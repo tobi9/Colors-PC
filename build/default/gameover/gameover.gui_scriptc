@@ -1,0 +1,627 @@
+
+–∫
+¥Clocal TouchFb = require("modules.animation")
+
+local gold_challenge_passed = false
+local diamond_challenge_passed = false
+
+local function set_currency()
+	local gold_text = gui.get_node("gold")
+	local diamonds_text = gui.get_node("diamonds")
+	gui.set_text(gold_text, gold)
+	gui.set_text(diamonds_text, diamonds)
+end
+
+local function animate_button(node)
+	gui.animate(node, "rotation.z", 1, gui.EASING_OUTSINE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+end
+
+local function animate_menu(nodes)
+	for i in ipairs(nodes) do
+		animate_button(nodes[i])
+	end
+end
+
+local node_table = {}-- each gui script has its own node_table
+
+local function get_nodes(string_table)
+	for i in ipairs(string_table) do
+		table.insert(node_table, gui.get_node(string_table[i]))
+	end
+end
+
+local is_exit_prompt_active
+local function hide_exit_prompt()
+	local nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
+	for i in ipairs(nodes) do
+		local node = gui.get_node(nodes[i])
+		gui.set_enabled(node, false)
+	end
+	local node_strings = {'score', 'best', 'respawns','s_chal', "h_chal",'gold', 'diamonds',
+	"_resume", "_restart", "_sound", "_menu", 'resume', 'restart', 'sound', 'menu',
+	'show_ad', 'ad_text', "h_status", "s_status", "h_landmark", "s_landmark"}
+	for i in ipairs(node_strings) do
+		local node = gui.get_node(node_strings[i])
+		gui.set_enabled(node, true)
+	end
+	is_exit_prompt_active = false
+end
+
+local function show_exit_prompt()
+	local nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
+	for i in ipairs(nodes) do
+		local node = gui.get_node(nodes[i])
+		gui.set_enabled(node, true)
+	end
+	local text = gui.get_node('exit_text')
+	local node_strings = {'score', 'best', 'respawns','s_chal', "h_chal",'gold', 'diamonds',
+	"_resume", "_restart", "_sound", "_menu", 'resume', 'restart', 'sound', 'menu',
+	'show_ad', 'ad_text', "h_status", "s_status", "h_landmark", "s_landmark"}
+	for i in ipairs(node_strings) do
+		local node = gui.get_node(node_strings[i])
+		gui.set_enabled(node, false)
+	end
+	is_exit_prompt_active = true
+end
+
+function init(self)
+	--animate the exit in the exit prompt
+	local exit_text = gui.get_node("exit_text")
+	gui.animate(exit_text, 'position.y', 660, gui.EASING_INOUTBOUNCE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	hide_exit_prompt()
+	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+	msg.post(ANALYZER, 'gameover')
+	local best = gui.get_node("best")
+	local sc = gui.get_node("score")
+	gui.animate(sc, "position.x", 420, gui.EASING_INBOUNCE, 1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
+	gui.animate(best, "position.x", 220, gui.EASING_INBOUNCE, 1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
+	local node_strings = {'resume', "_resume", "restart", "_restart", "sound", 
+	"_sound", "menu", "_menu", "s_chal", "h_chal", "gold", "diamonds", "score", 
+	"respawns", "s_status", "h_status", "s_landmark", "h_landmark", "best", "show_ad", 
+	"ad_text"}
+	get_nodes(node_strings)
+	animate_menu(node_table)
+	msg.post("/gameover#ended", "play_sound", {delay = 0, gain = 1})
+	msg.post(".", "acquire_input_focus")
+	--instruct the challenge script to tell the challenges script to check any of 
+	--the challenges was completed
+	set_currency()
+	msg.post("main:/main#challenges", "challenges", {id = "gameover:/gameover#gameover"})
+	msg.post("main:/main#challenges", "check_challenges")
+	-- set the score
+	local score_id = gui.get_node("score")
+	gui.set_text(score_id, "Your score was "..tostring(score))
+	-- set the respawns
+	local respawns_id = gui.get_node("respawns")
+	gui.set_text(respawns_id, tostring(respawns).." respawn(s)")
+	-- display the highscore
+	local best_prompt = nil
+	if score > highscore then
+		best_prompt = "Whoa!! your new highscore is "..tostring(highscore)
+	else
+		best_prompt = "Your best is "..tostring(highscore)
+	end
+	local best_id = gui.get_node('best')
+	gui.set_text(best_id, best_prompt)
+end
+
+function final(self)
+	gold_challenge_passed = false
+	diamond_challenge_passed = false
+	msg.post(".", "release_input_focus")
+end
+
+local button_tapped = nil
+
+local function handle_input()
+	if button_tapped == 'resume' then 
+		msg.post(main, 'resume', {col = "gameover"})-- tells the controller script which collection to unload when resuming
+		respawns = respawns -1
+		msg.post(ANALYZER, 'respawn_used')
+	elseif button_tapped == 'show_ad' then
+		msg.post("main:/main#main", "show_ad", {id = "gameover:/gameover#gameover"})
+	elseif button_tapped == 'restart' then
+		chances = const_chances
+		msg.post(main, 'restart', {col = "gameover"})-- tells the controller script which collection to unload when restarting	
+	elseif button_tapped == 'sound' then
+		msg.post("main:/main#main", "sound")
+	elseif button_tapped == 'menu' then
+		show_exit_prompt()
+	elseif button_tapped == 'yes' then
+		chances = const_chances
+		msg.post(main, 'return_2_menu', {col = "gameover"})-- tells the controller script which collection to unload when returning to menu
+	else
+		hide_exit_prompt()
+	end
+end
+
+local function touch_feedback(node)
+	local pos = gui.get_position(node)
+	gui.animate(node, "position.x", pos.x + 10, gui.EASING_INOUTBOUNCE, BUTTON_ANIMATION_DURATION, 0, handle_input, gui.PLAYBACK_ONCE_PINGPONG)
+end
+
+-- message ids
+local msg_challenges = hash("challenges")
+local adj_currencies = hash("adjust_currencies")
+local landmark = hash("landmark")
+local msg_completed = hash("completed")
+
+function on_message(self, message_id, message, sender)
+	if message_id == msg_challenges then
+		local s_chal = gui.get_node("s_chal")
+		local h_chal = gui.get_node("h_chal")
+		gui.set_text(s_chal, "GOLD CHALLENGE\n"..tostring(message.s))
+		gui.set_text(h_chal, "DIAMOND CHALLENGE\n"..tostring(message.h))
+	elseif message_id == adj_currencies then
+		msg.post("/gameover#passed", "play_sound", {delay = 0, gain = 1})
+		set_currency()
+		if message.s == "hard" then
+			local h = gui.get_node("h_status")
+			gui.set_text(h, "challenge\npassed")
+			diamond_challenge_passed = true
+		else
+			local h = gui.get_node("s_status")
+			gui.set_text(h, "challenge\npassed")
+			gold_challenge_passed = true
+		end
+	elseif message_id == landmark then
+		if message.c == "soft" then
+			local h = gui.get_node("s_landmark")
+			gui.set_text(h, tostring(message.l).."challenges\ncompleted")
+		else
+			local h = gui.get_node("h_landmark")
+			gui.set_text(h, tostring(message.l).."challenges\ncompleted")
+		end
+	elseif message_id == msg_completed then
+		msg.post("/gameover#reward", "play_sound", {delay = 0, gain = 1})
+		respawns = respawns + 1
+		-- set the respawns
+		local respawns_id = gui.get_node("respawns")
+		gui.set_text(respawns_id, tostring(respawns).." respawn(s)")
+	end
+	if diamond_challenge_passed == false then
+		local h = gui.get_node("h_status")
+		gui.set_text(h, "challenge\nfailed")
+	end
+	if gold_challenge_passed == false then
+		local h = gui.get_node("s_status")
+		gui.set_text(h, "challenge\nfailed")
+	end
+end
+
+-- touch_ids
+local touch = hash("touch")
+local back = hash("back")
+
+function on_input(self, action_id, action)
+	if action_id == touch and action.released then
+		local _resume  = gui.get_node('_resume')
+		local _restart = gui.get_node('_restart')
+		local _sound = gui.get_node('_sound')
+		local _menu = gui.get_node('_menu')
+		local show_ad = gui.get_node('show_ad')
+		local yes = gui.get_node("yes_exit")
+		local no = gui.get_node("no_exit")
+		if gui.pick_node(_resume, action.x, action.y) and respawns > 0 and is_exit_prompt_active == false then 
+			button_tapped = 'resume'
+			TouchFb.touch_feedback(_resume, handle_input)
+		elseif gui.pick_node(show_ad, action.x, action.y) and is_exit_prompt_active == false then
+			button_tapped = 'show_ad'
+			TouchFb.touch_feedback(show_ad, handle_input)
+		elseif gui.pick_node(_restart, action.x, action.y) and is_exit_prompt_active == false then
+			button_tapped = 'restart'
+			TouchFb.touch_feedback(_restart, handle_input)
+			msg.post(ANALYZER, "game_restarted")
+		elseif gui.pick_node(_sound, action.x, action.y) and is_exit_prompt_active == false then
+			button_tapped = 'sound'
+			TouchFb.touch_feedback(_sound, handle_input)
+		elseif gui.pick_node(_menu, action.x, action.y) and is_exit_prompt_active == false then
+			button_tapped = 'menu'
+			TouchFb.touch_feedback(_menu, handle_input)
+		elseif gui.pick_node(yes, action.x, action.y) then
+			button_tapped = 'yes'
+			TouchFb.touch_feedback(yes, handle_input)
+		elseif gui.pick_node(no, action.x, action.y) then
+			button_tapped = 'no'
+			TouchFb.touch_feedback(no, handle_input)
+		end
+	elseif action_id == back then
+		if is_exit_prompt_active == false then
+			button_tapped = 'exit'
+			TouchFb.touch_feedback(exit, handle_input)
+		else
+			hide_exit_prompt()
+		end
+	end
+end/gameover/gameover.gui_script∫;LJ =/gameover/gameover.gui_script™    06   9  ' B 6  9' B6  9  6 B6  9 6 BK  set_textdiamonds	goldget_nodeguigold_text diamonds_text  ï 
+  6  9  ' ) 6  9) )  +  6	  9		B	K  PLAYBACK_LOOP_PINGPONGEASING_OUTSINErotation.zanimateguinode   j  
+/6    BXÄ-  8 BER˚K  ¿ipairsanimate_button nodes    i  † 	 76    BXÄ6 9-  6 98 B AERˆK  ¿get_nodeguiinsert
+tableipairsnode_table string_table    i  à  
+ "x 5   6   BX	Ä6 98 B6 9 + BERı5 6  BX	Ä6 98B6 9 +	 BERı1  K  Ä  
+score	bestrespawnss_chalh_chal	golddiamonds_resume_restart_sound
+_menuresumerestart
+sound	menushow_adad_texth_statuss_statush_landmarks_landmarkset_enabledget_nodeguiipairs  exit_dialogue_boxexit_textyes_exitno_exityesno				
+
+
+
+		is_exit_prompt_active nodes !  i 	node node_strings   i 	node  Æ   &É05   6   BX	Ä6 98 B6 9 + BERı6 9' B5 6  BX	Ä6 98B6 9	 +
+ BERı1  K  Ä  
+score	bestrespawnss_chalh_chal	golddiamonds_resume_restart_sound
+_menuresumerestart
+sound	menushow_adad_texth_statuss_statush_landmarks_landmarkexit_textset_enabledget_nodeguiipairs  exit_dialogue_boxexit_textyes_exitno_exityesno
+
+
+
+
+
+is_exit_prompt_active nodes %  i 	node text node_strings   i 	node  ø ( õΩA'6  9' B6  9 ' )î6  9) )  +	  6
+  9
+
+B	-  B6 9'	 '
+ 5 6 9) ) )	 )
+  B=B6 96 ' B6  9' B6  9' B6  9 ' )§6  9)	 )
+  +  6  9B	6  9 ' )‹ 6  9)	 )
+  +  6  9B	5 -  B- - B6 9' ' 5 B6 9' ' B- B6 9' ' 5 B6 9' ' B6  9' B6  9  '! 6	" 6
+ B	&	B6  9'# B6  9  6	" 6
+# B	'
+$ &	
+	B+  6 6	% 	 XÄ'& 6	" 6
+% B	&	XÄ'' 6	" 6
+% B	&	6  9'	 B6	  9	 	
+  B	K  	¿¿¿¿¿Your best is "Whoa!! your new highscore is highscore respawn(s)respawnstostringYour score was set_textcheck_challenges id gameover:/gameover#gameoverchallengesmain:/main#challengesacquire_input_focus. 
+delay 	gainplay_sound/gameover#ended  resume_resumerestart_restart
+sound_sound	menu
+_menus_chalh_chal	golddiamonds
+scorerespawnss_statush_statuss_landmarkh_landmark	bestshow_adad_textPLAYBACK_ONCE_PINGPONGEASING_INBOUNCEposition.x
+score	bestgameoverANALYZER
+color  vector4
+vmathclear_color@render:	postmsgPLAYBACK_LOOP_PINGPONGEASING_INOUTBOUNCEposition.yanimateexit_textget_nodegui													
+
+
+
+
+
+
+
+
+
+
+
+
+    !!!!!!#####%%%%&&&&&'hide_exit_prompt get_nodes animate_menu node_table set_currency self  úexit_text óbest &qsc mnode_strings Rscore_id "0respawns_id #best_prompt 
+best_id  å  ?j1  1 6  9' ' BK  ÄÄrelease_input_focus.	postmsggold_challenge_passed diamond_challenge_passed self  	 ˘  Fwr-      X Ä6  9  6 '  5 B 6     7  6  9  6 ' B X 3Ä-     X Ä6  9  '	 ' 5
+ B X )Ä-     X 	Ä6  7  6  9  6 ' 5 B X Ä-     X Ä6  9  '	 ' B X Ä-     X Ä-  B X Ä-     X 	Ä6  7  6  9  6 ' 5 B X Ä-  B K  Ä
+¿	¿ colgameoverreturn_2_menuyes	menu
+sound colgameoverchancesconst_chancesrestart id gameover:/gameover#gameovermain:/main#mainshow_adrespawn_usedANALYZERrespawns colgameover	main	postmsgresume							
+
+
+button_tapped show_exit_prompt hide_exit_prompt  Ú .à6  9  B6  9  ' 9 6  96 )  -	  6
+  9
+
+B	K  ¿PLAYBACK_ONCE_PINGPONGBUTTON_ANIMATION_DURATIONEASING_INOUTBOUNCExposition.xanimateget_positionguihandle_input node  pos  è
+ ñÎì)-   XÄ6  9' B6  9' B6  9 ' 6	 9
+B	&	B6  9 ' 6	 9
+	B	&	BX_Ä-  X!Ä6
+ 9' ' 5 B- B9 XÄ6  9' B6  9 ' B1 XFÄ6  9' B6  9 ' B1 X;Ä-  XÄ9 XÄ6  9' B6  9 6 9B' &BX'Ä6  9' B6  9 6 9B' &BXÄ-  XÄ6
+ 9' ' 5 B6  7 6  9' B6  9 6 6 B' &B-  X	Ä6  9' B6  9 ' B-  X	Ä6  9' B6  9 ' BK  ¿¿¿ÄÄ¿¿challenge
+failed respawn(s)respawns 
+delay 	gain/gameover#rewardh_landmarkchallenges
+completedls_landmark	softcs_statuschallenge
+passedh_status	hard 
+delay 	gainplay_sound/gameover#passed	postmsghDIAMOND CHALLENGE
+stostringGOLD CHALLENGE
+set_texth_chals_chalget_nodegui			
+
+
+
+!!!""""#####%%%&&&&''''')msg_challenges adj_currencies set_currency diamond_challenge_passed gold_challenge_passed landmark msg_completed self  ómessage_id  ómessage  ósender  ós_chal h_chal h %h h 	h 	respawns_id 	h h  ã
+  ≥Í¬(-   X†Ä9   XùÄ6 9' B6 9' B6 9' B6 9' B6 9' B6 9'	 B6	 9		'
+	 B	6
+ 9
+
+
+ 99B
+ 
+ XÄ6
+ )  
+ X
+
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+zÄ6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+hÄ6
+ 9
+
+
+ 99B
+ 
+ XÄ-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+6
+ 9
+
+6 ' B
+X
+QÄ6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+?Ä6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+-Ä6
+ 9
+
+
+ 99B
+ 
+ XÄ/ -
+ 9
+
+ - B
+X
+Ä6
+ 9
+
+
+	 99B
+ 
+ XÄ/ -
+ 9
+
+	 - B
+XÄ-  XÄ-  XÄ/ - 96 - BXÄ- BK  ¿ÄÄ ¿¿¿	¿	exitnoyes	menu
+soundgame_restartedANALYZER	postmsgrestarttouch_feedbackresumerespawnsyxpick_nodeno_exityes_exitshow_ad
+_menu_sound_restart_resumeget_nodeguireleased															
+   !!!"######%%(touch is_exit_prompt_active button_tapped TouchFb handle_input back hide_exit_prompt self  ¥action_id  ¥action  ¥_resume ò_restart î_sound ê_menu åshow_ad àyes Ñno Ä ≠   ,Ï Í6   ' B + + 3 3 3 4  3 +  3	 3
+ 3 7	 3
+ 7 +  3 3 6 ' B6 ' B6 ' B6 ' B3 7 6 ' B6 ' B3 7 2  ÄK  on_input 	back
+touchon_message completedlandmarkadjust_currencieschallenges	hash  
+final 	init       modules.animationrequire.?hAnjpÜãéééèèèêêêëëëºìøøø¿¿¿Í¬ÍÍTouchFb )gold_challenge_passed (diamond_challenge_passed 'set_currency &animate_button %animate_menu $node_table #get_nodes "is_exit_prompt_active !hide_exit_prompt  show_exit_prompt button_tapped handle_input touch_feedback msg_challenges adj_currencies landmark msg_completed touch back   "∫;LJ=/gameover/gameover.gui_script™    06   9  ' B 6  9' B6  9  6 B6  9 6 BK  set_textdiamonds	goldget_nodeguigold_text diamonds_text  ï   6  9  ' ) 6  9) )  +	  6
+  9
+
+B	K  PLAYBACK_LOOP_PINGPONGEASING_OUTSINErotation.zanimateguinode   j  
+/6    BXÄ-  8 BER˚K  ¿ipairsanimate_button nodes    i  †  76    BXÄ6 9-  6 98
+ B AERˆK  ¿get_nodeguiinsert
+tableipairsnode_table string_table    i  à   "x 5   6   BX	Ä6 98 B6 9 +	 BERı5 6  BX	Ä6 98B6 9	 +
+ BERı1  K  Ä  
+score	bestrespawnss_chalh_chal	golddiamonds_resume_restart_sound
+_menuresumerestart
+sound	menushow_adad_texth_statuss_statush_landmarks_landmarkset_enabledget_nodeguiipairs  exit_dialogue_boxexit_textyes_exitno_exityesno				
+
+
+
+		is_exit_prompt_active nodes !  i 	node node_strings   i 	node  Æ   &É05   6   BX	Ä6 98 B6 9 +	 BERı6 9' B5 6  BX	Ä6 98	B6 9
+ + BERı1  K  Ä  
+score	bestrespawnss_chalh_chal	golddiamonds_resume_restart_sound
+_menuresumerestart
+sound	menushow_adad_texth_statuss_statush_landmarks_landmarkexit_textset_enabledget_nodeguiipairs  exit_dialogue_boxexit_textyes_exitno_exityesno
+
+
+
+
+
+is_exit_prompt_active nodes %  i 	node text node_strings   i 	node  ø ( õΩA'6  9' B6  9 ' )î6  9) )	  +
+  6  9B	-  B6 9'	 '
+ 5 6 9)	 )
+ ) )  B=B6 96 ' B6  9' B6  9' B6  9 ' )§6	  9		)
+ )  +  6  9B	6  9 ' )‹ 6	  9		)
+ )  +  6  9B	5 -  B- - B6 9' ' 5	 B6 9' ' B- B6 9' ' 5	 B6 9' ' B6  9' B6  9  '	! 6
+" 6 B
+&	
+	B6  9'# B6  9 	 6
+" 6# B
+'$ &
+
+B+  6 6	% 	 XÄ'& 6	" 6% B	&	XÄ'' 6	" 6% B	&	6  9'
+ B6	  9	 	  B	K  	¿¿¿¿¿Your best is "Whoa!! your new highscore is highscore respawn(s)respawnstostringYour score was set_textcheck_challenges id gameover:/gameover#gameoverchallengesmain:/main#challengesacquire_input_focus. 
+delay 	gainplay_sound/gameover#ended  resume_resumerestart_restart
+sound_sound	menu
+_menus_chalh_chal	golddiamonds
+scorerespawnss_statush_statuss_landmarkh_landmark	bestshow_adad_textPLAYBACK_ONCE_PINGPONGEASING_INBOUNCEposition.x
+score	bestgameoverANALYZER
+color  vector4
+vmathclear_color@render:	postmsgPLAYBACK_LOOP_PINGPONGEASING_INOUTBOUNCEposition.yanimateexit_textget_nodegui													
+
+
+
+
+
+
+
+
+
+
+
+
+    !!!!!!#####%%%%&&&&&'hide_exit_prompt get_nodes animate_menu node_table set_currency self  úexit_text óbest &qsc mnode_strings Rscore_id "0respawns_id #best_prompt 
+best_id  å  ?j1  1 6  9' ' BK  ÄÄrelease_input_focus.	postmsggold_challenge_passed diamond_challenge_passed self  	 ˘  Fwr-      X Ä6  9  6 '  5 B 6     7  6  9  6 ' B X 3Ä-     X Ä6  9  '	 ' 5
+ B X )Ä-     X 	Ä6  7  6  9  6 ' 5 B X Ä-     X Ä6  9  '	 ' B X Ä-     X Ä-  B X Ä-     X 	Ä6  7  6  9  6 ' 5 B X Ä-  B K  Ä
+¿	¿ colgameoverreturn_2_menuyes	menu
+sound colgameoverchancesconst_chancesrestart id gameover:/gameover#gameovermain:/main#mainshow_adrespawn_usedANALYZERrespawns colgameover	main	postmsgresume							
+
+
+button_tapped show_exit_prompt hide_exit_prompt  Ú .à6  9  B6  9  ' 9 6  96 )	  -
+  6  9B	K  ¿PLAYBACK_ONCE_PINGPONGBUTTON_ANIMATION_DURATIONEASING_INOUTBOUNCExposition.xanimateget_positionguihandle_input node  pos  è
+ ñÎì)-   XÄ6  9' B6  9' B6  9 '	 6
+ 9B
+&	
+	B6  9 '	 6
+ 9	B
+&	
+	BX_Ä-  X!Ä6
+ 9' ' 5 B- B9 XÄ6  9' B6  9 ' B1 XFÄ6  9' B6  9 ' B1 X;Ä-  XÄ9 XÄ6  9' B6  9 6 9
+B'	 &	BX'Ä6  9' B6  9 6 9
+B'	 &	BXÄ-  XÄ6
+ 9' ' 5 B6  7 6  9' B6  9 6 6
+ B'	 &	B-  X	Ä6  9' B6  9 ' B-  X	Ä6  9' B6  9 ' BK  ¿¿¿ÄÄ¿¿challenge
+failed respawn(s)respawns 
+delay 	gain/gameover#rewardh_landmarkchallenges
+completedls_landmark	softcs_statuschallenge
+passedh_status	hard 
+delay 	gainplay_sound/gameover#passed	postmsghDIAMOND CHALLENGE
+stostringGOLD CHALLENGE
+set_texth_chals_chalget_nodegui			
+
+
+
+!!!""""#####%%%&&&&''''')msg_challenges adj_currencies set_currency diamond_challenge_passed gold_challenge_passed landmark msg_completed self  ómessage_id  ómessage  ósender  ós_chal h_chal h %h h 	h 	respawns_id 	h h  ã
+  ≥Í¬(-   X†Ä9   XùÄ6 9' B6 9' B6 9' B6 9' B6 9'	 B6 9'
+ B6	 9		'	 B	6
+ 9
+
+
+ 99B
+ 
+ XÄ6
+ )  
+ X
+
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+zÄ6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+hÄ6
+ 9
+
+
+ 99B
+ 
+ XÄ-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+6
+ 9
+
+6 ' B
+X
+QÄ6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+?Ä6
+ 9
+
+
+ 99B
+ 
+ X
+Ä-
+ 
+ X
+Ä/ -
+ 9
+
+ - B
+X
+-Ä6
+ 9
+
+
+ 99B
+ 
+ XÄ/ -
+ 9
+
+ - B
+X
+Ä6
+ 9
+
+
+	 99B
+ 
+ XÄ/ -
+ 9
+
+	 - B
+XÄ-  XÄ-  XÄ/ - 96 - BXÄ- BK  ¿ÄÄ ¿¿¿	¿	exitnoyes	menu
+soundgame_restartedANALYZER	postmsgrestarttouch_feedbackresumerespawnsyxpick_nodeno_exityes_exitshow_ad
+_menu_sound_restart_resumeget_nodeguireleased															
+   !!!"######%%(touch is_exit_prompt_active button_tapped TouchFb handle_input back hide_exit_prompt self  ¥action_id  ¥action  ¥_resume ò_restart î_sound ê_menu åshow_ad àyes Ñno Ä ≠   ,Ï Í6   ' B + + 3 3 3 4  3 +  3	 3
+ 3 7	 3
+ 7 +  3 3 6 ' B6 ' B6 ' B6 ' B3 7 6 ' B6 ' B3 7 2  ÄK  on_input 	back
+touchon_message completedlandmarkadjust_currencieschallenges	hash  
+final 	init       modules.animationrequire.?hAnjpÜãéééèèèêêêëëëºìøøø¿¿¿Í¬ÍÍTouchFb )gold_challenge_passed (diamond_challenge_passed 'set_currency &animate_button %animate_menu $node_table #get_nodes "is_exit_prompt_active !hide_exit_prompt  show_exit_prompt button_tapped handle_input touch_feedback msg_challenges adj_currencies landmark msg_completed touch back   modules.animation/modules/animation.luac" 

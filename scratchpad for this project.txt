@@ -1,0 +1,14 @@
+Customization system for the colours game:
+	The player can change the colour of the menu boxes and texts
+	
+MORE EXPRESSIVE MUSIC TO COMPENSATE FOR THE LACK OF ANIMATIONS
+RELEASE JUST 12 COLORS AT FIRST
+COLOURS NEED MORE VARIETY
+
+The main collection has too many collection proxies so I'm going to branch out
+some processes. The main collection loads a collection that handles the loading
+and unloading of sections of the game. The main collection is still responsible
+loading and unload core parts of the game.
+
+Change the iap collection to a disabled collection in the upgrades script to
+save memory

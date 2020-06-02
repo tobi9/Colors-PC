@@ -1,0 +1,135 @@
+ANALYZER = "main:/analyzer#analyzer"
+local folder = 'tc2_analyzer_debug'
+local is_game_rated
+local timer = 0
+local total_sessions = 0
+local gameovers = 0
+local total_spawns = 0
+local gold_challenges_completed = 0
+local diamond_challenges_completed = 0
+local restarts = 0
+local frictions_used = 0
+local respawns_used = 0
+local hints_used = 0
+local prob_to_use_frictions = 0
+local prob_to_use_respawns = 0
+local prob_to_use_hints = 0
+local prob_to_complete_a_gold_challenge = 0
+local prob_to_complete_a_diamond_challenge = 0
+local prob_to_restart = 0
+local scores = {}
+local avg_score
+
+local prob_to_miss = 0
+local total_misses = 0
+local total_hits = 0
+
+local durations = {} -- the total time spent in the app in a session (in seconds)
+local avg_duration
+
+local data = {}
+
+local function retrieve_data()
+	local file = sys.get_save_file(folder, "tc2_analysis_data")
+	local table = sys.load(file)
+	if #table == 0 then
+		total_sessions = 0
+		gameovers = 0
+		total_spawns = 0
+		gold_challenges_completed = 0
+		diamond_challenges_completed = 0
+		restarts = 0
+		total_misses = 0
+		total_hits = 0
+		frictions_used = 0
+		respawns_used = 0
+		hints_used = 0
+		scores = {}
+		durations = {}
+		is_game_rated = false
+	else
+		total_sessions = table[1]
+		gameovers = table[2]
+		total_spawns = table[3]
+		gold_challenges_completed = table[4]
+		diamond_challenges_completed = table[5]
+		restarts = table[6]
+		total_misses = table[7]
+		total_hits = table[8]
+		frictions_used = table[9]
+		respawns_used = table[10]
+		hints_used = table[11]
+		scores = table[12]
+		durations = table[13]
+		is_game_rated = table[14]
+	end
+end
+
+local function save_data()
+	local file = sys.get_save_file(folder, "tc2_analysis_data")
+	local values = {total_sessions, gameovers, total_spawns, gold_challenges_completed,
+	diamond_challenges_completed, restarts, total_misses, total_hits, frictions_used,
+	respawns_used, hints_used, scores, durations, is_game_rated}
+	for i, v in ipairs(values) do
+		table.insert(data, i, v)
+	end
+	sys.save(file, data)
+end
+
+function init(self)
+	retrieve_data()
+end
+
+function final(self)
+	table.insert(durations, timer)
+	save_data()
+end
+
+function update(self, dt)
+	timer = timer + 1
+end
+
+-- message ids
+local level_ended = hash("level_ended")
+local hit_miss = hash("hit_miss")
+local gold_chal_completed = hash("gold_challenge_completed")
+local diamond_chal_completed = hash("diamond_challenge_completed")
+local game_restarted = hash("game_restarted")
+local gameover = hash("gameover")
+local friction_used = hash("friction_used")
+local respawn_used = hash("respawn_used")
+local hint_used = hash("hint_used")
+
+function on_message(self, message_id, message, sender)
+	if message_id == level_ended then
+		table.insert(scores, message.score)
+		local total = 0
+		for i in ipairs(scores) do
+			total = total + scores[i]
+		end
+		avg_score = total / #scores
+		total_spawns = total_spawns + message.spawns
+		total_sessions = total_sessions + 1
+	elseif message_id == hit_miss then
+		total_hits = total_hits + message.hits
+		total_misses = total_misses + message.misses
+		if total_misses and total_hits ~= 0 then
+			hit_miss_ratio = total_hits / total_misses
+		end
+	elseif message_id == gold_chal_completed then
+		gold_challenges_completed = gold_challenges_completed + 1
+	elseif message_id == diamond_chal_completed then
+		diamond_challenges_completed = diamond_challenges_completed + 1
+	elseif message_id == game_restarted then
+		restarts = restarts + 1
+	elseif message_id == gameover then
+		gameovers = gameovers + 1
+		--msg.post(sender, "")
+	elseif message_id == friction_used then
+		frictions_used = frictions_used + 1
+	elseif message_id == respawn_used then
+		respawns_used = respawns_used + 1
+	elseif message_id == hint_used then
+		hints_used = hints_used + 1
+	end
+end

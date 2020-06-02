@@ -1,0 +1,91 @@
+local Color = require("modules.colors")
+
+local controller = 'level:/controller#controller' -- the address of the controller script
+local pos = nil -- the variable will contain the position of the go
+local my_words
+local my_colors
+local color = nil -- the color in vector4 form
+local my_color -- the string of the color
+local my_word = nil-- the game object's word
+local qst
+
+local movement  = function (self)
+	pos.x = pos.x + 5
+	go.set_position(pos)
+	msg.post("#", "check_pos")
+end
+
+local check_pos = function (self)
+	pos = go.get_position()
+	if pos.x < 700 then
+		timer.delay(0, false, movement)
+	else
+		if answered == false then
+			chances = chances - 1
+			if chances <= 0 then
+				chances = p_chances
+				msg.post(main, "gameover")
+			end
+			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
+			msg.post(level_gui, "adjust_chances")
+		end
+		go.delete() -- the go deletes after it passes 700 on the x-axis
+	end
+end	
+
+function init(self)
+	--CHECK HERE FOR BUGS
+	my_words = color_strings
+	my_colors = colors
+	timer.delay(0.5, false, check_pos)
+	math.randomseed(os.time()*1001)
+	self.color_ptr = math.random(#my_colors)-- position of the color in the table
+	color = my_colors[self.color_ptr]
+	my_color = my_words[self.color_ptr]
+	Color.set_label_color('#label', color)
+	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
+	my_word = my_words[self.word_ptr]
+	label.set_text("#label", my_word) -- sets itself to the randomly selected word	
+end
+
+function final(self)
+	msg.post(controller, "im_dead") --lets the controller object know its dead
+end
+
+local answer = nil -- this is the value the script sends so it can be compared with the button the was clicked
+local hint
+--message ids
+local color_is = hash("your_color_is")
+local check_this = hash("check_this")
+local msg_check_pos = hash("check_pos")
+
+function on_message(self, message_id, message, sender)
+	if message_id == color_is then
+		if question == "What Word ?" then -- this sets the answer to any of the questions so it can be sent to the input
+			answer = my_word
+			hint = self.word_ptr
+		else
+			answer = my_color
+			hint = self.color_ptr
+		end
+		msg.post(controller, "answer", {hint = hint})
+	elseif message_id == check_this and answered == false then
+		-- the level_gui is the address of the level.gui it was declared in the controller.script
+		if answer == message.ans then-- checks the answwer
+			msg.post("#right", "play_sound", {delay = 0, gain = 0.7})
+			msg.post(level_gui, "add_score") --if the answer is correct this line notifies the level.gui_script to increment the score
+		else
+			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
+			chances = chances - 1
+			if chances <= 0 then
+				chances = p_chances
+				msg.post(main, "gameover")
+				msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
+			end
+			msg.post(level_gui, "adjust_chances")
+		end
+		answered = true -- this is a global variable declared in the controller script
+	elseif message_id == msg_check_pos then
+		check_pos()
+	end
+end

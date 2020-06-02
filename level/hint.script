@@ -1,0 +1,8 @@
+--spawned by the controller script
+local show_hint = hash("show_hint")
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show_hint") then
+		msg.post("#sprite", "play_animation", {id = hash(message.hint)})
+	end
+end

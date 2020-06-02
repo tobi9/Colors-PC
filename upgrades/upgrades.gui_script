@@ -1,0 +1,212 @@
+local friction_price = 500 -- the price to purchase one friction is 500 gold
+local r_price_g = 500 -- the price for a respawn is 500 gold
+local r_price_d = 6 -- 6 diamonds
+local c_price_g
+local c_price_d
+local time_diffrence = 1800 -- in seconds
+
+
+local button_tapped = nil
+
+local function set_recources()
+	local p = gui.get_node("prompt")
+	if os.time() - last_ad_time >= time_diffrence then -- checks if 30 minutes have passed
+		gui.set_text(p , "Try your luck !!")
+	else
+		gui.set_text(p , "Come back later")
+	end
+	local g = gui.get_node("gold")
+	local d = gui.get_node("diamonds")
+	gui.set_text(g, gold)
+	gui.set_text(d, diamonds)
+	local tfric = gui.get_node("totalFric")
+	local fPrice = gui.get_node("fPrice")
+	gui.set_text(tfric, frictions)
+	gui.set_text(fPrice, friction_price)
+	local tRes = gui.get_node("totalRes")
+	local r_price_gold = gui.get_node("rPriceG")
+	local r_price_diamond = gui.get_node("rPriceD")
+	gui.set_text(tRes, respawns)
+	gui.set_text(r_price_gold, r_price_g)
+	gui.set_text(r_price_diamond, r_price_d)
+	local tchan = gui.get_node("totalChan")
+	local c_price_gold = gui.get_node("cPriceG")
+	local c_price_diamond = gui.get_node("cPriceD")
+	c_price_g = chances * 1000
+	c_price_d = chances * 30
+	gui.set_text(tchan, chances)
+	gui.set_text(c_price_gold, c_price_g)
+	gui.set_text(c_price_diamond, c_price_d)
+end
+
+function init(self)
+	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+	local function animate_button(node)
+		gui.animate(node, "rotation.z", 1, gui.EASING_OUTSINE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	end
+
+	local function animate_menu(nodes)
+		for i in ipairs(nodes) do
+			animate_button(nodes[i])
+		end
+	end
+
+	local node_table = {}-- each gui script has its own node_table
+
+	local function get_nodes(string_table)
+		for i in ipairs(string_table) do
+			table.insert(node_table, gui.get_node(string_table[i]))
+		end
+	end
+	
+	local node_strings = {'frictions', 'totalFric', 'fPrice', 'buy', 'respawns', 'totalRes',
+	'rPriceG', 'rPriceD', 'buy1', 'chances', 'totalChan', 'cPriceG', 'cPriceD', 'buy2',
+	'maxChan', 'menu', '_menu', 'rewardPrompt', 'buyIap1', 'buyIap2', 'buyIap3'}
+	get_nodes(node_strings)
+	animate_menu(node_table)
+	local title = gui.get_node("upgrades")
+	local prompt1 = gui.get_node("prompt")
+	local prompt2 = gui.get_node("prompt1") 
+	local adButton = gui.get_node("adButton")
+	local adText = gui.get_node("video")
+	local iap = gui.get_node("_buyIap")
+	local iaptxt = gui.get_node("buyIap")
+	local g = gui.get_node("gold")
+	local d = gui.get_node("diamonds")
+	local duration = 10
+	gui.animate(title , "position.y", 1090, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(prompt1, "position.y", 1040, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(prompt2, "position.y", 1040, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(adButton, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(adText, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(iap, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(iaptxt, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(g, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(d, "position.y", 970, gui.EASING_INBOUNCE, duration, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	set_recources()
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+local function handle_input()
+	if button_tapped == 'buy_frictions' then
+		if friction_price <= gold then
+			frictions = frictions + 1
+			gold = gold - friction_price
+			msg.post("#success", "play_sound", {delay = 0, gain = 1})
+			local node = gui.get_node("totalFric")
+			gui.animate(node, "position.x", 220, gui.EASING_INBOUNCE, 1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
+		else
+			msg.post("#failure", "play_sound", {delay = 0, gain = 1})
+		end
+	elseif button_tapped == 'buy_respawns' then
+		if r_price_g <= gold and r_price_d <= diamonds then
+			respawns = respawns + 1
+			gold = gold - r_price_g
+			diamonds = diamonds - r_price_d
+			msg.post("#success", "play_sound", {delay = 0, gain = 1})
+			local node = gui.get_node("totalRes")
+			gui.animate(node, "position.x", 220, gui.EASING_INBOUNCE, 1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
+		else
+			msg.post("#failure", "play_sound", {delay = 0, gain = 1})
+		end
+	elseif button_tapped == 'buy_chances' then
+		if c_price_g <= gold and c_price_d <= diamonds and chances < 8 then
+			const_chances = const_chances + 1
+			chances = chances + 1
+			gold = gold - c_price_g
+			diamonds = diamonds - c_price_d
+			msg.post("#success", "play_sound", {delay = 0, gain = 1})
+			local node = gui.get_node("totalChan")
+			gui.animate(node, "position.x", 220, gui.EASING_INBOUNCE, 1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
+		else
+			msg.post("#failure", "play_sound", {delay = 0, gain = 1})
+		end
+	elseif button_tapped == 'iap' then
+		msg.post("main:/main#main", "load_iap")
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif button_tapped == 'menu' then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		msg.post(main, "unload_upgrades")
+	elseif button_tapped == 'ad' then
+		msg.post("main:/main#main", "show_ad", {id = "upgrades:/upgrades#upgrades"})
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	end
+end
+
+local msg_completed = hash("completed")
+
+local TouchFb = require("modules.animation")
+
+function on_message(self, message_id, message, sender)
+	if message_id == msg_completed then
+		last_ad_time = os.time()
+		math.randomseed(os.time()*100200)
+		local num = math.random(1, 3) 
+		local text
+		if num == 1 then
+			gold = gold + 500
+			text  = "You got 500 gold"
+		elseif num == 2 then
+			gold = gold + 500
+			diamonds = diamonds + 6
+			text  = "You got 500 gold\nand 6 diamonds"
+		else
+			gold = gold + c_price_g
+			diamonds = diamonds + c_price_d
+			text  = "You got "..tostring(c_price_g).." gold\nand "..tostring(c_price_d).." diamonds"
+		end
+		set_recources()
+		msg.post("/upgrades#reward", "play_sound", {delay = 0, gain = 1})
+		local Prompt = gui.get_node("prompt")
+		gui.set_text(Prompt, text)
+		msg.post("main:/main#data_handler", "save_data")
+	end
+end
+
+
+local function touch_feedback(node)
+	local pos = gui.get_position(node)
+	gui.animate(node, "position.x", pos.x + 10, gui.EASING_INOUTBOUNCE, BUTTON_ANIMATION_DURATION, 0, handle_input, gui.PLAYBACK_ONCE_PINGPONG)
+end
+
+local touch = hash("touch")
+local back = hash("back")
+
+function on_input(self, action_id, action)
+	if action_id == touch and action.released then
+		local buyFrictions = gui.get_node("buy")
+		local buyRespawns  = gui.get_node("buy1")
+		local buyChances = gui.get_node("buy2")
+		local iap = gui.get_node("_buyIap")
+		local menu = gui.get_node("_menu")
+		local adButton = gui.get_node("adButton")
+		if gui.pick_node(buyFrictions, action.x, action.y) then
+			button_tapped = 'buy_frictions'
+			TouchFb.touch_feedback(buyFrictions, handle_input)
+		elseif gui.pick_node(buyRespawns, action.x, action.y) then
+			button_tapped = 'buy_respawns'
+			TouchFb.touch_feedback(buyRespawns, handle_input)
+		elseif gui.pick_node(buyChances, action.x, action.y) then
+			button_tapped = 'buy_chances'
+			TouchFb.touch_feedback(buyChances, handle_input)
+		elseif gui.pick_node(iap, action.x, action.y) then
+			button_tapped = 'iap'
+			TouchFb.touch_feedback(iap, handle_input)
+		elseif gui.pick_node(menu, action.x, action.y) then
+			button_tapped = 'menu'
+			TouchFb.touch_feedback(menu, handle_input)
+		elseif gui.pick_node(adButton, action.x, action.y) and os.time() - last_ad_time >= time_diffrence then
+			button_tapped = 'ad'
+			TouchFb.touch_feedback(adButton, handle_input)
+		end
+	elseif action_id == back then
+		button_tapped = 'menu'
+		TouchFb.touch_feedback(menu, handle_input)
+	end
+	msg.post("main:/main#data_handler", "save_data")
+	set_recources()
+end

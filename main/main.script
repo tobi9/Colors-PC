@@ -1,0 +1,298 @@
+--[[ These variables are used by the level, color ,controller, and color selection system 
+scripts they were put in the main script because they need to be immune ro restarting game sessions]]
+
+--[[
+	THE TRAY is the table where the colors chosen are placed in the order in which they were chosen.
+	The colors script and the level script both check this tray to get the colors chosen and the adjust the
+	game elements.
+]]
+TRAY = {}
+-- This global variable is to be checked by the pick colors script so the correct number of colors are displayed
+NUM_OF_COLORS_PICKED = nil 
+--the variables below are to be used by the level gui script 
+color_strings = {}
+colors = {}
+--there's a bug im trying to patch for some reason the NUM_OF_COLOS_PICKED is nil when a game session is restarted
+--I've not figured out why this happens but for now a patch will have to do and thats the purpose of the variable below
+NumOfColorsPicked = nil
+
+-- commented out the lvl_loaded in the load clr menu
+local menuProxy = "#menu_proxy" -- the id of the collection proxy of the menu collection
+local levelProxy = "#level_proxy" --(rgb level)the id of the collection proxy of the level collection
+local levelYbrProxy = "#level_ybr_proxy"
+local levelOpgProxy = "#level_opg_proxy"
+local pauseProxy = "#pause_proxy"-- the id of the collection proxy of the pause collection
+local gameOverProxy = "#gameover_proxy" -- the id of the collection proxy of the gameover collection
+local upgradesProxy = "#upgrades_proxy"
+local iapProxy = "#iap_proxy"
+local colorMenuProxy = "#color_menu_proxy"
+local pickColorsProxy = "#pick_colors_proxy"
+local colorSelectorProxy = "#color_selector_proxy"
+local lvl_loaded = false -- this variable makes sure the main input does not take action when another collectionproxy has been loaded
+local startButtonPos = vmath.vector3(320, 800, 0) -- the position of the start button
+local upgradeButtonPos = vmath.vector3(320, 600, 0) -- the position of the upgrades button
+local musicButtonPos = vmath.vector3(320, 400, 0) -- the position of the music button
+local leaveButtonPos = vmath.vector3(320, 200, 0) -- the position of the leave button
+local radius = vmath.vector3(150, 50, 0)
+main = "main:/main#main"
+colors_picked = nil -- the variables the controller, level and color scripts check to know the correct colors 
+
+local function load_menu()-- loads the menu collection
+	if sound_playing == false then
+		msg.post("#soundtrack", "play_sound", {delay = 0, gain = 1})
+		sound_playing = true
+	end
+	msg.post(menuProxy, "load")
+	lvl_loaded = false -- this returns input control to main.script
+	TRAY = {}
+	NUM_OF_COLORS_PICKED = nil
+	color_strings = {}
+	colors = {}
+end
+
+local function unload_menu() -- unloads the menu collection
+	msg.post(menuProxy, "unload")
+end
+
+local function load_color_menu()
+	msg.post(colorMenuProxy, "load")
+end
+
+local function unload_color_menu()
+	msg.post(colorMenuProxy , "unload")
+end
+
+local function load_pick_colors()
+	msg.post(pickColorsProxy, "load")
+end
+
+local function unload_pick_colors()
+	msg.post(pickColorsProxy, "unload")
+end
+
+local function load_color_selector()
+	msg.post( colorSelectorProxy, "load")
+end
+
+local function unload_color_selector()
+	msg.post( colorSelectorProxy, "unload")
+end
+
+local function load_level() -- loads the level collection
+	msg.post("#soundtrack", "stop_sound", {delay = 0, gain = 1})
+	sound_playing = false
+	msg.post(levelProxy, "load")
+	lvl_loaded = true
+end
+
+local function unload_level() -- unloads the level collection
+	msg.post(levelProxy, "unload")
+	lvl_loaded = false
+		--[[After the level collection is unload, the TRAY(which is a global table declared in the color menu script)
+	is emptied and the NUM_OF_COLORS_PICKED(which is a global variable also declared in the color menu script) is
+	set to nil. The reason for this is that there are scripts that use these information and after each level session
+	the player chooses new options that are placed in the table and variable]]
+	TRAY = {}
+	NUM_OF_COLORS_PICKED = nil
+end
+
+gamePaused = false
+-- gamePaused sets to true if the game is paused
+local function pause_game()--pauses the level
+	msg.post(pauseProxy, "load")
+	msg.post(levelProxy, "disable")
+	gamePaused = true
+end
+
+local function end_game()--gameover
+	msg.post(gameOverProxy, "load")
+	msg.post(levelProxy, "disable")
+	gamePaused = true
+end
+
+local function resume_game(proxy) --resumes the game
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, "enable")
+	gamePaused = false
+end
+
+local not_first_time = false -- this condition prevents the level from restarting at the beginning
+local restart_col = nil -- the collection that is to be reloaded when the player restarts the level
+local function restart_level(proxy) -- restart the level
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, 'load')
+	not_first_time = false
+end
+
+local function return_2_menu(proxy) -- goes back to the main menu(pause)
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, "unload")
+	load_menu()
+end
+
+local function load_upgrades()
+	msg.post(upgradesProxy, "load")
+	unload_menu()
+	lvl_loaded = true
+	gamePaused = true -- to is dor convinience because the level and upgrade collection share the same window listener function
+end
+
+local function unload_upgrades()
+	msg.post(upgradesProxy, "unload")
+	load_menu()
+	lvl_loaded = false
+	gamePaused = false
+end
+
+local function load_iap()
+	msg.post(iapProxy, "load")
+	msg.post(upgradesProxy, "unload")
+end
+
+local function unload_iap()
+	msg.post(iapProxy, "unload")
+	msg.post(upgradesProxy, "load")
+end
+
+-- this function pauses the game if event focus is lost
+local function window_callback(self, event, data) --gamePaused is declared in the main script
+	if event == window.WINDOW_EVENT_FOCUS_LOST and lvl_loaded == true and gamePaused == false then
+		msg.post("#", 'pause') -- pause the game
+	end
+end
+
+function init(self)
+	msg.post("@system:", "set_update_frequency", { frequency = 100 } )
+	msg.post("#intro", "play_sound", {delay = 0, gain = 1})
+	msg.post(".", "acquire_input_focus")
+	msg.post("#intro_proxy", "load")
+	window.set_listener(window_callback)
+	
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+local ad_caller
+--message ids
+local start = hash("start")
+local load_lvl = hash("load_level")
+local unload_intro = hash("unload_intro")
+local msg_upgrades = hash("upgrades")
+local msg_sound = hash("sound")
+local exit = hash("exit")
+local pause = hash('pause')
+local resume = hash('resume')
+local return_to_menu = hash('return_2_menu')
+local gameover = hash('gameover')
+local restart = hash('restart')
+local unload_upgrds = hash("unload_upgrades")
+local load_micro = hash("load_iap")
+local unload_micro = hash("unload_iap")
+local proxy_unloaded = hash("proxy_unloaded")
+local proxy_loaded = hash("proxy_loaded")
+local show_ad = hash("show_ad")
+local ad_completed = hash("ad_completed")
+local unload_clr_menu = hash("unload_color_menu")
+local load_pick_clr = hash("load_pick_colors")
+local unload_pick_clr = hash("unload_pick_colors")
+local load_clr_selector = hash("load_color_selector")
+local unload_clr_selector = hash("unload_color_selector")
+
+function on_message(self, message_id, message, sender)
+	if message_id == start then
+		load_color_menu()
+		unload_menu()
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif message_id == load_lvl then
+		load_level()
+		unload_pick_colors()
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif message_id == unload_intro then
+		msg.post("#intro_proxy", "unload")
+		load_menu()
+	elseif message_id == msg_upgrades then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		load_upgrades()
+	elseif message_id == msg_sound then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		function handle_sound() -- this is a global function
+			local gain = sound.get_group_gain('master')
+			if gain == 0 then
+				sound.set_group_gain('master', 1)
+			else
+				sound.set_group_gain('master', 0)
+			end
+		end
+		handle_sound()
+	elseif message_id == exit then
+		os.exit()
+	elseif message_id == pause then -- pause the game
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		pause_game()
+	elseif message_id == resume then -- resume the game
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		local col = nil -- this variable will contain the collection to be unloaded
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			col = pauseProxy
+		else
+			col = gameOverProxy
+		end
+		resume_game(col)
+	elseif message_id == return_to_menu then -- return to the main menu
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		local col = nil -- this variable will contain the collection to be unloaded
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			col = pauseProxy
+		else
+			col = gameOverProxy
+		end
+		return_2_menu(col)
+	elseif message_id == gameover then -- end the game
+		end_game()
+	elseif message_id == restart then -- this condition modifies the variables that will enable this script to restart the level
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			restart_col = pauseProxy
+		else
+			restart_col = gameOverProxy
+		end
+		not_first_time = true
+		unload_level()
+	elseif message_id == unload_upgrds then
+		unload_upgrades()
+	elseif message_id == load_micro then
+		load_iap()
+	elseif message_id == unload_micro then
+		unload_iap()
+	elseif message_id == proxy_unloaded then -- this message is received everytime a proxy is unloaded
+		local col = hash('level_proxy')
+		if sender.fragment == col and not_first_time == true then -- this confirms if the level collection is not  loading for the first time
+			restart_level(restart_col) -- restarts the level
+		end
+	elseif message_id == proxy_loaded then
+		msg.post(sender, "init")
+		msg.post(sender, "enable")
+	elseif message_id == show_ad then
+		ad_caller = message.id
+		msg.post("main:/ads#ads", "show_ad")
+	elseif message_id == ad_completed then
+		msg.post(ad_caller, "completed")
+	elseif message_id == unload_clr_menu then
+		unload_color_menu()
+		load_menu()
+	elseif message_id == load_pick_clr then
+		load_pick_colors()
+		unload_color_menu()
+	elseif message_id == unload_pick_clr then
+		unload_pick_colors()
+		load_color_menu()
+	elseif message_id == load_clr_selector then
+		load_color_selector()
+		unload_pick_colors()
+	elseif message_id == unload_clr_selector then
+		unload_color_selector()
+		load_pick_colors()
+	end
+end

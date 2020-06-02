@@ -1,0 +1,415 @@
+--THE TWO GLOBAL VARIABLES DECLARED ARE MODIFIED BY THE MODIFIED BY THE LEVEL GUI SCRIPT
+-- miss BECOMES TRUE IF THE PLAYER MISSES A QUESTION
+-- slow_downs_used BECOMES TRUE IF THE PLAYER sLOWS DOWN THE SPEED OF THE COLOR GAME OBJECT
+p_highscore = nil --previous highscore
+local folder = "trick colors 2"
+--This function uses the os.time() function to simulate randomization it is also a global function
+function random_index(tab)
+	local time = os.time() -- gets time in seconds 
+	local index = time % (#tab+1) -- gets time mod (no of elements in the table + 1)
+	if index == 0 then
+		index = math.random(#tab) -- adjusts the index if its zero to a random number between 1 and 3
+	end
+	return index -- returns the index
+end
+
+local miss_score = 0 --the score the moment the player misses for the first time
+local frictions_score = 0 -- the score the momeent a friction is used for the first time
+-----------------------------------SOFT CHALLENGES-----------------------------------------------------
+--AKA THE GOLD CHALLENGE
+sn1 = nil
+sn2 = nil
+sn3 = nil
+sn4 = nil
+local soft_challenges_completed
+local soft_challenges_landmark
+
+local s1
+local s2
+local s3
+local s4
+
+local sc_data = {}
+
+local function retrieve_soft_data()
+	local file = sys.get_save_file(folder, "tc2s_data")
+	local table = sys.load(file)
+	if #table == 0 then
+		math.randomseed(os.time())
+		soft_challenges_completed = 0
+		soft_challenges_landmark = 5
+		s1 = math.random(1000000)
+		s2 = math.random(1000000)
+		s3 = math.random(1000000)
+		s4 = math.random(1000000)
+		sn1 = 50
+		sn2 = 50
+		sn3 = 50
+		sn4 = 50
+	else
+		soft_challenges_completed = tonumber(decode(table[1]))
+		soft_challenges_landmark = tonumber(decode(table[2]))
+		s1 = tonumber(decode(table[3]))
+		s2 = tonumber(decode(table[4]))
+		s3 = tonumber(decode(table[5]))
+		s4 = tonumber(decode(table[6]))
+		sn1 = (tonumber(decode(table[7]))) - s1
+		sn2 = (tonumber(decode(table[8]))) - s2
+		sn3 = (tonumber(decode(table[9]))) - s3
+		sn4 = (tonumber(decode(table[10]))) - s4
+	end
+end
+
+local function save_soft_data()
+	local file = sys.get_save_file(folder, "tc2s_data")
+	local values = {soft_challenges_completed, soft_challenges_landmark
+	, s1, s2, s3, s4, sn1 + s1, sn2 + s2, sn3 + s3, sn4 + s4}
+	for i, v in ipairs(values) do
+		table.insert(sc_data, i,encode(tostring(v)))
+	end
+	sys.save(file, sc_data)
+end
+
+local function check_soft_challenges_landmark()
+	if soft_challenges_completed >= soft_challenges_landmark then
+		-- do something
+		--prompt the user
+		msg.post("gameover:/gameover#gameover", "landmark", {c = "soft", l = soft_challenges_landmark})
+		gold = gold + 200
+		soft_challenges_landmark = soft_challenges_landmark * 2
+	end
+end
+
+local soft_challenge
+local i -- this points to the challenge(soft)
+
+local function set_soft_challenge()
+	local ch1 = "reach a score of "..tostring(sn1)
+	local ch2 = "reach a score of "..tostring(sn2).."\n without a miss"
+	local ch3 = "reach a score of "..tostring(sn3).."\n without using frictions"
+	local ch4 = "reach a score of "..tostring(sn4).."\n without a miss and \nwithout using frictions"
+	local ch5 = "double your highscore"
+	local ch6 = "double your highscore\n without a miss"
+	local ch7 = "double your highscore\n without using any frictions"
+	local ch8 = "double your highscore\n without a miss and \nwithout using frictions"
+	local challenges_locked = {ch1, ch2, ch3, ch4}
+	local challenges_unlocked = {ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8}
+	-- to make it challenge the some challenges are unlocked after the highscore is > 30
+	if highscore >= 30 then
+		i = random_index(challenges_unlocked)
+		soft_challenge = challenges_unlocked[i]
+	else
+		i = random_index(challenges_locked)
+		soft_challenge = challenges_locked[i]
+	end
+end
+
+local function handle_soft_challenge()
+	local c_passed = soft_challenges_completed
+	local g = 100
+	local scw1 = 1
+	local scw2 = 2
+	local scw3 = 2
+	local scw4 = 3
+	local cond = p_highscore * 2
+	if i == 1 then
+		if score >= sn1 then
+			-- challenge passed
+			if sn1 < 100 then
+				sn1 = sn1 * 2
+			end
+			gold = gold + g * scw1
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 2 then
+		if score >= sn2 and miss_score < sn2 then
+			--challenge passed
+			if sn2 < 100 then
+				sn2 = sn2 * 2
+			end
+			gold = gold + g * scw2
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 3 then
+		if score >= sn3 and frictions_score < sn3 then
+			--challenge passed
+			if sn3 < 100 then
+				sn3 = sn3 * 2
+			end
+			gold = gold + g * scw3
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 4 then
+		if score >= sn4 and frictions_score < sn4 and miss_score < sn4 then
+			--challenge passed
+			if sn4 < 100 then
+				sn4 = sn4 * 2
+			end
+			gold = gold + g * scw4
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 5 then
+		if score >= cond then
+			--challenge passed
+			gold = gold + g * scw1
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 6 then
+		if score >= cond and miss_score < cond then
+			--challenge passed
+			gold = gold + g * scw2
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	elseif i == 7 then
+		if score >= cond and frictions_score < cond then
+			--challenge passed
+			gold = gold + g * scw3
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	else
+		if score >= cond and frictions_score < cond and miss_score < cond then
+			--challenge passed
+			gold = gold + g * scw4
+			soft_challenges_completed = soft_challenges_completed + 1
+		end
+	end
+	if soft_challenges_completed > c_passed then
+		--adjust the displayed number and play a sound
+		msg.post(ANALYZER, 'gold_challenge_completed')
+		msg.post("gameover:/gameover#gameover", "adjust_currencies", {s = "soft"})
+	end
+	check_soft_challenges_landmark()
+	save_soft_data()
+	msg.post("main:/main#data_handler", "save_data")
+end
+
+-------------------------------------HARD CHALLENGES------------------------------------------------
+-- AKA THE DIAMOND CHALLENGE
+hn1 = nil
+hn2 = nil
+hn3 = nil
+hn4 = nil
+hn5 = nil
+hn6 = nil
+hn7 = nil
+hn8 = nil
+local hard_challenges_completed
+local hard_challenges_landmark
+
+local function check_hard_challenges_landmark()
+	if hard_challenges_completed >= hard_challenges_landmark then
+		-- do something
+		--prompt the user
+		msg.post("gameover:/gameover#gameover", "landmark", {c = "hard", l = hard_challenges_landmark})
+		diamonds = diamonds + 2
+		hard_challenges_landmark = hard_challenges_landmark * 2
+	end
+end
+
+local h1
+local h2
+local h3
+local h4
+local h5
+local h6
+local h7
+local h8
+
+local hc_data = {}
+
+local function retrieve_hard_data()
+	local file = sys.get_save_file(folder, "tc2h_data")
+	local table = sys.load(file)
+	if #table == 0 then
+		math.randomseed(os.time())
+		hard_challenges_completed = 0
+		hard_challenges_landmark = 5
+		h1 = math.random(1000000)
+		h2 = math.random(1000000)
+		h3 = math.random(1000000)
+		h4 = math.random(1000000)
+		h5 = math.random(1000000)
+		h6 = math.random(1000000)
+		h7 = math.random(1000000)
+		h8 = math.random(1000000)
+		hn1 = 150
+		hn2 = 150
+		hn3 = 150
+		hn4 = 150
+		hn5 = 4
+		hn6 = 4
+		hn7 = 4
+		hn8 = 4
+	else
+		hard_challenges_completed = tonumber(decode(table[1]))
+		hard_challenges_landmark = tonumber(decode(table[2]))
+		h1 = tonumber(decode(table[3]))
+		h2 = tonumber(decode(table[4]))
+		h3 = tonumber(decode(table[5]))
+		h4 = tonumber(decode(table[6]))
+		h5 = tonumber(decode(table[7]))
+		h6 = tonumber(decode(table[8]))
+		h7 = tonumber(decode(table[9]))
+		h8 = tonumber(decode(table[10]))
+		hn1 = (tonumber(decode(table[11]))) - h1
+		hn2 = (tonumber(decode(table[12]))) - h2
+		hn3 = (tonumber(decode(table[13]))) - h3
+		hn4 = (tonumber(decode(table[14]))) - h4
+		hn5 = (tonumber(decode(table[15]))) - h5
+		hn6 = (tonumber(decode(table[16]))) - h6
+		hn7 = (tonumber(decode(table[17]))) - h7
+		hn8 = (tonumber(decode(table[18]))) - h8
+	end
+end
+
+local function save_hard_data()
+	local file = sys.get_save_file(folder, "tc2h_data")
+	local values = {hard_challenges_completed, hard_challenges_landmark,h1, h2, h3, h4, h5,
+	 h6, h7, h8, hn1 + h1, hn2 + h2, hn3 + h3, hn4 + h4, hn5 + h5, hn6 + h6, hn7 + h7, hn8 + h8}
+	for i, v in ipairs(values) do
+		table.insert(hc_data, i,encode(tostring(v)))
+	end
+	sys.save(file, hc_data)
+end
+
+local hard_challenge
+local j
+
+local function set_hard_challenge()
+	local ch1 = "reach a score of "..tostring(hn1)
+	local ch2 = "reach a score of "..tostring(hn2).."\n without a miss"
+	local ch3 = "reach a score of "..tostring(hn3).."\n without using frictions"
+	local ch4 = "reach a score of "..tostring(hn4).."\n without a miss and \nwithout using frictions"
+	local ch5 = "get "..tostring(hn5).."X your highscore"
+	local ch6 = "get "..tostring(hn6).."X your highscore\n without a miss"
+	local ch7 = "get "..tostring(hn7).."X your highscore\n without using any frictions"
+	local ch8 = "get "..tostring(hn8).."X your highscore\n without a miss and \nwithout using frictions"
+	local challenges_locked = {ch1, ch2, ch3, ch4}
+	local challenges_unlocked = {ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8}
+	-- to make it challenge the some challenges are unlocked after the highscore is > 30
+	if highscore >= 50 then
+		j = random_index(challenges_unlocked)
+		hard_challenge = challenges_unlocked[j]
+	else
+		j = random_index(challenges_locked)
+		hard_challenge = challenges_locked[j]
+	end
+end
+
+local function handle_hard_challenge()
+	local c_passed = hard_challenges_completed
+	local hcw1 = 1
+	local hcw2 = 2
+	local hcw3 = 2
+	local hcw4 = 3
+	if j == 1 then
+		if score >= hn1 then
+			-- challenge passed
+			if hn1 < 600 then
+				hn1 = hn1 * 2
+			end
+			diamonds = diamonds + hcw1
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	elseif j == 2 then
+		if score >= hn2 and miss_score < hn2 then
+			--challenge passed
+			if hn2 < 600 then
+				hn2 = hn2 * 2
+				diamonds = diamonds + hcw2
+				hard_challenges_completed = hard_challenges_completed + 1
+			end
+		end
+	elseif j == 3 then
+		if score >= hn3 and frictions_score < hn3 then
+			--challenge passed
+			if hn3 < 600  then
+				hn3 = hn3 * 2
+			end
+			diamonds = diamonds + hcw3
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	elseif j == 4 then
+		if score >= hn4 and frictions_score < hn4 and miss_score < hn4 then
+			--challenge passed
+			if hn4 < 600 then
+				hn4 = hn4 * 2
+			end
+			diamonds = diamonds + hcw4
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	elseif j == 5 then
+		local cond = hn5 * p_highscore
+		if score >= cond then
+			--challenge passed
+			diamonds = diamonds + hcw1
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	elseif j == 6 then
+		local cond = hn6 * p_highscore
+		if score >= cond and miss_score < cond then
+			--challenge passed
+			diamonds = diamonds + hcw2
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	elseif j == 7 then
+		local cond = hn7 * p_highscore
+		if score >= cond and frictions_score < cond then
+			--challenge passed
+			diamonds = diamonds + hcw3
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	else
+		local cond = hn8 * p_highscore
+		if score >= cond and frictions_score < cond and miss_score < cond then
+			--challenge passed
+			diamonds = diamonds + hcw4
+			hard_challenges_completed = hard_challenges_completed + 1
+		end
+	end
+	if hard_challenges_completed > c_passed then
+		--adjust the displayed number and play a sound
+		msg.post(ANALYZER, 'diamond_challenge_completed')
+		msg.post("gameover:/gameover#gameover", "adjust_currencies", {s = "hard"})
+	end
+	check_hard_challenges_landmark()
+	save_hard_data()
+	msg.post("main:/main#data_handler", "save_data")
+end
+
+function init(self)
+	retrieve_soft_data()
+	retrieve_hard_data()
+	p_highscore = highscore
+end
+
+-- message ids
+local check_challenges = hash("check_challenges")
+local set_challenge = hash("set_challenge")
+local msg_challenges = hash("challenges")
+local miss = hash("miss")
+local friction = hash("friction")
+local send_pointers = hash("send_pointers")
+
+function on_message(self, message_id, message, sender)
+	if message_id == check_challenges then
+		handle_soft_challenge()
+		handle_hard_challenge()
+	elseif message_id == set_challenge then
+		set_soft_challenge()
+		set_hard_challenge()
+	elseif message_id == msg_challenges then
+		msg.post(message.id, "challenges", {s = soft_challenge, h = hard_challenge})
+	elseif message_id == miss then
+		miss_score = score
+	elseif message_id == friction then
+		frictions_score = score
+	elseif message_id == send_pointers then
+		msg.post(sender , "pointers", {ptr1 = i, ptr2 = j})
+	end
+end
+
+function final(self)
+	save_hard_data()
+	save_soft_data()
+end

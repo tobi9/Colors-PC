@@ -1,0 +1,370 @@
+
+˜Œ
+˘Q--[[ These variables are used by the level, color ,controller, and color selection system 
+scripts they were put in the main script because they need to be immune ro restarting game sessions]]
+
+--[[
+	THE TRAY is the table where the colors chosen are placed in the order in which they were chosen.
+	The colors script and the level script both check this tray to get the colors chosen and the adjust the
+	game elements.
+]]
+TRAY = {}
+-- This global variable is to be checked by the pick colors script so the correct number of colors are displayed
+NUM_OF_COLORS_PICKED = nil 
+--the variables below are to be used by the level gui script 
+color_strings = {}
+colors = {}
+--there's a bug im trying to patch for some reason the NUM_OF_COLOS_PICKED is nil when a game session is restarted
+--I've not figured out why this happens but for now a patch will have to do and thats the purpose of the variable below
+NumOfColorsPicked = nil
+
+-- commented out the lvl_loaded in the load clr menu
+local menuProxy = "#menu_proxy" -- the id of the collection proxy of the menu collection
+local levelProxy = "#level_proxy" --(rgb level)the id of the collection proxy of the level collection
+local levelYbrProxy = "#level_ybr_proxy"
+local levelOpgProxy = "#level_opg_proxy"
+local pauseProxy = "#pause_proxy"-- the id of the collection proxy of the pause collection
+local gameOverProxy = "#gameover_proxy" -- the id of the collection proxy of the gameover collection
+local upgradesProxy = "#upgrades_proxy"
+local iapProxy = "#iap_proxy"
+local colorMenuProxy = "#color_menu_proxy"
+local pickColorsProxy = "#pick_colors_proxy"
+local colorSelectorProxy = "#color_selector_proxy"
+local lvl_loaded = false -- this variable makes sure the main input does not take action when another collectionproxy has been loaded
+local startButtonPos = vmath.vector3(320, 800, 0) -- the position of the start button
+local upgradeButtonPos = vmath.vector3(320, 600, 0) -- the position of the upgrades button
+local musicButtonPos = vmath.vector3(320, 400, 0) -- the position of the music button
+local leaveButtonPos = vmath.vector3(320, 200, 0) -- the position of the leave button
+local radius = vmath.vector3(150, 50, 0)
+main = "main:/main#main"
+colors_picked = nil -- the variables the controller, level and color scripts check to know the correct colors 
+
+local function load_menu()-- loads the menu collection
+	if sound_playing == false then
+		msg.post("#soundtrack", "play_sound", {delay = 0, gain = 1})
+		sound_playing = true
+	end
+	msg.post(menuProxy, "load")
+	lvl_loaded = false -- this returns input control to main.script
+	TRAY = {}
+	NUM_OF_COLORS_PICKED = nil
+	color_strings = {}
+	colors = {}
+end
+
+local function unload_menu() -- unloads the menu collection
+	msg.post(menuProxy, "unload")
+end
+
+local function load_color_menu()
+	msg.post(colorMenuProxy, "load")
+end
+
+local function unload_color_menu()
+	msg.post(colorMenuProxy , "unload")
+end
+
+local function load_pick_colors()
+	msg.post(pickColorsProxy, "load")
+end
+
+local function unload_pick_colors()
+	msg.post(pickColorsProxy, "unload")
+end
+
+local function load_color_selector()
+	msg.post( colorSelectorProxy, "load")
+end
+
+local function unload_color_selector()
+	msg.post( colorSelectorProxy, "unload")
+end
+
+local function load_level() -- loads the level collection
+	msg.post("#soundtrack", "stop_sound", {delay = 0, gain = 1})
+	sound_playing = false
+	msg.post(levelProxy, "load")
+	lvl_loaded = true
+end
+
+local function unload_level() -- unloads the level collection
+	msg.post(levelProxy, "unload")
+	lvl_loaded = false
+		--[[After the level collection is unload, the TRAY(which is a global table declared in the color menu script)
+	is emptied and the NUM_OF_COLORS_PICKED(which is a global variable also declared in the color menu script) is
+	set to nil. The reason for this is that there are scripts that use these information and after each level session
+	the player chooses new options that are placed in the table and variable]]
+	TRAY = {}
+	NUM_OF_COLORS_PICKED = nil
+end
+
+gamePaused = false
+-- gamePaused sets to true if the game is paused
+local function pause_game()--pauses the level
+	msg.post(pauseProxy, "load")
+	msg.post(levelProxy, "disable")
+	gamePaused = true
+end
+
+local function end_game()--gameover
+	msg.post(gameOverProxy, "load")
+	msg.post(levelProxy, "disable")
+	gamePaused = true
+end
+
+local function resume_game(proxy) --resumes the game
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, "enable")
+	gamePaused = false
+end
+
+local not_first_time = false -- this condition prevents the level from restarting at the beginning
+local restart_col = nil -- the collection that is to be reloaded when the player restarts the level
+local function restart_level(proxy) -- restart the level
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, 'load')
+	not_first_time = false
+end
+
+local function return_2_menu(proxy) -- goes back to the main menu(pause)
+	msg.post(proxy, "unload")
+	msg.post(levelProxy, "unload")
+	load_menu()
+end
+
+local function load_upgrades()
+	msg.post(upgradesProxy, "load")
+	unload_menu()
+	lvl_loaded = true
+	gamePaused = true -- to is dor convinience because the level and upgrade collection share the same window listener function
+end
+
+local function unload_upgrades()
+	msg.post(upgradesProxy, "unload")
+	load_menu()
+	lvl_loaded = false
+	gamePaused = false
+end
+
+local function load_iap()
+	msg.post(iapProxy, "load")
+	msg.post(upgradesProxy, "unload")
+end
+
+local function unload_iap()
+	msg.post(iapProxy, "unload")
+	msg.post(upgradesProxy, "load")
+end
+
+-- this function pauses the game if event focus is lost
+local function window_callback(self, event, data) --gamePaused is declared in the main script
+	if event == window.WINDOW_EVENT_FOCUS_LOST and lvl_loaded == true and gamePaused == false then
+		msg.post("#", 'pause') -- pause the game
+	end
+end
+
+function init(self)
+	msg.post("@system:", "set_update_frequency", { frequency = 100 } )
+	msg.post("#intro", "play_sound", {delay = 0, gain = 1})
+	msg.post(".", "acquire_input_focus")
+	msg.post("#intro_proxy", "load")
+	window.set_listener(window_callback)
+	
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+local ad_caller
+--message ids
+local start = hash("start")
+local load_lvl = hash("load_level")
+local unload_intro = hash("unload_intro")
+local msg_upgrades = hash("upgrades")
+local msg_sound = hash("sound")
+local exit = hash("exit")
+local pause = hash('pause')
+local resume = hash('resume')
+local return_to_menu = hash('return_2_menu')
+local gameover = hash('gameover')
+local restart = hash('restart')
+local unload_upgrds = hash("unload_upgrades")
+local load_micro = hash("load_iap")
+local unload_micro = hash("unload_iap")
+local proxy_unloaded = hash("proxy_unloaded")
+local proxy_loaded = hash("proxy_loaded")
+local show_ad = hash("show_ad")
+local ad_completed = hash("ad_completed")
+local unload_clr_menu = hash("unload_color_menu")
+local load_pick_clr = hash("load_pick_colors")
+local unload_pick_clr = hash("unload_pick_colors")
+local load_clr_selector = hash("load_color_selector")
+local unload_clr_selector = hash("unload_color_selector")
+
+function on_message(self, message_id, message, sender)
+	if message_id == start then
+		load_color_menu()
+		unload_menu()
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif message_id == load_lvl then
+		load_level()
+		unload_pick_colors()
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif message_id == unload_intro then
+		msg.post("#intro_proxy", "unload")
+		load_menu()
+	elseif message_id == msg_upgrades then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		load_upgrades()
+	elseif message_id == msg_sound then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		function handle_sound() -- this is a global function
+			local gain = sound.get_group_gain('master')
+			if gain == 0 then
+				sound.set_group_gain('master', 1)
+			else
+				sound.set_group_gain('master', 0)
+			end
+		end
+		handle_sound()
+	elseif message_id == exit then
+		os.exit()
+	elseif message_id == pause then -- pause the game
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		pause_game()
+	elseif message_id == resume then -- resume the game
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		local col = nil -- this variable will contain the collection to be unloaded
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			col = pauseProxy
+		else
+			col = gameOverProxy
+		end
+		resume_game(col)
+	elseif message_id == return_to_menu then -- return to the main menu
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		local col = nil -- this variable will contain the collection to be unloaded
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			col = pauseProxy
+		else
+			col = gameOverProxy
+		end
+		return_2_menu(col)
+	elseif message_id == gameover then -- end the game
+		end_game()
+	elseif message_id == restart then -- this condition modifies the variables that will enable this script to restart the level
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+		if message.col == "pause" then -- this if statement determines which collection to be unloaded
+			restart_col = pauseProxy
+		else
+			restart_col = gameOverProxy
+		end
+		not_first_time = true
+		unload_level()
+	elseif message_id == unload_upgrds then
+		unload_upgrades()
+	elseif message_id == load_micro then
+		load_iap()
+	elseif message_id == unload_micro then
+		unload_iap()
+	elseif message_id == proxy_unloaded then -- this message is received everytime a proxy is unloaded
+		local col = hash('level_proxy')
+		if sender.fragment == col and not_first_time == true then -- this confirms if the level collection is not  loading for the first time
+			restart_level(restart_col) -- restarts the level
+		end
+	elseif message_id == proxy_loaded then
+		msg.post(sender, "init")
+		msg.post(sender, "enable")
+	elseif message_id == show_ad then
+		ad_caller = message.id
+		msg.post("main:/ads#ads", "show_ad")
+	elseif message_id == ad_completed then
+		msg.post(ad_caller, "completed")
+	elseif message_id == unload_clr_menu then
+		unload_color_menu()
+		load_menu()
+	elseif message_id == load_pick_clr then
+		load_pick_colors()
+		unload_color_menu()
+	elseif message_id == unload_pick_clr then
+		unload_pick_colors()
+		load_color_menu()
+	elseif message_id == load_clr_selector then
+		load_color_selector()
+		unload_pick_colors()
+	elseif message_id == unload_clr_selector then
+		unload_color_selector()
+		load_pick_colors()
+	end
+end/main/main.script±>LJ =/main/main.scriptö   0(6     X Ä6  9  ' ' 5 B +  7   6  9  -  ' B 1 4   7  +   7  4   7 	 4   7 
+ K   ¿Äcolorscolor_stringsNUM_OF_COLORS_PICKED	TRAY	load 
+delay 	gainplay_sound#soundtrack	postmsgsound_playing		
+
+menuProxy lvl_loaded  E   56   9  -  ' B K   ¿unload	postmsgmenuProxy  H   96   9  -  ' B K  ¿	load	postmsgcolorMenuProxy  J   =6   9  -  ' B K  ¿unload	postmsgcolorMenuProxy  I   A6   9  -  ' B K  	¿	load	postmsgpickColorsProxy  K   E6   9  -  ' B K  	¿unload	postmsgpickColorsProxy  L   I6   9  -  ' B K  
+¿	load	postmsgcolorSelectorProxy  N   M6   9  -  ' B K  
+¿unload	postmsgcolorSelectorProxy  µ   &Q6   9  ' ' 5 B +  7  6   9  -  ' B 1 K  ¿Ä	loadsound_playing 
+delay 	gainstop_sound#soundtrack	postmsglevelProxy lvl_loaded  Ü   "X	6   9  -  ' B 1 4   7  +   7  K  ¿ÄNUM_OF_COLORS_PICKED	TRAYunload	postmsg	levelProxy lvl_loaded  á   $e6   9  -  ' B 6   9  - ' B +  7  K  ¿¿gamePauseddisable	load	postmsgpauseProxy levelProxy  ä   'k6   9  -  ' B 6   9  - ' B +  7  K  ¿¿gamePauseddisable	load	postmsggameOverProxy levelProxy  É  !q6  9  ' B6  9-  ' B+ 7 K  ¿gamePausedenableunload	postmsglevelProxy proxy   Ç  /y6  9  ' B6  9-  ' B1 K  ¿Ä	loadunload	postmsglevelProxy not_first_time proxy   }  +6  9  ' B6  9-  ' B- BK  ¿¿unload	postmsglevelProxy load_menu proxy   á   1Ö6   9  -  ' B -  B 1 +  7  K  ¿¿ÄgamePaused	load	postmsgupgradesProxy unload_menu lvl_loaded  á   /å6   9  -  ' B -  B 1 +  7  K  ¿¿ÄgamePausedunload	postmsgupgradesProxy load_menu lvl_loaded  s   #ì6   9  -  ' B 6   9  - ' B K  ¿¿unload	load	postmsgiapProxy upgradesProxy  s   #ò6   9  -  ' B 6   9  - ' B K  ¿¿	loadunload	postmsgiapProxy upgradesProxy  ∫  2û6  9 XÄ-   XÄ6  XÄ6 9' ' BK  Ä
+pause#	postmsggamePausedWINDOW_EVENT_FOCUS_LOSTwindowlvl_loaded self  event  data   ¬  3§6  9' ' 5 B6  9' ' 5 B6  9' '	 B6  9'
+ ' B6 9-  BK  &¿set_listenerwindow	load#intro_proxyacquire_input_focus. 
+delay 	gainplay_sound#intro frequencydset_update_frequency@system:	postmsgwindow_callback self   P   ≠6  9' ' BK  release_input_focus.	postmsgself   ô   ‹6   9  ' B 	   XÄ6  9' ) BXÄ6  9' )  BK  set_group_gainmasterget_group_gain
+sound gain  ∫/ ÉõÀ_-   XÄ- B- B6  9' ' 5 BXÙÄ-  XÄ- B- B6  9' ' 5 BXÊÄ-  XÄ6  9' ' B- BX€Ä-  X	Ä6  9' ' 5 B-	 BXœÄ-
+  XÄ6  9' ' 5	 B3
+ 7 6 BX¡Ä-  XÄ6 9BX∫Ä-  X	Ä6  9' ' 5 B- BXÆÄ-  XÄ6  9' ' 5 B+  9 XÄ- XÄ- -  BXöÄ-  XÄ6  9' ' 5 B+  9 XÄ- XÄ- -  BXÜÄ-  XÄ- BXÄÄ-  XÄ6  9' ' 5 B9 XÄ- . XÄ- . 1 - BXkÄ-  XÄ- BXeÄ-  XÄ- BX_Ä-  XÄ- BXYÄ-   XÄ6 ' B9 XPÄ-  XMÄ-! - BXIÄ-"  XÄ6  9 ' B6  9 ' BX;Ä-#  XÄ9.$ 6  9' ' BX0Ä-%  XÄ6  9-$ ' BX'Ä-&  XÄ-' B- BXÄ-(  XÄ-) B-' BXÄ-*  XÄ- B- BXÄ-+  XÄ-, B- BXÄ--  XÄ-. B-) BK  (¿¿¿)¿¿¿*¿¿+¿"¿,¿-¿.¿¿/¿¿¿¿0¿!¿1¿¿2¿ÄÄ¿3¿#¿4¿$¿5¿%¿6¿ ¿7¿8¿'Ä9¿:¿¿;¿¿<¿=¿¿>¿¿completedshow_admain:/ads#adsidenable	initfragmentlevel_proxy	hash 
+delay 	gain 
+delay 	gain
+pausecol 
+delay 	gain 
+delay 	gain	exitoshandle_sound  
+delay 	gain 
+delay 	gainunload#intro_proxy 
+delay 	gain 
+delay 	gainplay_sound#click	postmsg			
+
+
+
+
+      !"""##%''''((())))))*+++,,.000011122233344444455566688:;;;<<<===>>>???@@@AAABBBCCCDDDDDDEEEFGGGHHHHHIIIIIIJJJKKLLLLLLMMMNNNNNNOOOPPQQQRRRSSTTTUUUVVWWWXXXYYZZZ[[[\\]]_start load_color_menu unload_menu load_lvl load_level unload_pick_colors unload_intro load_menu msg_upgrades load_upgrades msg_sound exit pause pause_game resume pauseProxy gameOverProxy resume_game return_to_menu return_2_menu gameover end_game restart restart_col not_first_time unload_level unload_upgrds unload_upgrades load_micro load_iap unload_micro unload_iap proxy_unloaded restart_level proxy_loaded show_ad ad_caller ad_completed unload_clr_menu unload_color_menu load_pick_clr load_pick_colors unload_pick_clr load_clr_selector load_color_selector unload_clr_selector unload_color_selector self  Ñmessage_id  Ñmessage  Ñsender  Ñcol _	col 	col =	 Ò @ H û¸	 ™4   7   +   7  4   7  4   7  +   7  '  ' ' ' '	 '
+ ' ' ' '	 '
+ + 6 9)@) )  B6 9)@)X)  B6 9)@)ê)  B6 9)@)» )  B6 9)ñ )2 )  B' 7 +  7 3 3 3 3 3 3 3 3 3 3 + 7 3  3! 3" + +  3 # 3!$ 3"% 3#& 3$' 3%( 3&) 3'* 7'+ 3', 7'- +'  6(. ')/ B(6). '*0 B)6*. '+1 B*6+. ',2 B+6,. '-3 B,6-. '.4 B-6.. '/5 B.6/. '06 B/60. '17 B061. '28 B162. '39 B263. '4: B364. '5; B465. '6< B566. '7= B667. '8> B768. '9? B869. ':@ B96:. ';A B:6;. '<B B;6<. '=C B<6=. '>D B=6>. '?E B>3?F 7?G 2  ÄK  on_message unload_color_selectorload_color_selectorunload_pick_colorsload_pick_colorsunload_color_menuad_completedshow_adproxy_loadedproxy_unloadedunload_iapload_iapunload_upgradesrestartgameoverreturn_2_menuresume
+pause	exit
+soundupgradesunload_introload_level
+start	hash
+final 	init           gamePaused          colors_picked	mainmain:/main#mainvector3
+vmath#color_selector_proxy#pick_colors_proxy#color_menu_proxy#iap_proxy#upgrades_proxy#gameover_proxy#pause_proxy#level_opg_proxy#level_ybr_proxy#level_proxy#menu_proxyNumOfColorsPickedcolorscolor_stringsNUM_OF_COLORS_PICKED	TRAY	 	                                 ! ! ! ! ! ! " " " " " " # # # # # # $ $ $ $ $ $ % % & & 3 7 ; ? C G K O V a c c i o u w x } É ä ë ñ õ ¢ ´ § Ø ≠ ± ≥ ≥ ≥ ¥ ¥ ¥ µ µ µ ∂ ∂ ∂ ∑ ∑ ∑ ∏ ∏ ∏ π π π ∫ ∫ ∫ ª ª ª º º º Ω Ω Ω æ æ æ ø ø ø ¿ ¿ ¿ ¡ ¡ ¡ ¬ ¬ ¬ √ √ √ ƒ ƒ ƒ ≈ ≈ ≈ ∆ ∆ ∆ « « « » » » … … … *À **menuProxy ìlevelProxy ílevelYbrProxy ëlevelOpgProxy êpauseProxy ègameOverProxy éupgradesProxy çiapProxy åcolorMenuProxy ãpickColorsProxy äcolorSelectorProxy âlvl_loaded àstartButtonPos ÇupgradeButtonPos |musicButtonPos vleaveButtonPos pradius jload_menu eunload_menu dload_color_menu cunload_color_menu bload_pick_colors aunload_pick_colors `load_color_selector _unload_color_selector ^load_level ]unload_level \pause_game Yend_game Xresume_game Wnot_first_time Vrestart_col Urestart_level Treturn_2_menu Sload_upgrades Runload_upgrades Qload_iap Punload_iap Owindow_callback Nad_caller Istart Fload_lvl Cunload_intro @msg_upgrades =msg_sound :exit 7pause 4resume 1return_to_menu .gameover +restart (unload_upgrds %load_micro "unload_micro proxy_unloaded proxy_loaded show_ad ad_completed unload_clr_menu load_pick_clr unload_pick_clr 
+load_clr_selector unload_clr_selector   "±>LJ=/main/main.scriptö   0(6     X Ä6  9  ' ' 5 B +  7   6  9  -  ' B 1 4   7  +   7  4   7 	 4   7 
+ K   ¿Äcolorscolor_stringsNUM_OF_COLORS_PICKED	TRAY	load 
+delay 	gainplay_sound#soundtrack	postmsgsound_playing		
+
+menuProxy lvl_loaded  E   56   9  -  ' B K   ¿unload	postmsgmenuProxy  H   96   9  -  ' B K  ¿	load	postmsgcolorMenuProxy  J   =6   9  -  ' B K  ¿unload	postmsgcolorMenuProxy  I   A6   9  -  ' B K  	¿	load	postmsgpickColorsProxy  K   E6   9  -  ' B K  	¿unload	postmsgpickColorsProxy  L   I6   9  -  ' B K  
+¿	load	postmsgcolorSelectorProxy  N   M6   9  -  ' B K  
+¿unload	postmsgcolorSelectorProxy  µ   &Q6   9  ' ' 5 B +  7  6   9  -  ' B 1 K  ¿Ä	loadsound_playing 
+delay 	gainstop_sound#soundtrack	postmsglevelProxy lvl_loaded  Ü   "X	6   9  -  ' B 1 4   7  +   7  K  ¿ÄNUM_OF_COLORS_PICKED	TRAYunload	postmsg	levelProxy lvl_loaded  á   $e6   9  -  ' B 6   9  - ' B +  7  K  ¿¿gamePauseddisable	load	postmsgpauseProxy levelProxy  ä   'k6   9  -  ' B 6   9  - ' B +  7  K  ¿¿gamePauseddisable	load	postmsggameOverProxy levelProxy  É  !q6  9  ' B6  9-  ' B+ 7 K  ¿gamePausedenableunload	postmsglevelProxy proxy   Ç  /y6  9  ' B6  9-  ' B1 K  ¿Ä	loadunload	postmsglevelProxy not_first_time proxy   }  +6  9  ' B6  9-  ' B- BK  ¿¿unload	postmsglevelProxy load_menu proxy   á   1Ö6   9  -  ' B -  B 1 +  7  K  ¿¿ÄgamePaused	load	postmsgupgradesProxy unload_menu lvl_loaded  á   /å6   9  -  ' B -  B 1 +  7  K  ¿¿ÄgamePausedunload	postmsgupgradesProxy load_menu lvl_loaded  s   #ì6   9  -  ' B 6   9  - ' B K  ¿¿unload	load	postmsgiapProxy upgradesProxy  s   #ò6   9  -  ' B 6   9  - ' B K  ¿¿	loadunload	postmsgiapProxy upgradesProxy  ∫  2û6  9 XÄ-   XÄ6  XÄ6 9' ' BK  Ä
+pause#	postmsggamePausedWINDOW_EVENT_FOCUS_LOSTwindowlvl_loaded self  event  data   ¬  3§6  9' ' 5 B6  9' ' 5 B6  9' '	 B6  9'
+ ' B6 9-  BK  &¿set_listenerwindow	load#intro_proxyacquire_input_focus. 
+delay 	gainplay_sound#intro frequencydset_update_frequency@system:	postmsgwindow_callback self   P   ≠6  9' ' BK  release_input_focus.	postmsgself   ô   ‹6   9  ' B 	   XÄ6  9' ) BXÄ6  9' )  BK  set_group_gainmasterget_group_gain
+sound gain  ∫	/ ÉõÀ_-   XÄ- B- B6  9' ' 5 BXÙÄ-  XÄ- B- B6  9' ' 5 BXÊÄ-  XÄ6  9' ' B- BX€Ä-  X	Ä6  9' ' 5 B-	 BXœÄ-
+  XÄ6  9' ' 5	 B3
+ 7 6 BX¡Ä-  XÄ6 9BX∫Ä-  X	Ä6  9' ' 5 B- BXÆÄ-  XÄ6  9' ' 5 B+  9 XÄ- XÄ- -  BXöÄ-  XÄ6  9' ' 5 B+  9 XÄ- XÄ- -  BXÜÄ-  XÄ- BXÄÄ-  XÄ6  9' ' 5 B9 XÄ- . XÄ- . 1 - BXkÄ-  XÄ- BXeÄ-  XÄ- BX_Ä-  XÄ- BXYÄ-   XÄ6 ' B9 XPÄ-  XMÄ-! - BXIÄ-"  XÄ6  9 ' B6  9 ' BX;Ä-#  XÄ9.$ 6  9' ' BX0Ä-%  XÄ6  9-$ ' BX'Ä-&  XÄ-' B- BXÄ-(  XÄ-) B-' BXÄ-*  XÄ- B- BXÄ-+  XÄ-, B- BXÄ--  XÄ-. B-) BK  (¿¿¿)¿¿¿*¿¿+¿"¿,¿-¿.¿¿/¿¿¿¿0¿!¿1¿¿2¿ÄÄ¿3¿#¿4¿$¿5¿%¿6¿ ¿7¿8¿'Ä9¿:¿¿;¿¿<¿=¿¿>¿¿completedshow_admain:/ads#adsidenable	initfragmentlevel_proxy	hash 
+delay 	gain 
+delay 	gain
+pausecol 
+delay 	gain 
+delay 	gain	exitoshandle_sound  
+delay 	gain 
+delay 	gainunload#intro_proxy 
+delay 	gain 
+delay 	gainplay_sound#click	postmsg			
+
+
+
+
+      !"""##%''''((())))))*+++,,.000011122233344444455566688:;;;<<<===>>>???@@@AAABBBCCCDDDDDDEEEFGGGHHHHHIIIIIIJJJKKLLLLLLMMMNNNNNNOOOPPQQQRRRSSTTTUUUVVWWWXXXYYZZZ[[[\\]]_start load_color_menu unload_menu load_lvl load_level unload_pick_colors unload_intro load_menu msg_upgrades load_upgrades msg_sound exit pause pause_game resume pauseProxy gameOverProxy resume_game return_to_menu return_2_menu gameover end_game restart restart_col not_first_time unload_level unload_upgrds unload_upgrades load_micro load_iap unload_micro unload_iap proxy_unloaded restart_level proxy_loaded show_ad ad_caller ad_completed unload_clr_menu unload_color_menu load_pick_clr load_pick_colors unload_pick_clr load_clr_selector load_color_selector unload_clr_selector unload_color_selector self  Ñmessage_id  Ñmessage  Ñsender  Ñcol _	col 	col =	 Ò A H û¸	 ™4   7   +   7  4   7  4   7  +   7  '  ' ' ' '	 '
+ ' ' ' '	 '
+ + 6 9)@) )  B6 9)@)X)  B6 9)@)ê)  B6 9)@)» )  B6 9)ñ )2 )  B' 7 +  7 3 3 3 3 3 3 3 3 3 3 + 7 3  3! 3" + +  3 # 3!$ 3"% 3#& 3$' 3%( 3&) 3'* 7'+ 3', 7'- +'  6(. '*/ B(6). '+0 B)6*. ',1 B*6+. '-2 B+6,. '.3 B,6-. '/4 B-6.. '05 B.6/. '16 B/60. '27 B061. '38 B162. '49 B263. '5: B364. '6; B465. '7< B566. '8= B667. '9> B768. ':? B869. ';@ B96:. '<A B:6;. '=B B;6<. '>C B<6=. '?D B=6>. '@E B>3?F 7?G 2  ÄK  on_message unload_color_selectorload_color_selectorunload_pick_colorsload_pick_colorsunload_color_menuad_completedshow_adproxy_loadedproxy_unloadedunload_iapload_iapunload_upgradesrestartgameoverreturn_2_menuresume
+pause	exit
+soundupgradesunload_introload_level
+start	hash
+final 	init           gamePaused          colors_picked	mainmain:/main#mainvector3
+vmath#color_selector_proxy#pick_colors_proxy#color_menu_proxy#iap_proxy#upgrades_proxy#gameover_proxy#pause_proxy#level_opg_proxy#level_ybr_proxy#level_proxy#menu_proxyNumOfColorsPickedcolorscolor_stringsNUM_OF_COLORS_PICKED	TRAY	 	                                 ! ! ! ! ! ! " " " " " " # # # # # # $ $ $ $ $ $ % % & & 3 7 ; ? C G K O V a c c i o u w x } É ä ë ñ õ ¢ ´ § Ø ≠ ± ≥ ≥ ≥ ¥ ¥ ¥ µ µ µ ∂ ∂ ∂ ∑ ∑ ∑ ∏ ∏ ∏ π π π ∫ ∫ ∫ ª ª ª º º º Ω Ω Ω æ æ æ ø ø ø ¿ ¿ ¿ ¡ ¡ ¡ ¬ ¬ ¬ √ √ √ ƒ ƒ ƒ ≈ ≈ ≈ ∆ ∆ ∆ « « « » » » … … … *À **menuProxy ìlevelProxy ílevelYbrProxy ëlevelOpgProxy êpauseProxy ègameOverProxy éupgradesProxy çiapProxy åcolorMenuProxy ãpickColorsProxy äcolorSelectorProxy âlvl_loaded àstartButtonPos ÇupgradeButtonPos |musicButtonPos vleaveButtonPos pradius jload_menu eunload_menu dload_color_menu cunload_color_menu bload_pick_colors aunload_pick_colors `load_color_selector _unload_color_selector ^load_level ]unload_level \pause_game Yend_game Xresume_game Wnot_first_time Vrestart_col Urestart_level Treturn_2_menu Sload_upgrades Runload_upgrades Qload_iap Punload_iap Owindow_callback Nad_caller Istart Fload_lvl Cunload_intro @msg_upgrades =msg_sound :exit 7pause 4resume 1return_to_menu .gameover +restart (unload_upgrds %load_micro "unload_micro proxy_unloaded proxy_loaded show_ad ad_completed unload_clr_menu load_pick_clr unload_pick_clr 
+load_clr_selector unload_clr_selector   " 

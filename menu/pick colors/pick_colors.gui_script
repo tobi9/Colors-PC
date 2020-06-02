@@ -1,0 +1,151 @@
+local TouchFb = require("modules.animation")
+local Colors = require("modules.colors")
+
+local options = { '_1', '_2', '_3', '_4', '_5', '_6'}
+local enabled_boxes = {}
+
+local default_box_color
+local show_boxes = function(int)
+	default_box_color = gui.get_color(gui.get_node(options[1]))
+	for k, v in ipairs(options) do
+		if k  <= int then
+			local node = gui.get_node(v)
+			local text = gui.get_node("text"..v)
+			gui.set_enabled(node, true)
+			gui.set_enabled(text, true)
+			table.insert(enabled_boxes, node)
+		end
+	end
+	--	This block of code below sets the y positions of the boxes displayed to 650 and scales them up for aesthetic purposes
+	if NUM_OF_COLORS_PICKED == 3 then
+		for k, v in ipairs(options) do
+			if k <= 3 then
+				local node = gui.get_node(v)
+				local text = gui.get_node("text"..v)
+				local pos = gui.get_position(node)
+				pos.y  = 650 
+				gui.set_position(node, pos)
+				gui.set_position(text, pos)
+				gui.set_scale(node, vmath.vector4(0.9, 1.8, 1, 1))
+			end
+		end
+	elseif NUM_OF_COLORS_PICKED == 4 then
+		local node = gui.get_node(options[4])
+		local text = gui.get_node("text"..options[4])
+		local pos = gui.get_position(node)
+		pos.x = 320
+		gui.set_position(node, pos)
+		gui.set_position(text, pos)		
+	elseif NUM_OF_COLORS_PICKED == 5 then
+		local node = gui.get_node(options[4])
+		local text = gui.get_node("text"..options[4])
+		local pos = gui.get_position(node)
+		pos.x  = 240
+		gui.set_position(node, pos)
+		gui.set_position(text, pos)		
+		node = gui.get_node(options[5])
+		text = gui.get_node("text"..options[5])
+		pos = gui.get_position(node)
+		pos.x = 440 
+		gui.set_position(node, pos)
+		gui.set_position(text, pos)		
+	end
+end
+
+local set_box_colors = function()
+	for k, v in ipairs(TRAY) do
+		gui.set_color(enabled_boxes[k], v[3])
+		local text = gui.get_node("text"..options[k])
+		gui.set_text(text, v[1])
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	for k, v in ipairs(options) do
+		local node = gui.get_node(v)
+		local text = gui.get_node("text"..v)
+		gui.set_enabled(node, false)
+		gui.set_enabled(text, false)
+	end
+	show_boxes(NUM_OF_COLORS_PICKED)
+	set_box_colors()
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+
+end
+
+local clear_tray  = function()
+	TRAY = {}
+	for k, v in ipairs(enabled_boxes) do
+		gui.set_color(v, default_box_color)
+		local text = gui.get_node("text"..options[k])
+		gui.set_text(text, " ")
+	end
+end
+
+local multiplier = 1
+local choose_random_colors = function()
+	TRAY = {}
+	local colors = Colors.retrieve_colors()
+	local container = {}
+	for k, v in ipairs(colors) do
+--		if v[2] == true then
+			table.insert(container, v)
+--		end
+	end
+	math.randomseed(os.time() * multiplier)
+	repeat	
+		local index = math.random(#container)
+		table.insert(TRAY, container[index])
+		table.remove(container, index)
+		multiplier = multiplier + 1
+	until(#TRAY == NUM_OF_COLORS_PICKED)
+	set_box_colors()
+end
+
+local button_tapped
+local handle_input = function()
+	if button_tapped == 'menu' then
+		msg.post(main, "unload_pick_colors")
+	elseif button_tapped == 'pick' then
+		msg.post(main, "load_color_selector")
+	elseif button_tapped == 'clear' then
+		clear_tray()
+	elseif button_tapped == "random" then
+		choose_random_colors()
+	elseif button_tapped == "play" then
+		if NUM_OF_COLORS_PICKED == #TRAY then
+			msg.post(main, "load_level")
+			NumOfColorsPicked = NUM_OF_COLORS_PICKED -- this variable was declared in the main script
+		end
+	else
+		msg.post(main, "load_color_selector")
+	end
+end
+
+local touch = hash("touch")
+function on_input(self, action_id, action)
+	local input_table = {'pick', 'clear', 'random', 'play', 'menu'}
+	if action_id == touch and action.released then
+		for k, v in ipairs(options) do
+			local node = gui.get_node(v)
+			if gui.pick_node(node, action.x, action.y) == true then
+				button_tapped = v
+				TouchFb.touch_feedback(node, handle_input)
+			end
+		end
+		for k, v in ipairs(input_table) do
+			local node = gui.get_node("_"..v)
+			if gui.pick_node(node, action.x, action.y) == true then
+				button_tapped = v
+				TouchFb.touch_feedback(node, handle_input)				
+			end
+		end
+	end
+end

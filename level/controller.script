@@ -1,0 +1,55 @@
+local Color = require("modules.colors")
+
+local colorFac = '#color_factory' -- this is the game object to be spawned 
+local spawn_pos = vmath.vector3(-160, 650, 0.1)-- where the game objects are to be spawned
+local color = nil -- this variable contains the factory of the game object that will b spawned
+spawn = nil -- the id of the spawned game object it is also a global variable it is needed by the input script
+answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script
+level_gui  = "level:/gui#level" -- this is also used by the colors.script
+score = 0 -- this is the player's score and it is also a global variable
+speed = 300 --pixels per second ^ 2
+total_spawns = 0 
+
+local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
+	spawn = factory.create(clr, pos, nil, {}, 2) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
+	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
+	if speed < 600 then
+		speed = speed + 5
+	end
+	total_spawns = total_spawns + 1
+end
+
+function init(self)
+	Color.extract_color_info(TRAY, color_strings, 1) -- this statement extracts the string names of the colors in the TRAY and places them in the global color table
+	Color.extract_color_info(TRAY, colors, 3) -- extracts the vector4 color values
+	spawn_color(colorFac, spawn_pos) -- spawns the first go of the session
+	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
+	msg.post("main:/main#challenges", "set_challenge")
+	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
+end
+
+
+function final(self)
+	gamePaused = false -- the varible is declared in the main script
+	msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
+end
+
+local spawn_counter = 5 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned
+local hint
+--message ids
+local im_dead = hash("im_dead")
+local answer = hash("answer")
+local new_hints = hash("new_hints")
+
+function on_message(self, message_id, message, sender)
+	if message_id == im_dead then
+		msg.post(level_gui, "change_question")
+		spawn_color(colorFac, spawn_pos)
+		answered = false -- allows the player to answer another question
+	elseif message_id == answer and spawn_counter > 0 then
+		spawn_counter = spawn_counter - 1
+		msg.post(level_gui, "show_hint", {hint = message.hint})
+	elseif message_id == new_hints then
+		spawn_counter = 3
+	end
+end

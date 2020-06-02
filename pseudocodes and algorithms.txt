@@ -1,0 +1,26 @@
+pseudocode for color customization system
+There's a palette that is to be displayed whenever the box or text intended to be changed is tapped
+the code checks if the player wants to change the color of the box or text then loads the palette. The palette checks the
+colors for those that have been unlocked by the player and dynamically creates box nodes for those colors. When the player 
+chooses the intended colour the the address and color are loaded into a function(todo) which sets the color and and saves 
+it.
+
+Algorithm for the customization collection:
+-- for the palette
+	load the colors and check their unlocked status
+	-- keep in mind the colors are tables with a string, boolean value and vector4 number
+	load the colors that are unlocked into a local table unlkd_clrs
+	for k, v in unlkd_clrs do
+		create a text and box node a set them to their appropriate values
+		load the nodes created into two tables for the box and text nodes respectively
+	end
+	on choosing the colour, the correct memory address of the node that is to be changed is loaded and the vector4 
+	value of the colour is saved. the text node that aligns with the box node is set to "picked" or a tick. There's
+	also a default button which sets the color to the default color of that type of node. 
+-- for the general colour customization system
+	when the customization collection is loaded, the player gets to pick the collection they want to customize.The
+	customizable form of the collection is loaded, the player then chooses the node they would like to customize, then
+	an option asking the player wether to customize the text or the box is shown and when the the picks their 
+	preferred option then the pallete is loaded
+
+
