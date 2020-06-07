@@ -1,9 +1,5 @@
--- this are global functions are global variables used by all the gui scipts
--- the is  how long the button animation takes
-
---BUTTON_ANIMATION_DURATION = 0.09
-
 local TouchFb = require("modules.animation")
+local Colors = require("modules.colors")
 
 local button_tapped = nil
 
@@ -56,38 +52,23 @@ local function handle_input()
 	end
 end
 
-local function animate_button(node)
-	gui.animate(node, "rotation.z", 1, gui.EASING_OUTSINE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
-end
-
-local function animate_menu(nodes)
-	for i in ipairs(nodes) do
-		animate_button(nodes[i])
-	end
-end
-
-local node_table = {}-- each gui script has its own node_table
-
-local function get_nodes(string_table)
-	for i in ipairs(string_table) do
-		table.insert(node_table, gui.get_node(string_table[i]))
-	end
-end
+local Customizer = require("modules.customizer")
+local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	--animate the exit in the exit prompt
-	local exit_text = gui.get_node("exit_text")
-	gui.animate(exit_text, 'position.y', 660, gui.EASING_INOUTBOUNCE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	-- node each node to its appropriate color
+	local text_nodes = {'start', 'upgrades', 'sound', 'exit'}
+	local box_nodes = {'heading', '_start', '_upgrades', '_sound', '_exit'}
+	for k, v in ipairs(text_nodes) do
+		Customizer.set_node_color(v, default_text_clr_info, col_name)
+	end
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, default_box_clr_info, col_name)
+	end
+
 	hide_exit_prompt()
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
-	local node_strings = {'start', "_start", "upgrades", "_upgrades", "sound", 
-	"_sound", "exit", "_exit"}
-	get_nodes(node_strings)
-	--animate_menu(node_table)
-	local title = gui.get_node("heading")
-	gui.animate(title, "position.y", 1020, gui.EASING_INBOUNCE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
-	gui.animate(gui.get_node("heading"), "position.x", 300, gui.EASING_LINEAR, 2, 0, nil, gui.PLAYBACK_ONCE_BACKWARD)
 end
 
 function final(self)

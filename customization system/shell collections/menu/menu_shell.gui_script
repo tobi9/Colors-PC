@@ -1,0 +1,31 @@
+local nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no', 
+'heading', 'start', "_start", "upgrades", "_upgrades", "sound", "_sound", "exit", "_exit"}
+
+local Customizer = require("modules.customizer")
+
+local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
+
+function init(self)
+	-- node each node to its appropriate color
+	local text_nodes = {'start', 'upgrades', 'sound', 'exit'}
+	local box_nodes = {'heading', '_start', '_upgrades', '_sound', '_exit'}
+	for k, v in ipairs(text_nodes) do
+		Customizer.set_node_color(v, default_text_clr_info, col_name)
+	end
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, default_box_clr_info, col_name)
+	end
+
+end
+
+function final(self)
+
+end
+
+function on_message(self, message_id, message, sender)
+
+end
+
+function on_input(self, action_id, action)
+
+end

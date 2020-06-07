@@ -60,7 +60,9 @@ M.retrieve_colors = function()
     return colors
 end
 
+--saves table clrs in memory
 M.save_colors = function(clrs)
+	local folder = "trick colors 2"
 	local file = sys.get_save_file(folder, "colors")
 	sys.save(file, clrs)
 end

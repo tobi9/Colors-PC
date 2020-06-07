@@ -1,18 +1,23 @@
 --[[ These variables are used by the level, color ,controller, and color selection system 
 scripts they were put in the main script because they need to be immune ro restarting game sessions]]
-
+--[[These variables are needed by the gui scripts and customization system to set the nodes to the right colors  	
+]]
+default_box_clr_info = nil -- contains the info of the default color
+default_text_clr_info = nil
+--[[default_box_clr = nil
+default_text_clr = nil]]
 --[[
-	THE TRAY is the table where the colors chosen are placed in the order in which they were chosen.
+	THE tray is the table where the colors chosen are placed in the order in which they were chosen.
 	The colors script and the level script both check this tray to get the colors chosen and the adjust the
 	game elements.
 ]]
 TRAY = {}
 -- This global variable is to be checked by the pick colors script so the correct number of colors are displayed
-NUM_OF_COLORS_PICKED = nil 
+num_of_colors_picked = nil 
 --the variables below are to be used by the level gui script 
 color_strings = {}
 colors = {}
---there's a bug im trying to patch for some reason the NUM_OF_COLOS_PICKED is nil when a game session is restarted
+--there's a bug I'm trying to patch for some reason the NUM_OF_COLOS_PICKED is nil when a game session is restarted
 --I've not figured out why this happens but for now a patch will have to do and thats the purpose of the variable below
 NumOfColorsPicked = nil
 
@@ -45,7 +50,7 @@ local function load_menu()-- loads the menu collection
 	msg.post(menuProxy, "load")
 	lvl_loaded = false -- this returns input control to main.script
 	TRAY = {}
-	NUM_OF_COLORS_PICKED = nil
+	num_of_colors_picked = nil
 	color_strings = {}
 	colors = {}
 end
@@ -89,11 +94,11 @@ local function unload_level() -- unloads the level collection
 	msg.post(levelProxy, "unload")
 	lvl_loaded = false
 		--[[After the level collection is unload, the TRAY(which is a global table declared in the color menu script)
-	is emptied and the NUM_OF_COLORS_PICKED(which is a global variable also declared in the color menu script) is
+	is emptied and the num_of_colors_picked(which is a global variable also declared in the color menu script) is
 	set to nil. The reason for this is that there are scripts that use these information and after each level session
 	the player chooses new options that are placed in the table and variable]]
-	TRAY = {}
-	NUM_OF_COLORS_PICKED = nil
+	tray = {}
+	num_of_colors_picked = nil
 end
 
 gamePaused = false
@@ -162,7 +167,26 @@ local function window_callback(self, event, data) --gamePaused is declared in th
 end
 
 function init(self)
-	msg.post("@system:", "set_update_frequency", { frequency = 100 } )
+	--retrieve the default the default node colors from memory
+	local folder = "colors"
+	local file = sys.get_save_file(folder, "default_node_colors")
+	local default_colors = sys.load(file)
+	if #default_colors == 0 then
+		default_box_clr_info = {'magenta', true, vmath.vector4(1, 0, 1, 1)}
+		default_text_clr_info = {'white', true, vmath.vector4(1, 1, 1, 1)}
+	else
+		if default_colors[1] ~= nil then
+			default_box_clr_info = default_colors[1]
+		end
+
+		if default_colors[2] ~= nil then
+			default_text_clr_info = default_colors[2]		
+		end
+	end
+	--[[default_box_clr = default_box_clr_info[3]
+	default_text_clr = default_text_clr_info[3]]
+
+	msg.post("@system:", "set_update_frequency", { frequency = 100 } ) -- think carefully before touching this
 	msg.post("#intro", "play_sound", {delay = 0, gain = 1})
 	msg.post(".", "acquire_input_focus")
 	msg.post("#intro_proxy", "load")
@@ -172,6 +196,12 @@ end
 
 function final(self)
 	msg.post(".", "release_input_focus")
+	--save the default colors
+	local folder = "colors"
+	local file = sys.get_save_file(folder, "default_node_colors")
+	local default_clrs = {default_box_clr_info, default_text_clr_info}
+	sys.save(file, default_clrs)
+
 end
 
 local ad_caller

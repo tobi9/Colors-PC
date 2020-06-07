@@ -1,12 +1,7 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: build/default
+INFO:ENGINE: Loading data from: http://127.0.0.1:55066/build
 INFO:ENGINE: Initialised sound device 'default'
 
 INFO:ADMOB: init
-INFO:DLIB: SSDP: Started on address 192.168.1.1
-ERROR:SCRIPT: /upgrades/iap/iap.gui_script:88: attempt to index global 'iap' (a nil value)
-stack traceback:
-	/upgrades/iap/iap.gui_script:88: in function </upgrades/iap/iap.gui_script:60>
-ERROR:GAMESYS: Error when initializing gui component: -2.
 INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1

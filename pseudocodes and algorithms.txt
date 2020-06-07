@@ -22,5 +22,6 @@ Algorithm for the customization collection:
 	customizable form of the collection is loaded, the player then chooses the node they would like to customize, then
 	an option asking the player wether to customize the text or the box is shown and when the the picks their 
 	preferred option then the pallete is loaded
-
-
+-- the technique used to accomplish the objectives of the customization system
+NOTE prefix each memory location in the customization system with the name of the collection of the node that uses
+it
