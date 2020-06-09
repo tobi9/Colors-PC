@@ -1,31 +1,86 @@
-local nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no', 
-'heading', 'start', "_start", "upgrades", "_upgrades", "sound", "_sound", "exit", "_exit"}
-
 local Customizer = require("modules.customizer")
-
+local TouchFb = require("modules.animation")
+local Menu = require("modules.prompt")
 local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
 
+-- the tables below are needed to revert the changes made
+local node_strings = {'start', 'upgrades', 'sound', 'exit','heading', '_start', '_upgrades', '_sound', '_exit'}
+local node_colors = {}
+local node_ledger = {} -- this table contains the nodes tha have been changed
+local color_ledger = {} -- this table contains the colors of the nodes that have been changed
+
+local nodes1 = {'prompt', 'start', 'customize', 'upgrades', 'sound', 'exit', 'heading', '_start', '_customize',
+'_upgrades', '_sound', '_exit',"_clear_all", "_undo", "_ok", "clear_all", "undo", "ok"}
+local nodes2 = {'option_dialogue_box', 'option_text' ,'box_text' ,'txt_text' ,'box' ,'txt'}
+local prompt_status -- is the option prompt active ? active = true, inactive = false
+
 function init(self)
+	--take a snapshot of the unaltered state of the collection
+	Customizer.take_snapshot(node_strings, node_colors)
+	--hide the option prompt
+	Menu.hide_prompt(nodes2, nodes1)
+	prompt_status = false
 	-- node each node to its appropriate color
-	local text_nodes = {'start', 'upgrades', 'sound', 'exit'}
-	local box_nodes = {'heading', '_start', '_upgrades', '_sound', '_exit'}
+	local text_nodes = {'start', 'customize', 'upgrades', 'sound', 'exit'}
+	local box_nodes = {'heading', '_start', '_customize','_upgrades', '_sound', '_exit'}
 	for k, v in ipairs(text_nodes) do
 		Customizer.set_node_color(v, default_text_clr_info, col_name)
 	end
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, default_box_clr_info, col_name)
 	end
+	msg.post(".", "acquire_input_focus")
 
 end
 
 function final(self)
-
+	msg.post(".", "release_input_focus")
 end
 
+local chosen_node
 function on_message(self, message_id, message, sender)
 
 end
 
-function on_input(self, action_id, action)
+local button_tapped
+local handle_input = function()
+	if button_tapped == "ok" then
 
+	elseif button_tapped == "_undo" then
+		Customizer.undo_change(node_ledger , color_ledger)
+	elseif button_tapped == "_clear_all" then
+		Customizer.clear_changes(node_strings, node_colors)
+	else
+		local buttons = {'heading', "_start", "_customize","_upgrades", "_sound", "_exit","_clear_all", "_undo", "_ok"}
+		for k, v in ipairs(buttons) do
+			if button_tapped == v then
+				if v == "heading" then
+					chosen_node = gui.get_node(v)
+				else
+					chosen_node = gui.get_node(v)
+					Menu.show_prompt(nodes2, nodes1)
+					prompt_status = true
+				end
+				break 
+			end
+		end
+	end
+end
+
+local touch = hash("touch") -- touch_id
+function on_input(self, action_id, action)
+	local buttons = {'heading', "_start", "_customize","_upgrades", "_sound", "_exit","_clear_all", "_undo", "_ok"}
+	if action_id == touch and action.released then
+		if prompt_status == false then
+			for k, v in ipairs(buttons) do
+				local node = gui.get_node(v)
+				if gui.pick_node(node, action.x, action.y) then
+					button_tapped = v
+					TouchFb.touch_feedback(node, handle_input)
+				end
+			end
+		else
+
+		end
+	end
 end

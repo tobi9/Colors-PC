@@ -1,33 +1,37 @@
---what_to_customize is a global variable that is used to determine whether the player intends to customize the box or text
-what_to_customize = nil
+--The id of this script needed by the shell scipts
+customizer_controller = "customizer:/controller#customizer_controller"
 
-local load_customizaton_menu = function()
-	local col = "#customizer_menu_proxy"
+local customizer_menu_proxy = "#customizer_menu_proxy"
+local menu_shell_proxy = "#menu_shell_proxy"
+
+local load_col = function(col)
 	msg.post(col, "load")
+end
+
+local unload_col = function(col)
+	msg.post(col, "unload")
 end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	load_customizaton_menu()
+	load_col(customizer_menu_proxy)
 end
 
 function final(self)
-
+	msg.post(".", "release_input_focus")
 end
 
 --message_ids
 local proxy_unloaded = hash("proxy_unloaded")
 local proxy_loaded = hash("proxy_loaded")
+local ld_menu_shl = hash("load_menu_shell")
 
 function on_message(self, message_id, message, sender)
-	if message_id == proxy_unloaded then -- this message is received everytime a proxy is unloaded
-
-	elseif message_id == proxy_loaded then
+	if message_id == proxy_loaded then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")
+	elseif message_id == ld_menu_shl then
+		load_col(menu_shell_proxy)
+		unload_col(customizer_menu_proxy)
 	end
-end
-
-function on_input(self, action_id, action)
-
 end

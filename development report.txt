@@ -1,0 +1,12 @@
+LONG TERM PLAN:
+    Adding the multiplayer modes
+        race and challenge modes for the multiplayer
+
+MAIN FOCUS:
+    1. Form a well planed strategy for asking for ratings. 
+    2. Redesign the ui
+    3. New sound design
+    4. think of better phrases for the exit prompt
+    5. Ask for ratings
+    6. Add the rules and credits(if required).
+    7. change the currency system (dont use currency names)

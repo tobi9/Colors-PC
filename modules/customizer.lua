@@ -36,4 +36,33 @@ M.set_new_node_color = function(node_id, new_clr_info, col)
     sys.save(file, new_clr_info)
 end
 
+--This function saves the inaltered state of the collection so the player can revert all the changes made.
+-- the first arg is a table containing the ids of the nodes in the table
+M.take_snapshot = function(node_table, color_table)
+	for k, v in ipairs(node_table) do
+		local color = gui.get_color(gui.get_node(v))
+		table.insert(color_table, color)
+	end
+end
+
+M.clear_changes = function(node_table, color_table)
+	for k, v in ipairs(node_table) do
+		local node = gui.get_node(v)
+		gui.set_color(node, color_table[k])
+	end
+end
+
+--ldgr = ledger
+M.record_change = function( node, color, node_ldgr, color_ldgr)
+	table.insert(node_ldgr, node)
+	table.insert(color_ldgr, color)
+end
+
+M.undo_change = function(node_ldgr, color_ldgr)
+	local i = #node_ldgr
+	if i > 0 then
+		gui.set_color(node_ldgr[i], color_ldgr[i])
+	end
+end
+
 return M

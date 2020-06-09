@@ -3,8 +3,8 @@ scale_along_z: 0
 embedded_instances {
   id: "menu"
   data: "components {\n"
-  "  id: \"menu\"\n"
-  "  component: \"/menu/menu.gui\"\n"
+  "  id: \"menu_shell\"\n"
+  "  component: \"/customization system/shell collections/menu/menu_shell.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
