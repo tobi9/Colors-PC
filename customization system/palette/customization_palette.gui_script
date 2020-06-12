@@ -1,0 +1,122 @@
+local TouchFb = require("modules.animation")
+local Colors = require("modules.colors")
+
+local positions = {
+	vmath.vector3(100, 850, 0), vmath.vector3(320, 850, 0),	vmath.vector3(540, 850, 0),
+	vmath.vector3(100, 700, 0), vmath.vector3(320, 700, 0),	vmath.vector3(540, 700, 0),
+	vmath.vector3(100, 550, 0), vmath.vector3(320, 550, 0),	vmath.vector3(540, 550, 0),
+	vmath.vector3(100, 400, 0), vmath.vector3(320, 400, 0),	vmath.vector3(540, 400, 0),
+	vmath.vector3(100, 250, 0), vmath.vector3(320, 250, 0),	vmath.vector3(540, 250, 0)
+}
+
+local box_nodes = {}
+local text_nodes = {}
+
+
+local color_container = {}
+local leftover_colors = {}
+local page = 1
+local spawn_boxes = function(tab)	
+	local pos
+	for k, v in ipairs(tab) do
+		pos = positions[k]
+		local size = vmath.vector3(200, 100, 0)
+		local box_scale = vmath.vector3(0.65, 1.3, 0)
+		local text_scale = vmath.vector3(1.5, 1.5, 1)
+		local box_node = gui.new_box_node(pos, size)
+		local text_node = gui.new_text_node(pos, v[1])
+		gui.set_color(box_node, v[3])
+		gui.set_scale(box_node, box_scale)
+		gui.set_scale(text_node, text_scale)
+		table.insert(box_nodes, box_node)
+		table.insert(text_nodes, text_node)
+	end
+end
+
+function init(self)
+	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+	msg.post(".", "acquire_input_focus")
+	--retrieve the colors from memory
+	local colors = Colors.retrieve_colors()
+	local cutoff = #positions
+	for k, v in ipairs(colors) do
+		if k <= cutoff then
+--			if v[2] == true then
+				table.insert(color_container, v)
+--			end
+		else
+--			if v[2] == true then
+				table.insert(leftover_colors, v)
+--			end
+		end
+	end
+	spawn_boxes(color_container)
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+local button_tapped
+
+local handle_input = function()
+	if button_tapped == "_change_page" then
+		for k , v in ipairs(box_nodes) do
+			gui.delete_node(v)
+			gui.delete_node(text_nodes[k])
+		end
+		box_nodes = {}
+		text_nodes = {}
+		if page == 1 then
+			spawn_boxes(leftover_colors)
+		else
+			spawn_boxes(color_container)
+		end
+		if page == 1 then
+			page = 2
+		else
+			page = 1
+		end	
+	elseif button_tapped == "_ok" then
+		msg.post(customizer_controller, "unload_palette")
+	elseif button_tapped == "_cancel" then
+		color_chosen = nil
+		msg.post(customizer_controller, "unload_palette")
+	end
+end
+
+local pkd_tab = {} -- contains the id of the text node set to picked
+function on_input(self, action_id, action)
+	local touch = hash("touch")
+	if action_id == touch and action.released then
+		local buttons = {"_change_page", "_ok", "_cancel"}
+		for k, v in ipairs(buttons) do
+			local node = gui.get_node(v)
+			if gui.pick_node(node, action.x, action.y) then
+				button_tapped = v
+				TouchFb.touch_feedback(node, handle_input)
+				break
+			end
+		end
+
+		for k, v in ipairs(box_nodes) do
+			if gui.pick_node(v, action.x, action.y) then
+				button_tapped = nil
+				if page == 1 then
+					color_chosen = color_container[k]
+				else
+					color_chosen = leftover_colors[k]
+				end
+				if #pkd_tab == 0 then
+					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
+				else
+					gui.set_text(pkd_tab[1][1], pkd_tab[1][2])
+					pkd_tab = {}
+					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
+				end
+				gui.set_text(pkd_tab[1][1], "PICKED")
+				TouchFb.touch_feedback(v, handle_input)
+			end
+		end
+	end
+end

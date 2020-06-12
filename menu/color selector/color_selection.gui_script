@@ -160,6 +160,14 @@ local load_color = function(clr, pos)
 		gui.set_text(box_label, color_picked[1])
 	end
 	in_tray = false -- this statement resets the in_tray boolean to false to enable the player to pick other colors
+	--set the status to ready
+	if #TRAY == NUM_OF_COLORS_PICKED then
+		local node = gui.get_node("status")
+		gui.set_text(node, "READY")
+	else
+		local node = gui.get_node("status")
+		gui.set_text(node, "NOT READY")
+	end
 end
 
 local clear_selection = function()
@@ -206,8 +214,6 @@ function on_input(self, action_id, action)
 		else
 			local matches = {} -- this table will contain the box nodes in the area of input
 			local box
-			o = 1
-		
 			for k, v in ipairs(box_nodes) do
 				if gui.pick_node(v, action.x, action.y) then
 					table.insert(matches, k)

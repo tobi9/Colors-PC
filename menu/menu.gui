@@ -512,7 +512,7 @@ nodes {
   text: "TRICK COLORS \n"
   ""
   font: "galindo"
-  id: "heading"
+  id: "title"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

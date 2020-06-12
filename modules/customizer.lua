@@ -9,13 +9,14 @@ local M = {}
 --is located. The color info tables are of the format {str, bool, vec4} where
 -- str is the name and identifier of the color, bool is it's unlock status and 
 --vec4 is the value of the color
+local folder = "trick colors 2 test 1"
 
 M.set_node_color = function(node_id, dflt_clr_info, col)
-	local folder = "trick colors 2"
 	--col and node_id are concatenated to avoid conflicts in memory location.
-	local file = sys.get_save_file(folder, col..node_id)
+	local file = sys.get_save_file(folder, col.."["..node_id.."]") --the braces are added because the gui.get_id returns the string enclosed in braces
 	local table_of_colors = sys.load(file)
 	local node_color_info
+	--pprint(table_of_colors)
 	if #table_of_colors ~= 0 then
 		node_color_info = table_of_colors
 	else
@@ -25,13 +26,14 @@ M.set_node_color = function(node_id, dflt_clr_info, col)
 	end
 	local node = gui.get_node(node_id)
 	gui.set_color(node, node_color_info[3])
+
 end
 
-M.set_new_node_color = function(node_id, new_clr_info, col)
-	local folder = "trick colors 2"
+M.set_new_node_color = function(node, new_clr_info, col)
+	local node_id = gui.get_id(node)
+	print(col..node_id)
 	--col and node_id are concatenated to avoid conflicts in memory location.
 	local file = sys.get_save_file(folder, col..node_id)
-    local node = gui.get_node(node_id)
     gui.set_color(node, new_clr_info[3])
     sys.save(file, new_clr_info)
 end
@@ -53,15 +55,15 @@ M.clear_changes = function(node_table, color_table)
 end
 
 --ldgr = ledger
-M.record_change = function( node, color, node_ldgr, color_ldgr)
-	table.insert(node_ldgr, node)
-	table.insert(color_ldgr, color)
+--This functions puts a table {node, clr} into the ledger.clr is the color the node was before it was changed
+M.record_change = function(node, ldgr)
+	table.insert(ldgr, {node, gui.get_color(node)})
 end
 
-M.undo_change = function(node_ldgr, color_ldgr)
-	local i = #node_ldgr
+M.undo_change = function(ldgr)
+	local i = #ldgr
 	if i > 0 then
-		gui.set_color(node_ldgr[i], color_ldgr[i])
+		gui.set_color(ldgr[i][1], ldgr[i][2])
 	end
 end
 
