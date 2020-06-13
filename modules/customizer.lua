@@ -9,7 +9,7 @@ local M = {}
 --is located. The color info tables are of the format {str, bool, vec4} where
 -- str is the name and identifier of the color, bool is it's unlock status and 
 --vec4 is the value of the color
-local folder = "trick colors 2 test 1"
+local folder = "trick colors 2"
 
 M.set_node_color = function(node_id, dflt_clr_info, col)
 	--col and node_id are concatenated to avoid conflicts in memory location.

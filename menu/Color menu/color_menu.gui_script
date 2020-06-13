@@ -35,7 +35,7 @@ local function handle_input()
 end
 
 -- the string ids of the nodes in this collection
-local nodes = {"3_colors", "4_colors", "5_colors", "6_colors", "random"}
+local nodes = {"_3_colors", "_4_colors", "_5_colors", "_6_colors", "_random"}
 
 function init(self)
 	math.randomseed(os.time())
