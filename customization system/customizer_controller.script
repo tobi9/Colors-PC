@@ -39,18 +39,24 @@ function on_message(self, message_id, message, sender)
 	local proxy_unloaded = hash("proxy_unloaded")
 	local proxy_loaded = hash("proxy_loaded")
 	local ld_menu_shl = hash("load_menu_shell")
+	local unld_menu_shl = hash("unload_menu_shell")
 	local ld_palette = hash("load_palette")
 	local unld_palette = hash("unload_palette")
+	local actv_shl = hash("active_shell")
 	if message_id == proxy_loaded then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")
+	elseif message_id == actv_shl then
+		active_col = message.collection
 	elseif message_id == ld_menu_shl then
 		load_col(menu_shell_proxy)
 		unload_col(customizer_menu_proxy)
+	elseif message_id == unld_menu_shl then
+		unload_col(menu_shell_proxy)
+		load_col(customizer_menu_proxy)
 	elseif message_id == ld_palette then
 		load_col(palette_proxy)
 		col_to_disable = "#"..message.collection.."_shell_proxy" 
-		active_col = message.collection
 		disable_col(col_to_disable)
 	elseif message_id == unld_palette then
 		enable_col(col_to_disable)

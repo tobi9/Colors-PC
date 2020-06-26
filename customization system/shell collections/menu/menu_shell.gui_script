@@ -31,7 +31,7 @@ function init(self)
 		Customizer.set_node_color(v, default_box_clr_info, col_name)
 	end
 	msg.post(".", "acquire_input_focus")
-
+	msg.post(customizer_controller, "active_shell", {collection = "menu"})
 end
 
 function final(self)
@@ -54,7 +54,7 @@ end
 local button_tapped
 local handle_input = function()
 	if button_tapped == "ok" then
-
+		msg.post(customizer_controller, "unload_menu_shell")
 	elseif button_tapped == "undo" then
 		Customizer.undo_change(ledger)
 	elseif button_tapped == "clear_all" then

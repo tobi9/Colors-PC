@@ -10,3 +10,9 @@ MAIN FOCUS:
     5. Ask for ratings
     6. Add the rules and credits(if required).
     7. change the currency system (dont use currency names)
+
+PLAN:
+Release only a handful of colours. Release the rest in a timely manner.
+The first type of multiplayer should be local with one mode
+(Formulate the rules later).
+ 	
