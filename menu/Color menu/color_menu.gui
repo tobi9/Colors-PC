@@ -23,8 +23,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 2.0
-    y: 2.5
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -42,8 +42,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Pick any color combination\n"
-  ""
+  text: "Pick the number of colors \n"
+  "you want"
   font: "galindo"
   id: "title"
   xanchor: XANCHOR_NONE
@@ -140,8 +140,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 2.0
-    y: 2.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -472,8 +472,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 3.0
-    y: 3.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -534,8 +534,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 3.0
-    y: 3.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -596,8 +596,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 3.0
-    y: 3.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -658,8 +658,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 3.0
-    y: 3.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
@@ -720,8 +720,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 3.0
-    y: 3.0
+    x: 1.0
+    y: 1.0
     z: 1.0
     w: 1.0
   }
