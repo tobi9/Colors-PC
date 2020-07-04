@@ -3,16 +3,9 @@ function init(self)
 	intro_loaded = true
 	label.set_text("#label", "RODIO STUDIOS")
 	go.animate(".", "position.y", go.PLAYBACK_ONCE_PINGPONG, 800, go.EASING_INBOUNCE, 1.5)
-	go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1, 0, 0, 1), go.EASING_INOUTSINE, 0)
-end
-
-local timer = 0
-function update(self, dt)
-	timer = timer + 1
-	if timer == 60 then
-		label.set_text("#label", "how far can you go ?")
-	elseif timer == 200 then
+	--go.animate("#label", "color", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1, 0, 0, 1), go.EASING_INOUTSINE, 0)
+	local msg = function()
 		msg.post("main:/main#main", "unload_intro")
 	end
+	timer.delay(1, false, msg)
 end
-

@@ -204,7 +204,8 @@ function init(self)
 	msg.post("@system:", "set_update_frequency", { frequency = 100 } ) -- think carefully before touching this
 	msg.post("#intro", "play_sound", {delay = 0, gain = 1})
 	msg.post(".", "acquire_input_focus")
-	msg.post("#intro_proxy", "load")
+	--msg.post("#intro_proxy", "load")
+	load_menu()
 	window.set_listener(window_callback)
 	
 end
