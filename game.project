@@ -6,7 +6,7 @@ write_log = 1
 version = 1.2
 
 [bootstrap]
-main_collection = /menu/menu_copy.collectionc
+main_collection = /tests/menu_test.collectionc
 
 [input]
 game_binding = /input/game.input_bindingc
