@@ -12,9 +12,9 @@ function on_message(self, message_id, message, sender)
 		chal_status = message.status
 		node = gui.get_node("chal_but") -- I reused the node variable to accomodate the text on the challenge button
 		if chal_status then
-			gui.set_text(node, "TAP TO GET\nREWARD")
+			gui.set_text(node, "Tap to get\nreward")
 		else
-			gui.set_text(node, "CHANGE\nCHALLENGE")
+			gui.set_text(node, "Change\nchallenge")
 		end
 	end
 end

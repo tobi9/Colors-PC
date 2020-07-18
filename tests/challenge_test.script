@@ -30,21 +30,25 @@ local challenges = {--[[1]]	"REACH A SCORE OF "..tostring(n),
 --[[11]]"TRIPLE YOUR HIGHSCORE",
 --[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS"
 }
+local challenges = {--[[1]]	"Reach a score of "..tostring(n),
+--[[2]]	"Reach a score of "..tostring(n).."\nwithout using frictions",
 
-local rewards = {
-	--[[1]] ,
-	--[[2]] ,
-	--[[3]] ,
-	--[[4]] ,
-	--[[5]] ,
-	--[[6]] ,
-	--[[7]] ,
-	--[[8]] ,
-	--[[9]] ,
-	--[[10]] ,
-	--[[11]] ,
-	--[[12]] ,
+--[[3]]	"Beat your highscore",
+--[[4]] "Beat your highscore\nwithout using frictions",
+
+--[[5]]	"Get a "..tostring(n).."X color streak",
+--[[6]]	"Get a "..tostring(n).."X color streak\nwithout using frictions",
+
+--[[7]]	"Get a "..tostring(n).."X word streak",
+--[[8]]	"Get a "..tostring(n).."X word streak\nwithout using frictions",
+
+--[[9]]	"Double your highscore",
+--[[10]]"Double your highscore\nwithout using frictions",
+
+--[[11]]"Triple your highscore",
+--[[12]]"Triple your highscore\nwithout using frictions"
 }
+
 
 local chosen_chal_index
 local n
@@ -86,26 +90,25 @@ local set_challenge = function(index)
 	else
 		n = check_memory_loc("n"..chosen_chal_index)
 	end
-	local challenges = {
-		--[[1]]	"REACH A SCORE OF "..tostring(n),
-		--[[2]]	"REACH A SCORE OF\n"..tostring(n).." WITHOUT USING FRICTIONS",
-		
-		--[[3]]	"BEAT YOUR HIGHSCORE",
-		--[[4]] "BEAT YOUR HIGHSCORE\nWITHOUT USING FRICTIONS",
-		
-		--[[5]]	"GET A "..tostring(n).."X COLOR STREAK",
-		--[[6]]	"GET A "..tostring(n).."X COLOR STREAK\nWITHOUT USING FRICTIONS",
-		
-		--[[7]]	"GET A "..tostring(n).."X WORD STREAK",
-		--[[8]]	"GET A "..tostring(n).."X WORD STREAK\nWITHOUT USING FRICTIONS",
-		
-		--[[9]]	"DOUBLE YOUR HIGHSCORE",
-		--[[10]]"DOUBLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS",
-		
-		--[[11]]"TRIPLE YOUR HIGHSCORE",
-		--[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS"
-		}		
-	challenge = challenges[chosen_chal_index]
+	challenges = {--[[1]]	"Reach a score of "..tostring(n),
+	--[[2]]	"Reach a score of "..tostring(n).."\nwithout using frictions",
+	
+	--[[3]]	"Beat your highscore",
+	--[[4]] "Beat your highscore\nwithout using frictions",
+	
+	--[[5]]	"Get a "..tostring(n).."X color streak",
+	--[[6]]	"Get a "..tostring(n).."X color streak\nwithout using frictions",
+	
+	--[[7]]	"Get a "..tostring(n).."X word streak",
+	--[[8]]	"Get a "..tostring(n).."X word streak\nwithout using frictions",
+	
+	--[[9]]	"Double your highscore",
+	--[[10]]"Double your highscore\nwithout using frictions",
+	
+	--[[11]]"Triple your highscore",
+	--[[12]]"Triple your highscore\nwithout using frictions"
+	}
+		challenge = challenges[chosen_chal_index]
 	save_to_memory_loc("chal_index", chosen_chal_index)
 	save_to_memory_loc("chal_status", challenge_status)
 	msg.post("#menu_test", "chal", {c = challenge, status = challenge_status})

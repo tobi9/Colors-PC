@@ -53,12 +53,12 @@ local spawn_boxes = function()
 	end
 end
 
---[[This function checks the the table container and compares it with the TRAY to know which colors 
-have already been chosen by the player. Each data in the TRAY is compared with all the data in the container
+--[[This function checks the the table container and compares it with the tray to know which colors 
+have already been chosen by the player. Each data in the tray is compared with all the data in the container
 and if there is a match, the text nodes attched to those colours will be set to the position of the data in the table
-TRAY]]
+tray]]
 local check_for_chosen_colors = function()
-	for k ,v in ipairs(TRAY) do
+	for k ,v in ipairs(tray) do
 		local value = v
 		local tag = k -- the position
 		for k, v in ipairs(container) do
@@ -127,8 +127,8 @@ end
 
 local in_tray = false -- this is a boolean value that tells this function is the color picked has already been loaded
 local check_for_conflict = function(clr)
-	for i in ipairs(TRAY) do
-		if TRAY[i][1] == clr[1] then
+	for i in ipairs(tray) do
+		if tray[i][1] == clr[1] then
 			in_tray =  true
 		end
 	end
@@ -140,18 +140,18 @@ local color_picked
 local substitutes = {}
 
 local unload_color = function(pos)
-	table.remove(TRAY, pos)
+	table.remove(tray, pos)
 	table.insert(substitutes, 1, pos)
 end
 
 local load_color = function(clr, pos)
 	check_for_conflict(clr)
-	if #TRAY < NUM_OF_COLORS_PICKED and in_tray == false then
+	if #tray < num_of_colors_picked and in_tray == false then
 		if pos == nil then
-			table.insert(TRAY, clr)
-			gui.set_text(box_label, #TRAY)
+			table.insert(tray, clr)
+			gui.set_text(box_label, #tray)
 		else
-			table.insert(TRAY, pos, clr)
+			table.insert(tray, pos, clr)
 			gui.set_text(box_label, substitutes[1])
 			table.remove(substitutes, 1)
 		end
@@ -161,7 +161,7 @@ local load_color = function(clr, pos)
 	end
 	in_tray = false -- this statement resets the in_tray boolean to false to enable the player to pick other colors
 	--set the status to ready
-	if #TRAY == NUM_OF_COLORS_PICKED then
+	if #tray == num_of_colors_picked then
 		local node = gui.get_node("status")
 		gui.set_text(node, "READY")
 	else
@@ -171,7 +171,7 @@ local load_color = function(clr, pos)
 end
 
 local clear_selection = function()
-	TRAY = {}
+	tray = {}
 	for i in ipairs(text_nodes) do
 		gui.set_text(text_nodes[i], container[i][1])
 	end

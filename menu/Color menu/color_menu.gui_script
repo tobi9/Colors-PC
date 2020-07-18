@@ -6,26 +6,26 @@ local len_of_unlkd_clrs
 
 local function handle_input()
 	if button_tapped == '_3_colors' then
-		NUM_OF_COLORS_PICKED = 3
+		num_of_colors_picked = 3
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
 	elseif button_tapped == '_4_colors' then
-		NUM_OF_COLORS_PICKED = 4
+		num_of_colors_picked = 4
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
 	elseif button_tapped == '_5_colors' then
-		NUM_OF_COLORS_PICKED = 5
+		num_of_colors_picked = 5
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
 	elseif button_tapped == '_6_colors' then
-		NUM_OF_COLORS_PICKED = 6
+		num_of_colors_picked = 6
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
 	elseif button_tapped == '_random' then
 		if len_of_unlkd_clrs >= 6 then
-			NUM_OF_COLORS_PICKED = math.random(3, 6)
+			num_of_colors_picked = math.random(3, 6)
 		else
-			NUM_OF_COLORS_PICKED = math.random(3, 5)
+			num_of_colors_picked = math.random(3, 5)
 		end
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")

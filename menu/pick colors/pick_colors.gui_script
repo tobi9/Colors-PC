@@ -17,7 +17,7 @@ local show_boxes = function(int)
 		end
 	end
 	--	This block of code below sets the y positions of the boxes displayed to 650 and scales them up for aesthetic purposes
-	if NUM_OF_COLORS_PICKED == 3 then
+	if num_of_colors_picked == 3 then
 		for k, v in ipairs(options) do
 			if k <= 3 then
 				local node = gui.get_node(v)
@@ -29,14 +29,14 @@ local show_boxes = function(int)
 				gui.set_scale(node, vmath.vector4(0.9, 1.8, 1, 1))
 			end
 		end
-	elseif NUM_OF_COLORS_PICKED == 4 then
+	elseif num_of_colors_picked == 4 then
 		local node = gui.get_node(options[4])
 		local text = gui.get_node("text"..options[4])
 		local pos = gui.get_position(node)
 		pos.x = 320
 		gui.set_position(node, pos)
 		gui.set_position(text, pos)		
-	elseif NUM_OF_COLORS_PICKED == 5 then
+	elseif num_of_colors_picked == 5 then
 		local node = gui.get_node(options[4])
 		local text = gui.get_node("text"..options[4])
 		local pos = gui.get_position(node)
@@ -53,7 +53,7 @@ local show_boxes = function(int)
 end
 
 local set_box_colors = function()
-	for k, v in ipairs(TRAY) do
+	for k, v in ipairs(tray) do
 		gui.set_color(enabled_boxes[k], v[3])
 		local text = gui.get_node("text"..options[k])
 		gui.set_text(text, v[1])
@@ -68,7 +68,7 @@ function init(self)
 		gui.set_enabled(node, false)
 		gui.set_enabled(text, false)
 	end
-	show_boxes(NUM_OF_COLORS_PICKED)
+	show_boxes(num_of_colors_picked)
 	set_box_colors()
 end
 
@@ -81,7 +81,7 @@ function on_message(self, message_id, message, sender)
 end
 
 local clear_tray  = function()
-	TRAY = {}
+	tray = {}
 	for k, v in ipairs(enabled_boxes) do
 		gui.set_color(v, default_box_color)
 		local text = gui.get_node("text"..options[k])
@@ -91,7 +91,7 @@ end
 
 local multiplier = 1
 local choose_random_colors = function()
-	TRAY = {}
+	tray = {}
 	local colors = Colors.retrieve_colors()
 	local container = {}
 	for k, v in ipairs(colors) do
@@ -102,10 +102,10 @@ local choose_random_colors = function()
 	math.randomseed(os.time() * multiplier)
 	repeat	
 		local index = math.random(#container)
-		table.insert(TRAY, container[index])
+		table.insert(tray, container[index])
 		table.remove(container, index)
 		multiplier = multiplier + 1
-	until(#TRAY == NUM_OF_COLORS_PICKED)
+	until(#tray == num_of_colors_picked)
 	set_box_colors()
 end
 
@@ -120,9 +120,9 @@ local handle_input = function()
 	elseif button_tapped == "random" then
 		choose_random_colors()
 	elseif button_tapped == "play" then
-		if NUM_OF_COLORS_PICKED == #TRAY then
+		if num_of_colors_picked == #tray then
 			msg.post(main, "load_level")
-			NumOfColorsPicked = NUM_OF_COLORS_PICKED -- this variable was declared in the main script
+			NumOfColorsPicked = num_of_colors_picked -- this variable was declared in the main script
 		end
 	else
 		msg.post(main, "load_color_selector")

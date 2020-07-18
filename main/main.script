@@ -11,7 +11,7 @@ default_text_clr = nil]]
 	The colors script and the level script both check this tray to get the colors chosen and the adjust the
 	game elements.
 ]]
-TRAY = {}
+tray = {}
 -- This global variable is to be checked by the pick colors script so the correct number of colors are displayed
 num_of_colors_picked = nil 
 --the variables below are to be used by the level gui script 
