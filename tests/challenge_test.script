@@ -29,7 +29,22 @@ local challenges = {--[[1]]	"REACH A SCORE OF "..tostring(n),
 
 --[[11]]"TRIPLE YOUR HIGHSCORE",
 --[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS"
-}	
+}
+
+local rewards = {
+	--[[1]] ,
+	--[[2]] ,
+	--[[3]] ,
+	--[[4]] ,
+	--[[5]] ,
+	--[[6]] ,
+	--[[7]] ,
+	--[[8]] ,
+	--[[9]] ,
+	--[[10]] ,
+	--[[11]] ,
+	--[[12]] ,
+}
 
 local chosen_chal_index
 local n

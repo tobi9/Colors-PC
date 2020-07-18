@@ -43,7 +43,7 @@ M.retrieve_colors = function()
 	local colors = sys.load(file)
     if #colors == 0 then
 		colors = {
-			{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)},
+			--[[{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)},
 			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', true, vmath.vector4(1, 0, 1, 1)},
 			{'yellow', true, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
 			{'gray', false, vmath.vector4(128, 128, 128, 1)}, {'maroon', false, vmath.vector4(128, 0, 0, 1)},
@@ -54,7 +54,7 @@ M.retrieve_colors = function()
 			{'crimson', false, vmath.vector4(220, 20, 60, 1)}, {'coral', false, vmath.vector4(255, 127, 80, 1)},
 			{'olive', false, vmath.vector4(128, 128, 0, 1)}, {'khaki', false, vmath.vector4(240, 230, 140, 1)},
 			{'lemon', false, vmath.vector4(173, 248, 2, 1)}, {'violet', false, vmath.vector4(238 ,130 ,238 , 1)},
-			{'pink', false, vmath.vector4(255, 192, 103, 1)}, {'indigo', false, vmath.vector4(75 ,0 ,130 , 1)}
+			{'pink', false, vmath.vector4(255, 192, 103, 1)}, {'indigo', false, vmath.vector4(75 ,0 ,130 , 1)}]]
         }
     end
     return colors

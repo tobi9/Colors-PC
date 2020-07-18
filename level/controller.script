@@ -11,7 +11,7 @@ speed = 300 --pixels per second ^ 2
 total_spawns = 0 
 
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
-	spawn = factory.create(clr, pos, nil, {}, 2) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
+	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
 	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
 	if speed < 600 then
 		speed = speed + 5
@@ -53,3 +53,7 @@ function on_message(self, message_id, message, sender)
 		spawn_counter = 3
 	end
 end
+
+local color_streak_table = {}
+local word_streak_table = {}
+--use the color_strings table
