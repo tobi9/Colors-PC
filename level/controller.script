@@ -20,8 +20,8 @@ local function spawn_color(clr, pos) -- this function spawns the stated game obj
 end
 
 function init(self)
-	Color.extract_color_info(TRAY, color_strings, 1) -- this statement extracts the string names of the colors in the TRAY and places them in the global color table
-	Color.extract_color_info(TRAY, colors, 3) -- extracts the vector4 color values
+	Color.extract_color_info(tray, color_strings, 1) -- this statement extracts the string names of the colors in the TRAY and places them in the global color table
+	Color.extract_color_info(tray, colors, 3) -- extracts the vector4 color values
 	spawn_color(colorFac, spawn_pos) -- spawns the first go of the session
 	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
 	msg.post("main:/main#challenges", "set_challenge")
@@ -54,6 +54,8 @@ function on_message(self, message_id, message, sender)
 	end
 end
 
-local color_streak_table = {}
-local word_streak_table = {}
+local color_1, color_2, color_3, color_4, color_5, color_6 -- the streak counters
+local streak_counters = {color_1, color_2, color_3, color_4, color_5, color_6}
+local color_streak_table = {{},{}, {}, {}, {}, {}}
+local word_streak_table = {{},{}, {}, {}, {}, {}}
 --use the color_strings table

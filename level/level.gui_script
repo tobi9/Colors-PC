@@ -138,11 +138,7 @@ local option_ptr
 
 local function handle_input()
 	if button_tapped == 'option'..tostring(option_ptr) then
-		msg.post(spawn, "check_this", {ans = options[option_ptr]})
---[[	elseif button_tapped == 'option2' then
-		msg.post(spawn, "check_this", {ans = options[2]})
-	elseif button_tapped == 'option3' then
-		msg.post(spawn, "check_this", {ans = options[3]})]]
+		msg.post(spawn, "check_this", {ans_ptr = option_ptr})
 	elseif button_tapped == 'pause' then
 		msg.post("main:/main#main", "pause")
 	elseif button_tapped == 'frictions' and frictions > 0 then
@@ -214,13 +210,6 @@ function on_message(self, message_id, message, sender)
 		end
 		gui.set_text(score_id, score)-- this displays the incremented score
 		hits = hits + 1
-	elseif message_id == start_anim then
-		local ids = {"score", "question", "pause", "_frictions", "frictions", "option3"
-		, "option1", "option2", "chances", "s_chal", 
-		"h_chal", "frictions1", "pause_text", "question1"}
-		node_table = {}
-		get_nodes(ids)
-		animate_level(node_table)
 	elseif message_id == show_hint then
 		hint_player('option'..tostring(message.hint))
 	elseif message_id == change_qst then
@@ -257,15 +246,6 @@ function on_input(self, action_id, action)
 	if action_id == touch and action.released then
 		local pause = gui.get_node("pause")
 		local _frictions = gui.get_node("_frictions")
-		--[[if gui.pick_node(option1, action.x, action.y) then
-			button_tapped = 'option1'
-			TouchFb.touch_feedback(option1, handle_input)
-		elseif gui.pick_node(option2, action.x, action.y) then
-			button_tapped = 'option2'
-			TouchFb.touch_feedback(option2, handle_input)
-		elseif gui.pick_node(option3, action.x, action.y) then
-			button_tapped = 'option3'
-			TouchFb.touch_feedback(option3, handle_input)]]
 		if gui.pick_node(pause, action.x, action.y) then
 			button_tapped = 'pause'
 			TouchFb.touch_feedback(pause, handle_input)
@@ -279,6 +259,7 @@ function on_input(self, action_id, action)
 				button_tapped = v
 				option_ptr = k
 				TouchFb.touch_feedback(node, handle_input)
+				return
 			end
 		end
 	elseif action_id == back then

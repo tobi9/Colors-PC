@@ -71,7 +71,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(controller, "answer", {hint = hint})
 	elseif message_id == check_this and answered == false then
 		-- the level_gui is the address of the level.gui it was declared in the controller.script
-		if answer == message.ans then-- checks the answwer
+		if answer == color_strings[message.ans_ptr] then-- checks the answwer
 			msg.post("#right", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(level_gui, "add_score") --if the answer is correct this line notifies the level.gui_script to increment the score
 		else
