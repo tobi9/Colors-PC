@@ -4,9 +4,9 @@
 -- in any script using the functions.
 local M = {}
 
+local folder = "Tc_debug"
 --check if the lenght of the unlocked colors
 M.check_len_of_unlkd_clrs = function()
-	local folder = "trick colors 2"
 	local file = sys.get_save_file(folder, "colors")
 	local colors = sys.load(file)
     local counter = 0
@@ -23,7 +23,6 @@ M.check_len_of_unlkd_clrs = function()
 end
 
 M.retrieve_colors = function()
-    local folder = "trick colors 2"
 	local file = sys.get_save_file(folder, "colors")
 	local colors = sys.load(file)
     if #colors == 0 then
@@ -40,8 +39,8 @@ M.retrieve_colors = function()
 			{'olive', false, vmath.vector4(128, 128, 0, 1)}, {'khaki', false, vmath.vector4(240, 230, 140, 1)},
 			{'lemon', false, vmath.vector4(173, 248, 2, 1)}, {'violet', false, vmath.vector4(238 ,130 ,238 , 1)},
 			{'pink', false, vmath.vector4(255, 192, 103, 1)}, {'indigo', false, vmath.vector4(75 ,0 ,130 , 1)}
-        }
-    end
+		}
+	end
     return colors
 end
 

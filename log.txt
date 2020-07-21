@@ -4,32 +4,5 @@ INFO:ENGINE: Initialised sound device 'default'
 
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:DLIB: SSDP: Started on address 192.168.43.132
-ERROR:SCRIPT: /color/color.script:42: bad argument #1 to 'random' (interval is empty)
-stack traceback:
-	[C]: in function 'random'
-	/color/color.script:42: in function </color/color.script:36>
-	[C]: in function 'create'
-	/level/controller.script:14: in function 'spawn_color'
-	/level/controller.script:25: in function </level/controller.script:22>
-ERROR:GAMEOBJECT: Could not initialize when spawning /color/color.goc.
-ERROR:GAMEOBJECT: Could not spawn an instance of prototype /color/color.goc.
-ERROR:SCRIPT: /level/controller.script:15: The receiver shouldn't be `nil`
-stack traceback:
-	[C]: in function 'post'
-	/level/controller.script:15: in function 'spawn_color'
-	/level/controller.script:25: in function </level/controller.script:22>
-ERROR:SCRIPT: /level/level.gui_script:77: bad argument #2 to 'set_color' (vector4 expected, got nil)
-stack traceback:
-	[C]: in function 'set_color'
-	/level/level.gui_script:77: in function </level/level.gui_script:56>
-ERROR:GAMESYS: Error when initializing gui component: -2.
-ERROR:GAMEOBJECT: The identifier '/instance0' is already in use.
-ERROR:GAMEOBJECT: Could not spawn an instance of prototype /color/color.goc.
-ERROR:SCRIPT: /level/controller.script:15: The receiver shouldn't be `nil`
-stack traceback:
-	[C]: in function 'post'
-	/level/controller.script:15: in function 'spawn_color'
-	/level/controller.script:47: in function </level/controller.script:44>
+INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1
-INFO:DLIB: SSDP: Done on address 192.168.43.132

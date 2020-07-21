@@ -28,9 +28,9 @@ end
 local spawn_boxes = function()
 	local colors = Colors.retrieve_colors()
 	for k, v in ipairs(colors) do
---		if v[2] == true then
+		--if v[2] == true then
 			table.insert(container, v)
---		end
+		--end
 	end
 	for k, v in ipairs(container) do
 		next_grid(k)
@@ -39,7 +39,7 @@ local spawn_boxes = function()
 		local text_scale = vmath.vector3(0.65, 0.65, 1)
 		local box_node = gui.new_box_node(pos, size)
 		local text_node = gui.new_text_node(pos, v[1])
-		gui.set_color(box_node, v[3])
+		gui.set_color(box_node, vmath.vector4(0, 0, 0, 1))
 		gui.set_scale(box_node, box_scale)
 		gui.set_scale(text_node, text_scale)
 		table.insert(box_nodes, box_node)
