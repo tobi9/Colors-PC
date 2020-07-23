@@ -66,12 +66,12 @@ function init(self)
 	-- node each node to its appropriate color
 	local text_nodes = {'start', 'customize','upgrades', 'sound', 'exit'}
 	local box_nodes = {'title', '_start', '_customize', '_upgrades', '_sound', '_exit'}
-	for k, v in ipairs(text_nodes) do
+	--[[for k, v in ipairs(text_nodes) do
 		Customizer.set_node_color(v, default_text_clr_info, col_name)
 	end
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, default_box_clr_info, col_name)
-	end
+	end]]
 
 	hide_exit_prompt()
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
