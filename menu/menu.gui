@@ -567,7 +567,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -589,7 +589,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
@@ -648,7 +648,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -705,7 +705,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -737,7 +737,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -764,7 +764,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -821,7 +821,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -853,7 +853,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -880,7 +880,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -1037,7 +1037,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: ""
-  id: "box"
+  id: "board"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
