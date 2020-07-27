@@ -28,10 +28,19 @@ function init(self)
 	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
 end
 
+--Color Streak System
+local color_streak_table = {}
+local word_streak_table = {}
+--Streak Counters
+local color1, color2, color3, color4, color5, color6 = 0, 0, 0, 0, 0, 0
+local word1, word2, word3, word4, word5, word6 = 0, 0, 0, 0, 0, 0
+
 
 function final(self)
 	gamePaused = false -- the varible is declared in the main script
 	msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
+	pprint(color_streak_table)
+	pprint(word_streak_table)
 end
 
 local spawn_counter = 5 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned
@@ -40,6 +49,8 @@ local hint
 local im_dead = hash("im_dead")
 local answer = hash("answer")
 local new_hints = hash("new_hints")
+local msg_correct = hash("correct")
+local msg_wrong = hash("wrong")
 
 function on_message(self, message_id, message, sender)
 	if message_id == im_dead then
@@ -51,11 +62,88 @@ function on_message(self, message_id, message, sender)
 		msg.post(level_gui, "show_hint", {hint = message.hint})
 	elseif message_id == new_hints then
 		spawn_counter = 3
+	elseif message_id == msg_correct then
+		local temp -- this a container that is used to hold numbers from the streak tables
+		for k, v in ipairs(color_strings) do
+			if message.answer == v then
+				if message.type == "color" then
+					--increment the streaks
+					if k == 1 then
+						color1 = color1 + 1
+					elseif k == 2 then
+						color2 = color2 + 1
+					elseif k == 3 then
+						color3 = color3 + 1
+					elseif k == 4 then
+						color4 = color4 + 1
+					elseif k == 5 then
+						color5 = color5 + 1
+					elseif k == 6 then
+						color6 = color6 + 1	
+					end
+				else
+					if k == 1 then
+						word1 = word1 + 1
+					elseif k == 2 then
+						word2 = word2 + 1
+					elseif k == 3 then
+						word3 = word3 + 1
+					elseif k == 4 then
+						word4 = word4 + 1
+					elseif k == 5 then
+						word5 = word5 + 1
+					elseif k == 6 then
+						word6 = word6 + 1
+					end
+				end
+			end
+		end
+	elseif message_id == msg_wrong then
+		local temp -- this a container that is used to hold numbers from the streak tables
+		for k, v in ipairs(color_strings) do
+			if message.answer == v then
+				if message.type == "color" then
+					if k == 1 then
+						table.insert(color_streak_table, color1)
+						color1 = 0
+					elseif k == 2 then
+						table.insert(color_streak_table, color2)
+						color2 = 0
+					elseif k == 3 then
+						table.insert(color_streak_table, color3)
+						color3 = 0
+					elseif k == 4 then
+						table.insert(color_streak_table, color4)
+						color4 = 0
+					elseif k == 5 then
+						table.insert(color_streak_table, color5)
+						color5 = 0
+					elseif k == 6 then
+						table.insert(color_streak_table, color6)
+						color6 = 0
+					end
+				else
+					if k == 1 then
+						table.insert(word_streak_table, word1)
+						word1 = 0
+					elseif k == 2 then
+						table.insert(word_streak_table, word2)
+						word2 = 0
+					elseif k == 3 then
+						table.insert(word_streak_table, word3)
+						word3 = 0
+					elseif k == 4 then
+						table.insert(word_streak_table, word4)
+						word4 = 0
+					elseif k == 5 then
+						table.insert(word_streak_table, word5)
+						word5 = 0
+					elseif k == 6 then
+						table.insert(word_streak_table, word6)
+						word6 = 0
+					end
+				end
+			end
+		end
 	end
 end
-
-local color_1, color_2, color_3, color_4, color_5, color_6 -- the streak counters
-local streak_counters = {color_1, color_2, color_3, color_4, color_5, color_6}
-local color_streak_table = {{},{}, {}, {}, {}, {}}
-local word_streak_table = {{},{}, {}, {}, {}, {}}
---use the color_strings table
