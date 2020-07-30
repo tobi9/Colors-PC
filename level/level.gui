@@ -35,9 +35,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.04918033
-    y: 1.0
-    z: 0.53238374
+    x: 1.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -99,7 +99,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 0.76229507
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -127,7 +127,7 @@ nodes {
   line_break: false
   layer: ""
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -160,9 +160,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 0.0
-    y: 1.0
-    z: 1.0
+    x: 1.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -216,7 +216,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 0.2704918
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -521,131 +521,7 @@ nodes {
   line_break: false
   layer: ""
   inherit_alpha: true
-  alpha: 0.75
-  outline_alpha: 1.0
-  shadow_alpha: 1.0
-  template_node_child: false
-  text_leading: 1.0
-  text_tracking: 0.0
-}
-nodes {
-  position {
-    x: 150.0
-    y: 450.0
-    z: 0.0
-    w: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale {
-    x: 0.5
-    y: 0.5
-    z: 1.0
-    w: 1.0
-  }
-  size {
-    x: 200.0
-    y: 100.0
-    z: 0.0
-    w: 1.0
-  }
-  color {
-    x: 0.8278689
-    y: 0.7773647
-    z: 0.05767939
-    w: 1.0
-  }
-  type: TYPE_TEXT
-  blend_mode: BLEND_MODE_ALPHA
-  text: ""
-  font: "galindo"
-  id: "s_chal"
-  xanchor: XANCHOR_NONE
-  yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
-  outline {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  shadow {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  adjust_mode: ADJUST_MODE_FIT
-  line_break: false
-  layer: ""
-  inherit_alpha: true
-  alpha: 1.0
-  outline_alpha: 1.0
-  shadow_alpha: 1.0
-  template_node_child: false
-  text_leading: 1.0
-  text_tracking: 0.0
-}
-nodes {
-  position {
-    x: 490.0
-    y: 450.0
-    z: 0.0
-    w: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale {
-    x: 0.5
-    y: 0.5
-    z: 1.0
-    w: 1.0
-  }
-  size {
-    x: 200.0
-    y: 100.0
-    z: 0.0
-    w: 1.0
-  }
-  color {
-    x: 0.68126845
-    y: 0.8354016
-    z: 0.9836066
-    w: 1.0
-  }
-  type: TYPE_TEXT
-  blend_mode: BLEND_MODE_ALPHA
-  text: ""
-  font: "galindo"
-  id: "h_chal"
-  xanchor: XANCHOR_NONE
-  yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
-  outline {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  shadow {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
-  adjust_mode: ADJUST_MODE_FIT
-  line_break: false
-  layer: ""
-  inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -680,7 +556,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -806,7 +682,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 0.76229507
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -834,7 +710,7 @@ nodes {
   line_break: false
   layer: ""
   inherit_alpha: true
-  alpha: 0.16
+  alpha: 0.22
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false

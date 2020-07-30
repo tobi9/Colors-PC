@@ -108,7 +108,7 @@ local set_challenge = function(index)
 	--[[11]]"Triple your highscore",
 	--[[12]]"Triple your highscore\nwithout using frictions"
 	}
-		challenge = challenges[chosen_chal_index]
+	challenge = challenges[chosen_chal_index]
 	save_to_memory_loc("chal_index", chosen_chal_index)
 	save_to_memory_loc("chal_status", challenge_status)
 	msg.post("#menu_test", "chal", {c = challenge, status = challenge_status})

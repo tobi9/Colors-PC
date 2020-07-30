@@ -39,11 +39,9 @@ local word1, word2, word3, word4, word5, word6 = 0, 0, 0, 0, 0, 0
 function final(self)
 	gamePaused = false -- the varible is declared in the main script
 	msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
-	pprint(color_streak_table)
-	pprint(word_streak_table)
 end
 
-local spawn_counter = 5 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned
+local spawn_counter = 3 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned
 local hint
 --message ids
 local im_dead = hash("im_dead")
@@ -51,6 +49,7 @@ local answer = hash("answer")
 local new_hints = hash("new_hints")
 local msg_correct = hash("correct")
 local msg_wrong = hash("wrong")
+local msg_gameover = hash("gameover")
 
 function on_message(self, message_id, message, sender)
 	if message_id == im_dead then

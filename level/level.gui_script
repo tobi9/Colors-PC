@@ -17,48 +17,23 @@ local hits = 0
 local option_nodes = {} -- this table is need to set the correct colors
 
 local function set_question()
+	local top_node = gui.get_node("question")
 	local mid_node = gui.get_node("question1")
 	if question == "What Word ?" or question == nil then
 		question = "What Color ?"
 	else
 		question = "What Word ?"
 	end
+	gui.set_text(top_node, question)
 	gui.set_text(mid_node, question)
-end
-
-local node_table = {}-- each gui script has its own node_table
-
-local function get_nodes(string_table)-- clears the node table if its not empty
-	for i in ipairs(string_table) do
-		table.insert(node_table, gui.get_node(string_table[i]))
-	end
-end
-
-local function start_lanim()
-	msg.post(".", "start_anim")
-end
-
-local function entry_animation(table)
-	local q = gui.get_node("question")
-	gui.animate(q, "position.x", 420, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
-	for i in ipairs(table) do
-		gui.animate(table[i], "position.y", 470, gui.EASING_INBOUNCE, 1.5, 0, start_lanim(), gui.PLAYBACK_ONCE_PINGPONG)
-	end
-end
-
-local function animate_level(table)-- this animation function is used by the nodes that have entry animations
-	for i, v in ipairs(table) do
-		gui.animate(table[i], "rotation.z", 1, gui.EASING_OUTSINE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
-	end
 end
 
 --score was declared in the main script
 function init(self)
 	--msg.post("@system:", "toggle_profile")
+	local q = gui.get_node("question")
+	gui.animate(q, "position.y", 980, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
-	local node_strings1 = {"s_chal", "h_chal"}
-	get_nodes(node_strings1)
-	entry_animation(node_table)
 	friction_speed = speed
 	set_question()
 	msg.post(".", "acquire_input_focus")
@@ -174,32 +149,6 @@ local adj_frictions = hash("adjust_frictions")
 local msg_challenges = hash("challenges")
 
 function on_message(self, message_id, message, sender)
-	local function check_gold_challenge()
-		if chPtr1 == 2 or chPtr1 == 4 or chPtr1 == 6 or chPtr1 == 8 then
-			if chances ~= const_chances then
-				local s_chal = gui.get_node("s_chal")
-				gui.set_text(s_chal, " ")
-			end
-		elseif chPtr1 == 3 or chPtr1 == 4 or chPtr1 == 7 or chPtr1 == 8 then
-			if frictions ~= const_frictions then
-				local s_chal = gui.get_node("s_chal")
-				gui.set_text(s_chal, " ")
-			end
-		end
-	end
-	local function check_diamond_challenge()
-		if chPtr2 == 2 or chPtr2 == 4 or chPtr2 == 6 or chPtr2 == 8 then
-			if chances ~= const_chances then
-				local h_chal = gui.get_node("h_chal")
-				gui.set_text(h_chal, " ")
-			end
-		elseif chPtr2 == 3 or chPtr2 == 4 or chPtr2 == 7 or chPtr2 == 8 then
-			if frictions ~= const_frictions then
-				local h_chal = gui.get_node("h_chal")
-				gui.set_text(h_chal, " ")
-			end
-		end
-	end
 	if message_id == add_score then
 		local score_id = gui.get_node("score") -- gets the id of the score node
 		score = score + 1  -- increments the score
@@ -232,10 +181,7 @@ function on_message(self, message_id, message, sender)
 		local f_id = gui.get_node("frictions")
 		gui.set_text(f_id, frictions)
 	elseif message_id == msg_challenges then
-		local s_chal = gui.get_node("s_chal")
-		local h_chal = gui.get_node("h_chal")
-		gui.set_text(s_chal, "GOLD CHALLENGE\n"..tostring(message.s))
-		gui.set_text(h_chal, "DIAMOND CHALLENGE\n"..tostring(message.h))
+
 	end
 end
 

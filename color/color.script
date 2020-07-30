@@ -8,6 +8,8 @@ local color = nil -- the color in vector4 form
 local my_color -- the string of the color
 local my_word = nil-- the game object's word
 local qst
+local answer_type -- this variable is needed by the controller script in ascertaining the correct type of streak to record. it can only be two strings "word" or "color"
+local answer = nil -- this is the value the script sends so it can be compared with the button the was clicked
 
 local movement  = function (self)
 	pos.x = pos.x + 5
@@ -21,7 +23,8 @@ local check_pos = function (self)
 		timer.delay(0, false, movement)
 	else
 		if answered == false then
-			chances = chances - 1
+			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
+			chances = 0--chances - 1
 			if chances <= 0 then
 				chances = p_chances
 				msg.post(main, "gameover")
@@ -59,7 +62,6 @@ local color_is = hash("your_color_is")
 local check_this = hash("check_this")
 local msg_check_pos = hash("check_pos")
 
-local answer_type -- this variable is needed by the controller script in ascertaining the correct type of streak to record. it can only be two strings "word" or "color"
 function on_message(self, message_id, message, sender)
 	if message_id == color_is then
 		if question == "What Word ?" then -- this sets the answer to any of the questions so it can be sent to the input
@@ -81,7 +83,7 @@ function on_message(self, message_id, message, sender)
 		else
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
-			chances = chances - 1
+			chances = 0--chances - 1
 			if chances <= 0 then
 				chances = p_chances
 				msg.post(main, "gameover")

@@ -589,7 +589,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
@@ -648,7 +648,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -705,7 +705,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -764,7 +764,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -821,7 +821,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -880,7 +880,7 @@ nodes {
   line_break: false
   layer: "exit"
   inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -1311,7 +1311,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 795.0
+    y: 790.0
     z: 0.1
     w: 1.0
   }
@@ -1341,8 +1341,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "CHALLENGE\n"
-  ""
+  text: "BOUNTY"
   font: "galindo"
   id: "challenge_txt"
   xanchor: XANCHOR_NONE
@@ -1437,7 +1436,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 635.0
+    y: 625.0
     z: 0.0
     w: 1.0
   }
@@ -1491,7 +1490,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 635.0
+    y: 625.0
     z: 0.1
     w: 1.0
   }
@@ -1502,8 +1501,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 0.7
-    y: 0.7
+    x: 0.6
+    y: 0.6
     z: 1.0
     w: 1.0
   }
