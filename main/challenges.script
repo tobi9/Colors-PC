@@ -1,7 +1,8 @@
-local num_of_clrs_pkd = 3
-local num_of_unlkd_clrs = 3
-local highscore = 25
-
+local highscore
+local score
+local friction_used
+local word_streaks
+local color_streaks
 
 --[[
 	The challenges should get harder as the player gets better. So it needs to communicate with the analyser script to determine the kind of 
@@ -30,25 +31,6 @@ local challenges = {--[[1]]	"REACH A SCORE OF "..tostring(n),
 --[[11]]"TRIPLE YOUR HIGHSCORE",
 --[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS"
 }
-local challenges = {--[[1]]	"Reach a score of "..tostring(n),
---[[2]]	"Reach a score of "..tostring(n).."\nwithout using frictions",
-
---[[3]]	"Beat your highscore",
---[[4]] "Beat your highscore\nwithout using frictions",
-
---[[5]]	"Get a "..tostring(n).."X color streak",
---[[6]]	"Get a "..tostring(n).."X color streak\nwithout using frictions",
-
---[[7]]	"Get a "..tostring(n).."X word streak",
---[[8]]	"Get a "..tostring(n).."X word streak\nwithout using frictions",
-
---[[9]]	"Double your highscore",
---[[10]]"Double your highscore\nwithout using frictions",
-
---[[11]]"Triple your highscore",
---[[12]]"Triple your highscore\nwithout using frictions"
-}
-
 
 local chosen_chal_index
 local n
@@ -119,7 +101,6 @@ local set_challenge = function(index)
 	challenge = challenges[chosen_chal_index]
 	save_to_memory_loc("chal_index", chosen_chal_index)
 	save_to_memory_loc("chal_status", challenge_status)
-	--print(chosen_chal_index, "first")
 end
 
 local chal_status_check = function()
@@ -131,6 +112,7 @@ local chal_status_check = function()
 			end
 			challenges_passed = challenges_passed + 1
 		end
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 2 then
 		if score == n and fric < n then
@@ -140,18 +122,21 @@ local chal_status_check = function()
 			end
 			challenges_passed = challenges_passed + 1
 		end
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 3 then
 		if score > highscore then
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 4 then
 		if score > n and fric < n then
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 5 then
 --		if then
@@ -163,6 +148,7 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 --		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 6 then
 --		if then
@@ -173,6 +159,7 @@ local chal_status_check = function()
 			end
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 --		end
+		challenge_status = true
 		challenges_passed = challenges_passed + 1
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 7 then
@@ -185,6 +172,7 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 --		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 8 then
 --		if then
@@ -196,6 +184,7 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 --		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 9 then
 		local val = 2 * highscore
@@ -203,6 +192,7 @@ local chal_status_check = function()
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 10 then
 		local val = 2 * highscore
@@ -210,6 +200,7 @@ local chal_status_check = function()
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 11 then
 		local val = 3 * highscore
@@ -217,6 +208,7 @@ local chal_status_check = function()
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 12 then
 		local val = 3 * highscore
@@ -224,6 +216,7 @@ local chal_status_check = function()
 
 		end
 		challenges_passed = challenges_passed + 1
+		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	end
 end
@@ -241,12 +234,21 @@ end
 local msg_set_chal = hash("set_chal")
 local msg_change_chal = hash("change_challenge")
 local msg_chal_req = hash("challenges_requested")
+local msg_check_chal = hash("check_challenges")
 function on_message(self, message_id, message, sender)
 	if message_id == msg_change_chal then
 		prev_index = chosen_chal_index
 		save_to_memory_loc("chal_index", nil) -- clear the memory location
 		set_challenge()
 	elseif message_id == msg_chal_req then
+		msg.post(sender, "chal", {c = challenge, status = challenge_status})
+	elseif message_id == msg_check_chal then
+		highscore = message.highscore
+		score = message.score
+		friction_used = message.friction_status
+		word_streaks = message.word
+		color_streaks = message.color
+		chal_status_check()
 		msg.post(sender, "chal", {c = challenge, status = challenge_status})
 	end
 end

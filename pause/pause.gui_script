@@ -48,6 +48,17 @@ function init(self)
 		gui.set_enabled(gui.get_node('show_ad'), false)
 		gui.set_enabled(gui.get_node('ad_text'), false)
 	end
+	-- set the score
+	local score_id = gui.get_node("score")
+	gui.set_text(score_id, score)
+	-- display the highscore
+	if score > highscore then
+
+	else
+
+	end
+	local best_id = gui.get_node('best')
+	gui.set_text(best_id, "best\n"..tostring(highscore))	
 end
 
 function final(self)
@@ -75,7 +86,7 @@ local function handle_input()
 			--give reward
 		else
 			if chal_changes_allowed > 0 then
-				chal_changes_allowed = chal_changes_allowed - 1
+				chal_changes_allowed = chal_changes_allowed - 1 -- global variable declared in the menu gui script
 				msg.post("main:/main#challenges", "change_challenge")
 				timer.delay(0.001, false, req_challenge)
 			end
@@ -86,11 +97,6 @@ local function handle_input()
 	else
 		hide_exit_prompt()
 	end
-end
-
-local function touch_feedback(node)
-	local pos = gui.get_position(node)
-	gui.animate(node, "position.x", pos.x + 10, gui.EASING_INOUTBOUNCE, BUTTON_ANIMATION_DURATION, 0, handle_input, gui.PLAYBACK_ONCE_PINGPONG)
 end
 
 local msg_completed = hash("completed")

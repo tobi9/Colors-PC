@@ -12,7 +12,7 @@ background_color {
 nodes {
   position {
     x: 320.0
-    y: 1000.0
+    y: 1070.0
     z: 0.0
     w: 1.0
   }
@@ -546,7 +546,7 @@ nodes {
   rotation {
     x: 0.0
     y: 0.0
-    z: -1.0
+    z: 0.0
     w: 1.0
   }
   scale {
@@ -600,11 +600,11 @@ nodes {
   rotation {
     x: 0.0
     y: 0.0
-    z: -1.0
+    z: 0.0
     w: 1.0
   }
   scale {
-    x: 1.0
+    x: 0.9
     y: 0.9
     z: 1.0
     w: 1.0
@@ -623,7 +623,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "WATCH THIS\n"
+  text: "WATCH VIDEO\n"
   "FOR HINTS"
   font: "galindo"
   id: "ad_text"
@@ -1005,7 +1005,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 910.0
+    y: 1000.0
     z: 0.1
     w: 1.0
   }
@@ -1067,7 +1067,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 790.0
+    y: 730.0
     z: 0.1
     w: 1.0
   }
@@ -1129,7 +1129,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 850.0
+    y: 940.0
     z: 0.1
     w: 1.0
   }
@@ -1192,7 +1192,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 715.0
+    y: 750.0
     z: 0.0
     w: 1.0
   }
@@ -1204,7 +1204,7 @@ nodes {
   }
   scale {
     x: 2.7
-    y: 4.5
+    y: 5.5
     z: 1.0
     w: 1.0
   }
@@ -1246,7 +1246,7 @@ nodes {
 nodes {
   position {
     x: 520.0
-    y: 850.0
+    y: 940.0
     z: 0.1
     w: 1.0
   }
@@ -1309,7 +1309,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 725.0
+    y: 665.0
     z: 0.1
     w: 1.0
   }
@@ -1372,7 +1372,7 @@ nodes {
 nodes {
   position {
     x: 120.0
-    y: 850.0
+    y: 940.0
     z: 0.1
     w: 1.0
   }
@@ -1435,7 +1435,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 625.0
+    y: 565.0
     z: 0.0
     w: 1.0
   }
@@ -1489,7 +1489,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 625.0
+    y: 565.0
     z: 0.1
     w: 1.0
   }
@@ -1524,6 +1524,133 @@ nodes {
   ""
   font: "galindo"
   id: "chal_but"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_CENTER
+  outline {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  shadow {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  adjust_mode: ADJUST_MODE_FIT
+  line_break: false
+  layer: "top"
+  inherit_alpha: true
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
+  template_node_child: false
+  text_leading: 1.0
+  text_tracking: 0.0
+}
+nodes {
+  position {
+    x: 320.0
+    y: 800.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.3
+    y: 1.3
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  type: TYPE_TEXT
+  blend_mode: BLEND_MODE_ALPHA
+  text: "0\n"
+  ""
+  font: "galindo"
+  id: "score"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_CENTER
+  outline {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  shadow {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  adjust_mode: ADJUST_MODE_FIT
+  line_break: false
+  layer: "top"
+  inherit_alpha: true
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
+  template_node_child: false
+  text_leading: 1.0
+  text_tracking: 0.0
+}
+nodes {
+  position {
+    x: 320.0
+    y: 870.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 0.7
+    y: 0.7
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  type: TYPE_TEXT
+  blend_mode: BLEND_MODE_ALPHA
+  text: "BEST\n"
+  "0\n"
+  ""
+  font: "galindo"
+  id: "best"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

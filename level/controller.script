@@ -9,6 +9,7 @@ level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
 speed = 300 --pixels per second ^ 2
 total_spawns = 0 
+local friction_used = false -- if the player used a friction during gameplay
 
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
 	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
@@ -50,6 +51,8 @@ local new_hints = hash("new_hints")
 local msg_correct = hash("correct")
 local msg_wrong = hash("wrong")
 local msg_gameover = hash("gameover")
+local strks_needed = hash("streaks_needed")
+local fric_used = hash("friction_used")
 
 function on_message(self, message_id, message, sender)
 	if message_id == im_dead then
@@ -61,6 +64,11 @@ function on_message(self, message_id, message, sender)
 		msg.post(level_gui, "show_hint", {hint = message.hint})
 	elseif message_id == new_hints then
 		spawn_counter = 3
+	elseif message_id == fric_used then
+		friction_used = true 
+	elseif message_id == strks_needed then
+		-- although it requests streaks all the info needed by the challenge script to check if a challenge has been passed
+		msg.post(sender, "streaks", {word = word_streak_table, color = color_streak_table, fric = friction_used})
 	elseif message_id == msg_correct then
 		local temp -- this a container that is used to hold numbers from the streak tables
 		for k, v in ipairs(color_strings) do

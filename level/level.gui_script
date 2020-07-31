@@ -121,7 +121,7 @@ local function handle_input()
 		frictions = frictions - 1
 		msg.post("main:/main#data_handler", "save_data")
 		msg.post(level_gui, "adjust_frictions")
-		msg.post(ANALYZER, 'friction_used')
+		msg.post("level:/controller#controller", 'friction_used')
 	end
 end
 
