@@ -77,6 +77,14 @@ function init(self)
 	else
 		chal_changes_allowed = tab[1]
 	end
+	local m = gui.get_node("money")
+	gui.set_text(m, "$"..tostring(money))
+	local b = gui.get_node("brakes")
+	gui.set_text(b, "BRAKES\n"..tostring(brakes))
+	local l = gui.get_node("lives")
+	gui.set_text(l, "LIVES\n"..tostring(lives))
+	local c = gui.get_node("coins")
+	gui.set_text(c, "COINS\n"..tostring(coins))
 end
 
 local msg_chal = hash("chal")

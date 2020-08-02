@@ -1,6 +1,6 @@
-local highscore
+--[[local highscore
 local score
-local friction_used
+local brake_score -- the score when the player used brakes for the first time]]
 local word_streaks
 local color_streaks
 
@@ -115,7 +115,7 @@ local chal_status_check = function()
 		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 2 then
-		if score == n and fric < n then
+		if score == n and brake_score < n then
 			if n <= 1000 then
 				n = n + 5
 				save_to_memory_loc("n"..tostring(chosen_chal_index), n)
@@ -132,7 +132,7 @@ local chal_status_check = function()
 		challenge_status = true
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 4 then
-		if score > n and fric < n then
+		if score > n and brake_score < n then
 
 		end
 		challenges_passed = challenges_passed + 1
@@ -196,7 +196,7 @@ local chal_status_check = function()
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 10 then
 		local val = 2 * highscore
-		if score >= val and fric <= val then
+		if score >= val and brake_score <= val then
 
 		end
 		challenges_passed = challenges_passed + 1
@@ -204,7 +204,7 @@ local chal_status_check = function()
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 11 then
 		local val = 3 * highscore
-		if score >= val and fric <= val then
+		if score >= val then
 
 		end
 		challenges_passed = challenges_passed + 1
@@ -212,7 +212,7 @@ local chal_status_check = function()
 		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 12 then
 		local val = 3 * highscore
-		if score >= val and fric <= val then
+		if score >= val and brake_score <= val then
 
 		end
 		challenges_passed = challenges_passed + 1
@@ -235,6 +235,7 @@ local msg_set_chal = hash("set_chal")
 local msg_change_chal = hash("change_challenge")
 local msg_chal_req = hash("challenges_requested")
 local msg_check_chal = hash("check_challenges")
+
 function on_message(self, message_id, message, sender)
 	if message_id == msg_change_chal then
 		prev_index = chosen_chal_index
@@ -243,9 +244,6 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_chal_req then
 		msg.post(sender, "chal", {c = challenge, status = challenge_status})
 	elseif message_id == msg_check_chal then
-		highscore = message.highscore
-		score = message.score
-		friction_used = message.friction_status
 		word_streaks = message.word
 		color_streaks = message.color
 		chal_status_check()

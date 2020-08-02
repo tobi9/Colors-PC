@@ -148,8 +148,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 2.0
+    x: 1.3
+    y: 2.6
     z: 1.0
     w: 1.0
   }
@@ -202,8 +202,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 2.0
+    x: 1.3
+    y: 2.6
     z: 1.0
     w: 1.0
   }
@@ -222,7 +222,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: ""
-  id: "_frictions"
+  id: "_brakes"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -275,9 +275,9 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "<text>"
+  text: "3"
   font: "galindo"
-  id: "frictions"
+  id: "brakes"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -531,7 +531,7 @@ nodes {
 nodes {
   position {
     x: 120.0
-    y: 40.0
+    y: 25.0
     z: 0.1
     w: 1.0
   }
@@ -542,8 +542,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -561,10 +561,9 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "frictions\n"
-  ""
+  text: "BRAKES"
   font: "galindo"
-  id: "frictions1"
+  id: "brakes_txt"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -624,8 +623,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "P\n"
-  ""
+  text: "II"
   font: "galindo"
   id: "pause_text"
   xanchor: XANCHOR_NONE

@@ -5,7 +5,6 @@ local c_price_g
 local c_price_d
 local time_diffrence = 1800 -- in seconds
 
-
 local button_tapped = nil
 
 local function set_recources()

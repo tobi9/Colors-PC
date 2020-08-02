@@ -37,13 +37,13 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Pick any color combination\n"
-  ""
+  text: "HOW MANY COLORS DO \n"
+  "YOU WANT PLAY WITH ?"
   font: "galindo"
   id: "title"
   xanchor: XANCHOR_NONE
@@ -100,7 +100,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -216,7 +216,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -270,7 +270,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -324,7 +324,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -378,7 +378,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -432,7 +432,7 @@ nodes {
   color {
     x: 1.0
     y: 0.0
-    z: 1.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_BOX

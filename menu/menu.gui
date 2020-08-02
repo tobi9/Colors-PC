@@ -1279,7 +1279,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "G1000"
+  text: "$1000"
   font: "galindo"
   id: "money"
   xanchor: XANCHOR_NONE

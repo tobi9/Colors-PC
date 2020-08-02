@@ -1,56 +1,33 @@
 -- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY
 -- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY
 local enc = require("main.encryption")
-chances = nil -- the only script that is able to modify this variable is the upgrades script
-local h_mul
-local r_mul
-local f_mul
-local g_mul
-local d_mul
-local c_mul
-local folder = "trick colors 2"
+local folder = "trick colors 2 test"
 local data = {}
 sound_playing = false -- this is used to filter the music
 
-local function retrieve_data()
+local retrieve_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local table = sys.load(file)
 	if #table == 0 then
-		math.randomseed(os.time())
-		h_mul = math.random(1000000000)
-		r_mul = math.random(1000000000)
-		f_mul = math.random(1000000000)
-		g_mul = math.random(1000000000)
-		d_mul = math.random(1000000000)
-		c_mul = math.random(1000000000)
-		highscore = 0 -- THIS IS ALSO A GLOBAL VARIABLE
-		respawns = 3 -- THIIS IS HARD RESOURCE 
-		frictions = 3
-		gold = 0
-		diamonds = 0
-		const_chances = 3
+		money = 100
+		brakes = 3
+		coins = 10
+		lives = 3
 		last_ad_time = 0
+		highscore = 12
 	else
-		h_mul = tonumber(decode(table[1]))
-		r_mul = tonumber(decode(table[2]))
-		f_mul = tonumber(decode(table[3]))
-		g_mul = tonumber(decode(table[4]))
-		d_mul = tonumber(decode(table[5]))
-		c_mul = tonumber(decode(table[6]))
-		highscore = (tonumber(decode(table[7]))) - h_mul
-		respawns = (tonumber(decode(table[8]))) - r_mul
-		frictions = (tonumber(decode(table[9]))) - f_mul
-		gold = (tonumber(decode(table[10]))) - g_mul
-		diamonds = (tonumber(decode(table[11]))) - d_mul
-		const_chances = (tonumber(decode(table[12]))) - c_mul
-		last_ad_time = (tonumber(decode(table[13]))) - c_mul
+		money = tonumber(decode(table[1]))
+		brakes = tonumber(decode(table[2]))
+		coins = tonumber(decode(table[3]))
+		lives = tonumber(decode(table[4]))
+		last_ad_time = tonumber(decode(table[5]))
+		highscore = tonumber(decode(table[6]))
 	end
 end
 
-local function save_data()
+local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
-	local values = {h_mul, r_mul, f_mul, g_mul, d_mul, c_mul, highscore + h_mul, respawns + r_mul, 
-	frictions + f_mul, gold + g_mul, diamonds + d_mul, const_chances + c_mul,last_ad_time + c_mul}
+	local values = {money, brakes, coins, lives, last_ad_time, highscore}
 	for i, v in ipairs(values) do
 		table.insert(data, i,encode(tostring(v)))
 	end
@@ -59,8 +36,6 @@ end
 
 function init(self)
 	retrieve_data()
-	chances = const_chances
-	const_frictions = frictions
 end
 
 function final(self)
