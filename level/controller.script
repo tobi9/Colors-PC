@@ -32,6 +32,9 @@ end
 --Color Streak System
 local color_streak_table = {}
 local word_streak_table = {}
+--the scores at the time the streak ended are recorded in the tables below
+local color_streak_scores = {}
+local word_streak_scores = {}
 --Streak Counters
 local color1, color2, color3, color4, color5, color6 = 0, 0, 0, 0, 0, 0
 local word1, word2, word3, word4, word5, word6 = 0, 0, 0, 0, 0, 0
@@ -65,7 +68,7 @@ function on_message(self, message_id, message, sender)
 		spawn_counter = 3
 	elseif message_id == strks_needed then
 		-- although it requests streaks all the info needed by the challenge script to check if a challenge has been passed
-		msg.post(sender, "streaks", {word = word_streak_table, color = color_streak_table})
+		msg.post("main:/main#challenges", "check_challenge", {word = word_streak_table, color = color_streak_table, word_score = word_streak_scores, color_score = color_streak_scores})
 	elseif message_id == msg_correct then
 		local temp -- this a container that is used to hold numbers from the streak tables
 		for k, v in ipairs(color_strings) do
@@ -126,6 +129,7 @@ function on_message(self, message_id, message, sender)
 						table.insert(color_streak_table, color6)
 						color6 = 0
 					end
+					table.insert(color_streak_scores, score)
 				else
 					if k == 1 then
 						table.insert(word_streak_table, word1)
@@ -146,6 +150,7 @@ function on_message(self, message_id, message, sender)
 						table.insert(word_streak_table, word6)
 						word6 = 0
 					end
+					table.insert(word_streak_scores, score)
 				end
 			end
 		end

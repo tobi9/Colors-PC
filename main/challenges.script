@@ -3,6 +3,11 @@ local score
 local brake_score -- the score when the player used brakes for the first time]]
 local word_streaks
 local color_streaks
+local max_word_streak
+local max_color_streak
+local word_streak_scores
+local color_streak_scores
+local brake_used -- this boolean variable is used for challenge no 6 and 8 after so loops its value is set
 
 --[[
 	The challenges should get harder as the player gets better. So it needs to communicate with the analyser script to determine the kind of 
@@ -111,9 +116,9 @@ local chal_status_check = function()
 				save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			end
 			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 2 then
 		if score == n and brake_score < n then
 			if n <= 1000 then
@@ -121,103 +126,91 @@ local chal_status_check = function()
 				save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			end
 			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 3 then
 		if score > highscore then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 4 then
 		if score > n and brake_score < n then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 5 then
---		if then
-			if n == 3 then
-				n = 5
-			elseif n > 3 then
-				n = n + 5
-			end
+		if n >= max_color_streak then
+
+			n = n + 1
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
---		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
+		end
 	elseif chosen_chal_index == 6 then
---		if then
-			if n == 3 then
-				n = 5
-			elseif n > 3 then
-				n = n + 5
-			end
+		if n >= max_color_streak and brake_used == false then
+
+			n = n + 1
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
---		end
-		challenge_status = true
-		challenges_passed = challenges_passed + 1
-		save_to_memory_loc("chal_status", true)
+			challenge_status = true
+			challenges_passed = challenges_passed + 1
+			save_to_memory_loc("chal_status", true)	
+		end
 	elseif chosen_chal_index == 7 then
---		if then
-			if n == 3 then
-				n = 5
-			elseif n > 3 then
-				n = n + 5
-			end
+		if n >= max_word_streak then
+
+			n = n + 1
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
---		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
+		end
 	elseif chosen_chal_index == 8 then
---		if then
-			if n == 3 then
-				n = 5
-			elseif n > 3 then
-				n = n + 5
-			end
+		if n >= max_word_streak and brake_used == false then
+
+			n = n + 1
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
---		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
+		end
 	elseif chosen_chal_index == 9 then
 		local val = 2 * highscore
 		if score >= val then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 10 then
 		local val = 2 * highscore
 		if score >= val and brake_score <= val then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 11 then
 		local val = 3 * highscore
 		if score >= val then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	elseif chosen_chal_index == 12 then
 		local val = 3 * highscore
 		if score >= val and brake_score <= val then
 
+			challenges_passed = challenges_passed + 1
+			challenge_status = true
+			save_to_memory_loc("chal_status", true)	
 		end
-		challenges_passed = challenges_passed + 1
-		challenge_status = true
-		save_to_memory_loc("chal_status", true)
 	end
 end
 
@@ -234,7 +227,7 @@ end
 local msg_set_chal = hash("set_chal")
 local msg_change_chal = hash("change_challenge")
 local msg_chal_req = hash("challenges_requested")
-local msg_check_chal = hash("check_challenges")
+local msg_check_chal = hash("check_challenge")
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_change_chal then
@@ -246,6 +239,30 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_check_chal then
 		word_streaks = message.word
 		color_streaks = message.color
+		word_streak_scores = message.word_score
+		color_streak_scores = message.color_score
+		max_word_streak = table.maxn(word_streaks)
+		max_color_streak = table.maxn(color_streaks)
+		--The if statement below check if the player used brakes before getting the streak
+		if chosen_chal_index == 6 then
+			for k, v in ipairs(color_streaks) do
+				if v == n then
+					if color_streak_scores[k] < brake_score then
+						brake_used = false
+						break
+					end
+				end
+			end
+		elseif chosen_chal_index == 8 then
+			for k, v in ipairs(word_streaks) do
+				if v == n then
+					if word_streak_scores[k] < brake_score then
+						brake_used = false
+						break
+					end
+				end
+			end
+		end
 		chal_status_check()
 		msg.post(sender, "chal", {c = challenge, status = challenge_status})
 	end
