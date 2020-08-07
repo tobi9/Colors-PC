@@ -1,0 +1,89 @@
+local TouchFb = require("modules.animation")
+
+local input_nodes = {"_menu", 'buy_brakes', 'buy_lives', 'buy_coins', 'unlck_clrs', 'daily_gift', 'get_money', 'deals'}
+
+--prices of the commodities sold in the shop and their currencies
+local brake_price = 10 -- $
+local live_price = 2 -- coins
+local coin_price = 1999 -- $
+
+local update_info = function()
+    local m = gui.get_node("money")
+    gui.set_text(m, "$"..tostring(money))
+    local b = gui.get_node("brakes")
+    gui.set_text(b, "BRAKES\n"..tostring(brakes))
+    local l = gui.get_node("lives")
+    gui.set_text(l, "LIVES\n"..tostring(lives))
+    local c = gui.get_node("coins")
+    gui.set_text(c, "COINS\n"..tostring(coins))
+    local u = gui.get_node("unlckd_clrs")
+    local Colors = require("modules.colors")
+    local len = tostring(Colors.check_len_of_unlkd_clrs())
+    gui.set_text(u, len)
+end
+
+function init(self)
+    msg.post(".", 'acquire_input_focus')
+    update_info()
+end
+
+local clear_info = function()
+    local node = gui.get_node("info")
+    gui.set_text(node, " ")
+end
+
+local button_tapped
+local handle_input = function()
+    if button_tapped == "_menu" then
+        msg.post(main, "unload_upgrades")
+    elseif button_tapped == "buy_brakes" then
+        if money >= brake_price then
+            money = money - brake_price
+            brakes = brakes + 1
+        else
+            local node = gui.get_node("info")
+            gui.set_text(node, "YOU CAN'T AFFORD\nIT")
+            timer.delay(1, false, clear_info)
+        end
+    elseif button_tapped == "buy_lives" then
+        if coins >= live_price then
+            coins = coins - live_price
+            lives = lives + 1
+        else
+            local node = gui.get_node("info")
+            gui.set_text(node, "YOU CAN'T AFFORD\nIT")
+            timer.delay(1, false, clear_info)
+        end
+    elseif button_tapped == "buy_coins" then
+        if money >= coin_price then
+            money = money - coin_price
+            coins = coins + 1
+        else
+            local node = gui.get_node("info")
+            gui.set_text(node, "YOU CAN'T AFFORD\nIT")
+            timer.delay(1, false, clear_info)
+        end
+    elseif button_tapped == "unlck_clrs" then
+        msg.post(main, "load_color_options")
+    elseif button_tapped == "daily_gift" then
+        msg.post(main, "show_ad")
+    elseif button_tapped == "get_money" then
+        msg.post(main, "load_iap")
+    elseif button_tapped == "deals" then
+        msg.post(main, "load_iap")
+    end
+    update_info()
+end
+
+local touch = hash("touch")
+function on_input(self, action_id, action)
+    if action_id == touch and action.released then
+        for k, v in ipairs(input_nodes) do
+            local node = gui.get_node(v)
+            if gui.pick_node(node, action.x, action.y) then 
+                button_tapped = v
+                TouchFb.touch_feedback(node, handle_input)
+            end
+        end
+    end
+end

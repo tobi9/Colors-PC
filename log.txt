@@ -4,5 +4,7 @@ INFO:ENGINE: Initialised sound device 'default'
 
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
+INFO:ADMOB: show
+DEBUG:SCRIPT: main:/main#main
 INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1

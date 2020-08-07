@@ -112,6 +112,7 @@ end
 local button_tapped
 local handle_input = function()
 	if button_tapped == 'menu' then
+		tray = {}
 		msg.post(main, "unload_pick_colors")
 	elseif button_tapped == 'pick' then
 		msg.post(main, "load_color_selector")

@@ -100,7 +100,6 @@ local function handle_input()
 			end
 		end
 	elseif button_tapped == 'yes' then
-		chances = const_chances
 		msg.post(main, 'return_2_menu', {col = "pause"})-- tells the controller script which collection to unload when returning to menu
 	else
 		hide_exit_prompt()

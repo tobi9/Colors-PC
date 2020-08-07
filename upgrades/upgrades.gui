@@ -409,8 +409,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "YOU DON\'T HAVE\n"
-  "ENOUGH $"
+  text: ""
   font: "galindo"
   id: "info"
   xanchor: XANCHOR_NONE
@@ -820,7 +819,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "$100"
+  text: "$10"
   font: "galindo"
   id: "brake_price"
   xanchor: XANCHOR_NONE
@@ -882,7 +881,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "$100"
+  text: "2 COINS"
   font: "galindo"
   id: "live_price"
   xanchor: XANCHOR_NONE
@@ -944,7 +943,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "$100"
+  text: "$1999"
   font: "galindo"
   id: "coin_price"
   xanchor: XANCHOR_NONE

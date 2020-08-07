@@ -14,9 +14,9 @@ M.check_len_of_unlkd_clrs = function()
 		return 5
 	else
 		for k, v in ipairs(colors) do
-			if v[2] == true then
+			--if v[2] == true then
 				counter = counter + 1
-			end
+			--end
         end
         return counter
 	end	
@@ -28,8 +28,8 @@ M.retrieve_colors = function()
     if #colors == 0 then
 		colors = {
 			{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)},
-			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', true, vmath.vector4(1, 0, 1, 1)},
-			{'yellow', true, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
+			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', false, vmath.vector4(1, 0, 1, 1)},
+			{'yellow', false, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
 			--[[{'gray', false, vmath.vector4(128, 128, 128, 1)}, {'maroon', false, vmath.vector4(128, 0, 0, 1)},
 			{'olive', false, vmath.vector4(128, 128, 0, 1)}, {'green', false, vmath.vector4(0, 128, 0, 1)},
 			{'purple', false, vmath.vector4(128, 0, 128, 1)}, {'teal', false, vmath.vector4(0, 128, 128, 1)},
