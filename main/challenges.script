@@ -60,6 +60,7 @@ local challenge
 local challenges_passed = 0
 local challenge_status -- true if the challenge was passed and false if not
 local prev_index -- this is the index of the previous challenge it is needed to avoid set the same challenge twice in a row after a change is reqested by the player
+local chal_reward
 --This function sets the challenge.
 local set_challenge = function(index)
 	if check_memory_loc("chal_index") == nil then	
@@ -103,6 +104,11 @@ local set_challenge = function(index)
 	--[[11]]"Triple your highscore",
 	--[[12]]"Triple your highscore\nwithout using frictions"
 	}
+	if challenge_status then
+		chal_reward = check_memory_loc("reward")
+	else
+		chal_reward = n * chosen_chal_index
+	end
 	challenge = challenges[chosen_chal_index]
 	save_to_memory_loc("chal_index", chosen_chal_index)
 	save_to_memory_loc("chal_status", challenge_status)
@@ -117,7 +123,8 @@ local chal_status_check = function()
 			end
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 2 then
 		if score == n and brake_score < n then
@@ -128,6 +135,7 @@ local chal_status_check = function()
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
 			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 3 then
 		if score > highscore then
@@ -135,6 +143,7 @@ local chal_status_check = function()
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
 			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 4 then
 		if score > n and brake_score < n then
@@ -142,6 +151,7 @@ local chal_status_check = function()
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
 			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 5 then
 		if n >= max_color_streak then
@@ -150,7 +160,8 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 6 then
 		if n >= max_color_streak and brake_used == false then
@@ -159,7 +170,8 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			challenge_status = true
 			challenges_passed = challenges_passed + 1
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 7 then
 		if n >= max_word_streak then
@@ -168,7 +180,8 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 8 then
 		if n >= max_word_streak and brake_used == false then
@@ -177,7 +190,8 @@ local chal_status_check = function()
 			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 9 then
 		local val = 2 * highscore
@@ -185,7 +199,8 @@ local chal_status_check = function()
 
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 10 then
 		local val = 2 * highscore
@@ -193,7 +208,8 @@ local chal_status_check = function()
 
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 11 then
 		local val = 3 * highscore
@@ -201,7 +217,8 @@ local chal_status_check = function()
 
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	elseif chosen_chal_index == 12 then
 		local val = 3 * highscore
@@ -209,7 +226,8 @@ local chal_status_check = function()
 
 			challenges_passed = challenges_passed + 1
 			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
+			save_to_memory_loc("chal_status", true)
+			save_to_memory_loc("reward", chal_reward)
 		end
 	end
 end
@@ -228,14 +246,20 @@ local msg_set_chal = hash("set_chal")
 local msg_change_chal = hash("change_challenge")
 local msg_chal_req = hash("challenges_requested")
 local msg_check_chal = hash("check_challenge")
+local msg_reward = hash("reward")
+local msg_give_reward = hash("give_reward")
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_change_chal then
 		prev_index = chosen_chal_index
 		save_to_memory_loc("chal_index", nil) -- clear the memory location
 		set_challenge()
+	elseif message_id == msg_give_reward then
+		msg.post(sender, "chal_reward", {reward = chal_reward})
 	elseif message_id == msg_chal_req then
-		msg.post(sender, "chal", {c = challenge, status = challenge_status})
+		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = chal_reward})
+	elseif message_id == msg_reward then
+		chal_reward = chal_reward * message.num_of_clrs -- calculate the actual reward for the challenge
 	elseif message_id == msg_check_chal then
 		word_streaks = message.word
 		color_streaks = message.color
@@ -264,6 +288,6 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		chal_status_check()
-		msg.post(sender, "chal", {c = challenge, status = challenge_status})
+		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = chal_reward})
 	end
 end

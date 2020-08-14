@@ -74,7 +74,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 600.0
+    y: 595.0
     z: 0.0
     w: 1.0
   }
@@ -86,7 +86,7 @@ nodes {
   }
   scale {
     x: 3.0
-    y: 9.0
+    y: 9.3
     z: 1.0
     w: 1.0
   }
@@ -317,7 +317,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 1020.0
+    y: 1040.0
     z: 0.1
     w: 1.0
   }
@@ -819,7 +819,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "$10"
+  text: "$50"
   font: "galindo"
   id: "brake_price"
   xanchor: XANCHOR_NONE
@@ -943,7 +943,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "$1999"
+  text: "$3000"
   font: "galindo"
   id: "coin_price"
   xanchor: XANCHOR_NONE
@@ -1573,8 +1573,8 @@ nodes {
 }
 nodes {
   position {
-    x: 410.0
-    y: 1020.0
+    x: 320.0
+    y: 998.0
     z: 0.0
     w: 1.0
   }
@@ -1627,8 +1627,8 @@ nodes {
 }
 nodes {
   position {
-    x: 410.0
-    y: 1020.0
+    x: 320.0
+    y: 998.0
     z: 0.1
     w: 1.0
   }
@@ -1690,7 +1690,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 80.0
+    y: 60.0
     z: 0.0
     w: 1.0
   }
@@ -1744,7 +1744,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 80.0
+    y: 60.0
     z: 0.0
     w: 1.0
   }

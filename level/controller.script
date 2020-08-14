@@ -27,6 +27,7 @@ function init(self)
 	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
 	msg.post("main:/main#challenges", "set_challenge")
 	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
+	msg.post("main:/main#challenges", "reward", {num_of_clrs = NumOfColorsPicked}) -- give the challenge script the required info to calculate the actual reward
 end
 
 --Color Streak System

@@ -1,3 +1,6 @@
+--The tables below are global tables that hold the information on the colors the player can use.	
+color_info_table = nil
+unlocked_colors_table = {}
 --[[ These variables are used by the level, color ,controller, and color selection system 
 scripts they were put in the main script because they need to be immune ro restarting game sessions]]
 --[[These variables are needed by the gui scripts and customization system to set the nodes to the right colors  	
@@ -192,6 +195,26 @@ local function window_callback(self, event, data) --gamePaused is declared in th
 end
 
 function init(self)
+	--retrieve the colour information
+	local folder = "Trick Colors 2"
+	local file = sys.get_save_file(folder, "color_info_table")
+	color_info_table = sys.load(file)
+	if #color_info_table == 0 then
+		color_info_table = {
+			{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)}, 
+			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', false, vmath.vector4(1, 0, 1, 1)},
+			{'yellow', false, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
+			{'gray', false, vmath.vector4(128/256, 128/256, 128/256, 1)}, {'olive', false, vmath.vector4(128/256, 128/256, 0, 1)},
+			{'purple', false, vmath.vector4(128/256, 0, 128/256, 1)}, {'pink', false, vmath.vector4(255/256, 192/256, 203/256, 1)},
+			{'orange', false, vmath.vector4(255/256, 165/256, 0, 1)}, {'brown', false, vmath.vector4(165/256, 42/256, 42/256, 1)}
+		}
+	end
+	--retrieve the unlocked colors from the color_info_table and put them into the unlocked_colors_table
+	for k, v in ipairs(color_info_table) do
+		if v[2] == true then
+			table.insert(unlocked_colors_table, v)
+		end
+	end
 	--retrieve the default the default node colors from memory
 	local folder = "colors"
 	local file = sys.get_save_file(folder, "default_node_colors")
@@ -222,6 +245,10 @@ end
 
 function final(self)
 	msg.post(".", "release_input_focus")
+	--save the color_info_table
+	local folder = "Trick Colors 2"
+	local file = sys.get_save_file(folder, "color_info_table")
+	sys.save(file, color_info_table)
 	--save the default colors
 	local folder = "colors"
 	local file = sys.get_save_file(folder, "default_node_colors")
@@ -260,7 +287,6 @@ function on_message(self, message_id, message, sender)
 	local unld_customizer = hash("unload_customizer")
 	local load_clr_options = hash("load_color_options")
 	local unload_clr_options = hash("unload_color_options")
-
 	if message_id == start then
 		load_color_menu()
 		unload_menu()

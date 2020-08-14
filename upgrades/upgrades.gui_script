@@ -3,9 +3,9 @@ local TouchFb = require("modules.animation")
 local input_nodes = {"_menu", 'buy_brakes', 'buy_lives', 'buy_coins', 'unlck_clrs', 'daily_gift', 'get_money', 'deals'}
 
 --prices of the commodities sold in the shop and their currencies
-local brake_price = 10 -- $
+local brake_price = 50 -- $
 local live_price = 2 -- coins
-local coin_price = 1999 -- $
+local coin_price = 3000 -- $
 
 local update_info = function()
     local m = gui.get_node("money")

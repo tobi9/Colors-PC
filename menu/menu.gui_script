@@ -31,12 +31,15 @@ local function handle_input()
 		if chal_status then
 			chal_changes_allowed = 2
 			--give reward
+			msg.post("main:/main#challenges", "give_reward")
+			msg.post("main:/main#challenges", "change_challenge")
+			timer.delay(0.001, false, req_challenge)
 		else
-			if chal_changes_allowed > 0 then
-				chal_changes_allowed = chal_changes_allowed - 1
+			--[[if chal_changes_allowed > 0 then
+				chal_changes_allowed = chal_changes_allowed - 1]]
 				msg.post("main:/main#challenges", "change_challenge")
 				timer.delay(0.001, false, req_challenge)
-			end
+			--end
 		end
 	elseif button_tapped == 'exit' then
 		Prompt.prompt(menu_nodes, exit_dialogue_nodes, is_exit_prompt_active)
@@ -51,6 +54,17 @@ end
 
 local Customizer = require("modules.customizer")
 local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
+
+local update_info = function()
+    local m = gui.get_node("money")
+    gui.set_text(m, "$"..tostring(money))
+    local b = gui.get_node("brakes")
+    gui.set_text(b, "BRAKES\n"..tostring(brakes))
+    local l = gui.get_node("lives")
+    gui.set_text(l, "LIVES\n"..tostring(lives))
+    local c = gui.get_node("coins")
+    gui.set_text(c, "COINS\n"..tostring(coins))
+end
 
 function init(self)
 	req_challenge()
@@ -77,14 +91,7 @@ function init(self)
 	else
 		chal_changes_allowed = tab[1]
 	end
-	local m = gui.get_node("money")
-	gui.set_text(m, "$"..tostring(money))
-	local b = gui.get_node("brakes")
-	gui.set_text(b, "BRAKES\n"..tostring(brakes))
-	local l = gui.get_node("lives")
-	gui.set_text(l, "LIVES\n"..tostring(lives))
-	local c = gui.get_node("coins")
-	gui.set_text(c, "COINS\n"..tostring(coins))
+	update_info()
 end
 
 local msg_chal = hash("chal")
@@ -99,6 +106,11 @@ function on_message(self, message_id, message, sender)
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 		end
+		node = gui.get_node("challenge_reward")
+		gui.set_text(node, "REWARD\n$"..message.reward.."\nX\nCOLORS USED")
+	elseif message_id == msg_chal_reward then
+		money = money + message.reward
+		update_info()
 	end
 end
 

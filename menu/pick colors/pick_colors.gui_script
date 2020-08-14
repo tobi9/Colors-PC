@@ -92,18 +92,18 @@ end
 local multiplier = 1
 local choose_random_colors = function()
 	tray = {}
-	local colors = Colors.retrieve_colors()
 	local container = {}
-	for k, v in ipairs(colors) do
---		if v[2] == true then
-			table.insert(container, v)
---		end
+	--I iterated over the unlocked colors table because assigning the unclocked color table directly
+	--to the container causes any operation performed on the container to affect the unlocked colors table(it is passed by
+	--reference not by value)
+	for k, v in ipairs(unlocked_colors_table) do
+		table.insert(container, v)
 	end
 	math.randomseed(os.time() * multiplier)
-	repeat	
+	repeat
 		local index = math.random(#container)
 		table.insert(tray, container[index])
-		table.remove(container, index)
+		table.remove(container, index) --prevents repitition of colours
 		multiplier = multiplier + 1
 	until(#tray == num_of_colors_picked)
 	set_box_colors()

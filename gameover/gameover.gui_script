@@ -113,7 +113,6 @@ local adj_currencies = hash("adjust_currencies")
 local landmark = hash("landmark")
 local msg_completed = hash("completed")
 local msg_chal = hash("chal")
---local strks = hash('streaks')
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_chal then
@@ -126,13 +125,9 @@ function on_message(self, message_id, message, sender)
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 		end
-	--[[elseif message_id == strks then
-		local color_streaks  = message.color
-		local word_streaks = message.word
-		local brake_score = message.fric
-		--instruct the challenge script to tell the challenges script to check any of 
-		--the challenges was completed
-		msg.post("main:/main#challenges", "check_challenges", {color = color_streaks, word = word_streaks, friction_status = friction_status, score = score, highscore = highscore})]]
+		node = gui.get_node("challenge_reward")
+		chal_reward = message.reward * NumOfColorsPicked
+		gui.set_text(node, "REWARD\n$"..chal_reward)
 	elseif message_id == adj_currencies then
 
 	elseif message_id == msg_completed then
