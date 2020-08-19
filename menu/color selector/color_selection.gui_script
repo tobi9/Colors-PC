@@ -12,7 +12,7 @@ local positions = {
 local page = 1
 local box_nodes = {}
 local text_nodes = {}
-local container -- this is the table that contains the unlocked colors
+local container = {} -- this is the table that contains the unlocked colors
 local disabled_box_nodes = {} -- this contains leftover unlocked colours that could'nt be spawned in the first page bcos of the limit 
 local disabled_text_nodes = {}
 
@@ -26,7 +26,9 @@ local next_grid = function(num)
 end
 
 local spawn_boxes = function()
-	container = unlocked_colors_table
+	for k, v in ipairs(unlocked_colors_table) do -- the reason for this is stated in the choose random colors function in the pick colors script
+		table.insert(container, v)
+	end
 	for k, v in ipairs(container) do
 		next_grid(k)
 		local size = vmath.vector3(200, 100, 0)

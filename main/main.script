@@ -38,13 +38,7 @@ local colorSelectorProxy = "#color_selector_proxy"
 local customizerProxy = "#customizer_proxy"
 local colorOptionsProxy = "#color_options_proxy"
 local lvl_loaded = false -- this variable makes sure the main input does not take action when another collectionproxy has been loaded
-local startButtonPos = vmath.vector3(320, 800, 0) -- the position of the start button
-local upgradeButtonPos = vmath.vector3(320, 600, 0) -- the position of the upgrades button
-local musicButtonPos = vmath.vector3(320, 400, 0) -- the position of the music button
-local leaveButtonPos = vmath.vector3(320, 200, 0) -- the position of the leave button
-local radius = vmath.vector3(150, 50, 0)
 main = "main:/main#main"
-colors_picked = nil -- the variables the controller, level and color scripts check to know the correct colors 
 
 local function load_menu()-- loads the menu collection
 	if sound_playing == false then
@@ -182,7 +176,7 @@ local function load_color_options()
 	msg.post(upgradesProxy, "unload")
 end
 
-local function unload_iap()
+local function unload_color_options()
 	msg.post(colorOptionsProxy, "unload")
 	msg.post(upgradesProxy, "load")
 end
@@ -240,7 +234,6 @@ function init(self)
 	--msg.post("#intro_proxy", "load")
 	load_menu()
 	window.set_listener(window_callback)
-	
 end
 
 function final(self)
