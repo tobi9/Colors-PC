@@ -3,10 +3,6 @@ fonts {
   name: "galindo"
   font: "/fonts/galindo.font"
 }
-textures {
-  name: "currency"
-  texture: "/currency.atlas"
-}
 background_color {
   x: 0.0
   y: 0.0
@@ -693,7 +689,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: ""
-  id: "_customize1"
+  id: "_board"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

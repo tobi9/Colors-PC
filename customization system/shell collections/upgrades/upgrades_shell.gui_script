@@ -1,10 +1,9 @@
 local Customizer = require("modules.customizer")
 local TouchFb = require("modules.animation")
-local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
+local col_name = "upgrades" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {--[['start', 'customize','upgrades', 'sound', 'exit',]]'title', '_start', '_customize', '_upgrades',
- '_sound', '_exit', "_board"}
+local node_strings = {'title', "_menu", "_board"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -12,12 +11,12 @@ function init(self)
 	--take a snapshot of the unaltered state of the collection
 	Customizer.take_snapshot(node_strings, node_colors)
 	-- node each node to its appropriate color
-	local box_nodes = {'title', '_start', '_customize','_upgrades', '_sound', '_exit', '_board'}
+	local box_nodes = {'title', "_menu", "_board"}
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, col_name)
 	end
 	msg.post(".", "acquire_input_focus")
-	msg.post(customizer_controller, "active_shell", {collection = "menu"})
+	msg.post(customizer_controller, "active_shell", {collection = "upgrades"})
 	--update the currency info
 	local m = gui.get_node("money")
     gui.set_text(m, "$"..tostring(money))
@@ -45,15 +44,10 @@ function on_message(self, message_id, message, sender)
 			Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 		else
 			local node_holder
-			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board"}
+			local nodes = {'title', "_menu", "_board"}
 			for k, v in ipairs(nodes) do
 				--this is because of the title. As not to mix up the box with the text
-				if k > 1 then
-					node_holder = gui.get_node("_"..v)
-				else
-					node_holder = gui.get_node(v)
-				end
-				--print("node", node_holder)
+				node_holder = gui.get_node(v)
 				Customizer.record_change(node_holder, ledger)
 				Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 			end
@@ -65,16 +59,16 @@ end
 local button_tapped
 local handle_input = function()
 	if button_tapped == "ok" then
-		msg.post(customizer_controller, "unload_menu_shell")
+		msg.post(customizer_controller, "unload_upgrades_shell")
 	elseif button_tapped == "undo" then
 		Customizer.undo_change(ledger)
 	elseif button_tapped == "clear_all" then
 		Customizer.clear_changes(node_strings, node_colors)
 	elseif button_tapped == "set_all" then
 		change_all = true
-		msg.post(customizer_controller, "load_palette", {collection = "menu"})
+		msg.post(customizer_controller, "load_palette", {collection = "upgrades"})
 	else
-		local buttons = {'title', "start", "customize","upgrades", "sound", "exit", "board", "clear_all", "undo", "ok"}
+		local buttons = {'title', "menu", "board"}
 		for k, v in ipairs(buttons) do
 			if button_tapped == v then
 					chosen_node = v
@@ -84,7 +78,7 @@ local handle_input = function()
 					else
 						node_holder = gui.get_node(chosen_node)
 					end
-					msg.post(customizer_controller, "load_palette", {collection = "menu"})
+					msg.post(customizer_controller, "load_palette", {collection = "upgrades"})
 				break 
 			end
 		end
@@ -95,7 +89,7 @@ end
 function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	if action_id == touch and action.released then
-		local buttons = {"start", "customize","upgrades", "sound", "exit", "board", "clear_all", "set_all", "undo", "ok"}
+		local buttons = {"menu", "board", "clear_all", "set_all", "undo", "ok"}
 		local title = gui.get_node('_title') -- this is specific because it's a box node that is to be invisible 
 		if gui.pick_node(title, action.x, action.y) then
 			button_tapped = 'title'

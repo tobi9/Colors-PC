@@ -767,7 +767,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
@@ -827,7 +827,7 @@ nodes {
   line_break: false
   layer: "exit_prompt"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -884,7 +884,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -938,7 +938,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.0
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_AUTO
 }
@@ -997,7 +997,7 @@ nodes {
   line_break: false
   layer: "exit_prompt"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -1059,7 +1059,7 @@ nodes {
   line_break: false
   layer: "exit_prompt"
   inherit_alpha: true
-  alpha: 0.0
+  alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false

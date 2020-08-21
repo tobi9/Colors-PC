@@ -24,6 +24,18 @@ end
 
 function init(self)
     msg.post(".", 'acquire_input_focus')
+    -- node each node to its appropriate color
+    local Customizer = require("modules.customizer")
+    local col_name = "upgrades" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes = {'title', "_menu", "_board"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, col_name)
+    end
+    -- set the button labels on the board to the board's color
+    local labels = {"brake_plus", "live_plus", "coin_plus", "unlck_clr", "gift", "dls", "get_money_txt"}
+    for k, v in ipairs(labels) do
+        gui.set_color(gui.get_node(v), gui.get_color(gui.get_node("_board")))
+    end
     update_info()
 end
 

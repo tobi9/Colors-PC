@@ -7,8 +7,8 @@ local button_tapped = nil
 --These tables are needed to show the exit prompt
 local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
 local menu_nodes = {'title', 'start', "_start", "upgrades", "_upgrades", "sound", 
-"_sound", "exit", "_exit", "_customize", "customize", "board", "brakes", "lives", "coins",
-"money", "challenge_txt", "challenge", "_chal_but", "chal_but"}
+"_sound", "exit", "_exit", "_customize", "customize", "_board", "brakes", "lives", "coins",
+"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward"}
 local is_exit_prompt_active
 
 local chal_status -- this is the status of the challenge. It is true if the challenge has been passed and false otherwise
@@ -70,15 +70,13 @@ function init(self)
 	req_challenge()
 	msg.post(".", "acquire_input_focus")
 	-- node each node to its appropriate color
-	local text_nodes = {'start', 'customize','upgrades', 'sound', 'exit'}
-	local box_nodes = {'title', '_start', '_customize', '_upgrades', '_sound', '_exit'}
-	--[[for k, v in ipairs(text_nodes) do
-		Customizer.set_node_color(v, default_text_clr_info, col_name)
-	end
+	local box_nodes = {'title', '_start', '_customize','_upgrades', '_sound', '_exit', '_board'}
 	for k, v in ipairs(box_nodes) do
-		Customizer.set_node_color(v, default_box_clr_info, col_name)
-	end]]
-
+		Customizer.set_node_color(v, --[[default_box_clr_info,]] col_name)
+	end
+	--set chal_but to _board's color
+	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
+	
 	Prompt.prompt(exit_dialogue_nodes, menu_nodes)
 	is_exit_prompt_active = false
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
@@ -121,7 +119,6 @@ function final(self)
 	local tab = {chal_changes_allowed}
 	sys.save(file, tab)
 end
-
 -- action ids
 local touch = hash('touch')
 local back = hash('back')

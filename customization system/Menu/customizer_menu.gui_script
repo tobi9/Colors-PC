@@ -22,11 +22,14 @@ local handle_input = function()
 	elseif button_tapped == "_menucol" then
 		--load the menu shell
 		msg.post(customizer_controller, "load_menu_shell")
+	elseif button_tapped == "_upgradescol" then
+		--load the shop shell
+		msg.post(customizer_controller, "load_upgrades_shell")
 	end
 end
 
 function on_input(self, action_id, action)
-	local nodes = {"_menu", "_menucol"}
+	local nodes = {"_menu", "_menucol", "_upgradescol"}
 	local touch = hash("touch")
 
 	if action_id == touch and action.released then

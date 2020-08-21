@@ -12,7 +12,7 @@ background_color {
 nodes {
   position {
     x: 320.0
-    y: 1090.0
+    y: 1100.0
     z: 0.1
     w: 1.0
   }
@@ -105,7 +105,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: ""
-  id: "board"
+  id: "_board"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

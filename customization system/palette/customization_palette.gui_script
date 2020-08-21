@@ -13,9 +13,6 @@ local box_nodes = {}
 local text_nodes = {}
 
 
-local color_container = {}
-local leftover_colors = {}
-local page = 1
 local spawn_boxes = function(tab)	
 	local pos
 	for k, v in ipairs(tab) do
@@ -36,21 +33,7 @@ end
 function init(self)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
-	--retrieve the colors from memory
-	local colors = Colors.retrieve_colors()
-	local cutoff = #positions
-	for k, v in ipairs(colors) do
-		if k <= cutoff then
---			if v[2] == true then
-				table.insert(color_container, v)
---			end
-		else
---			if v[2] == true then
-				table.insert(leftover_colors, v)
---			end
-		end
-	end
-	spawn_boxes(color_container)
+	spawn_boxes(unlocked_colors_table)
 end
 
 function final(self)
@@ -60,24 +43,7 @@ end
 local button_tapped
 
 local handle_input = function()
-	if button_tapped == "_change_page" then
-		for k , v in ipairs(box_nodes) do
-			gui.delete_node(v)
-			gui.delete_node(text_nodes[k])
-		end
-		box_nodes = {}
-		text_nodes = {}
-		if page == 1 then
-			spawn_boxes(leftover_colors)
-		else
-			spawn_boxes(color_container)
-		end
-		if page == 1 then
-			page = 2
-		else
-			page = 1
-		end	
-	elseif button_tapped == "_ok" then
+	if button_tapped == "_ok" then
 		msg.post(customizer_controller, "unload_palette")
 	elseif button_tapped == "_cancel" then
 		color_chosen = nil
@@ -89,7 +55,7 @@ local pkd_tab = {} -- contains the id of the text node set to picked
 function on_input(self, action_id, action)
 	local touch = hash("touch")
 	if action_id == touch and action.released then
-		local buttons = {"_change_page", "_ok", "_cancel"}
+		local buttons = {"_ok", "_cancel"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
 			if gui.pick_node(node, action.x, action.y) then
@@ -102,11 +68,7 @@ function on_input(self, action_id, action)
 		for k, v in ipairs(box_nodes) do
 			if gui.pick_node(v, action.x, action.y) then
 				button_tapped = nil
-				if page == 1 then
-					color_chosen = color_container[k]
-				else
-					color_chosen = leftover_colors[k]
-				end
+				color_chosen = unlocked_colors_table[k]
 				if #pkd_tab == 0 then
 					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
 				else

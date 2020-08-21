@@ -9,7 +9,7 @@ local function hide_exit_prompt()
 	end
 	local node_strings = {'paused', "_resume", "_restart", "_sound",
 	"_menu", 'resume', 'restart', 'sound', 'menu', 'show_ad', 'ad_text', "board", "brakes", "lives", "coins",
-	"money", "challenge_txt", "challenge", "_chal_but", "chal_but"}
+	"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward"}
 	for i in ipairs(node_strings) do
 		local node = gui.get_node(node_strings[i])
 		gui.set_enabled(node, true)
@@ -26,7 +26,7 @@ local function show_exit_prompt()
 	local text = gui.get_node('exit_text')
 	local node_strings = {'paused', "_resume", "_restart", "_sound",
 	"_menu", 'resume', 'restart', 'sound', 'menu', 'show_ad', 'ad_text', "board", "brakes", "lives", "coins",
-	"money", "challenge_txt", "challenge", "_chal_but", "chal_but"}
+	"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward"}
 	for i in ipairs(node_strings) do
 		local node = gui.get_node(node_strings[i])
 		gui.set_enabled(node, false)
