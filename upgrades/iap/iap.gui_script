@@ -1,4 +1,4 @@
--- in app purchase stuff
+--in app purchase stuff
 local p1 = 'package1'
 local p2 = 'package2'
 local p3 = 'package3'
@@ -59,30 +59,6 @@ local TouchFb = require("modules.animation")
 
 function init(self)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
-	local function animate_button(node)
-		gui.animate(node, "rotation.z", 1, gui.EASING_OUTSINE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
-	end
-
-	local function animate_menu(nodes)
-		for i in ipairs(nodes) do
-			animate_button(nodes[i])
-		end
-	end
-
-	local node_table = {}-- each gui script has its own node_table
-
-	local function get_nodes(string_table)
-		for i in ipairs(string_table) do
-			table.insert(node_table, gui.get_node(string_table[i]))
-		end
-	end
-
-	local node_strings = {'p1', 'p2', 'p3', 'gold', 'diamonds', 'menu', '_menu', 'c1g', 'c1d', 'c1g1',
-	'c1d1', 'c1d2', 'c1g2', 'price1', 'price2', 'price3'}
-	get_nodes(node_strings)
-	animate_menu(node_table)
-	local title = gui.get_node("title")
-	gui.animate(title , "position.y", 1020, gui.EASING_INBOUNCE, 5, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	msg.post(".", "acquire_input_focus")
 	-- initiate  a fetch of products 
 	iap.list({ p1, p2, p3}, product_list)

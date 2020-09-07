@@ -62,7 +62,8 @@ local update_info = function()
     gui.set_text(b, "BRAKES\n"..tostring(brakes))
     local l = gui.get_node("lives")
     gui.set_text(l, "LIVES\n"..tostring(lives))
-    local c = gui.get_node("coins")
+	local c = gui.get_node("coins")
+	print(coins)
     gui.set_text(c, "COINS\n"..tostring(coins))
 end
 

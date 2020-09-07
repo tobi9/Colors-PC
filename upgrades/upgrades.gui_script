@@ -82,7 +82,7 @@ local handle_input = function()
     elseif button_tapped == "get_money" then
         msg.post(main, "load_iap")
     elseif button_tapped == "deals" then
-        msg.post(main, "load_iap")
+        msg.post(main, "load_sales", {caller = 'upgrades'})
     end
     update_info()
 end

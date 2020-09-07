@@ -31,6 +31,7 @@ local pickColorsProxy = "#pick_colors_proxy"
 local colorSelectorProxy = "#color_selector_proxy"
 local customizerProxy = "#customizer_proxy"
 local colorOptionsProxy = "#color_options_proxy"
+local salesProxy = "#sales_proxy"
 local lvl_loaded = false -- this variable makes sure the main input does not take action when another collectionproxy has been loaded
 main = "main:/main#main"
 
@@ -175,6 +176,16 @@ local function unload_color_options()
 	msg.post(upgradesProxy, "load")
 end
 
+local function load_sales(caller)
+	msg.post(caller, "unload")
+	msg.post(salesProxy, "load")
+end
+
+local function unload_sales(caller)
+	msg.post(salesProxy, "unload")
+	msg.post(caller, "load")
+end
+
 -- this function pauses the game if event focus is lost
 local function window_callback(self, event, data) --gamePaused is declared in the main script
 	if event == window.WINDOW_EVENT_FOCUS_LOST and lvl_loaded == true and gamePaused == false then
@@ -228,6 +239,7 @@ end
 local ad_caller
 
 function on_message(self, message_id, message, sender)
+	local sales_caller -- after loading the sales collection it holds the location of the caller 
 	--message ids
 	local start = hash("start")
 	local load_lvl = hash("load_level")
@@ -256,6 +268,8 @@ function on_message(self, message_id, message, sender)
 	local unld_customizer = hash("unload_customizer")
 	local load_clr_options = hash("load_color_options")
 	local unload_clr_options = hash("unload_color_options")
+	local ld_sales = hash("load_sales")
+	local unld_sales = hash("unload_sales")
 	if message_id == start then
 		load_color_menu()
 		unload_menu()
@@ -358,5 +372,14 @@ function on_message(self, message_id, message, sender)
 		load_color_options()
 	elseif message_id == unload_clr_options then
 		unload_color_options()
+	elseif message_id == ld_sales then
+		if message.caller == "upgrades" then
+			sales_caller = upgradesProxy
+		else
+			sales_caller = iapProxy
+		end
+		load_sales(sales_caller)
+	elseif message_id == unld_sales then
+		unload_sales(sales_caller)
 	end
 end

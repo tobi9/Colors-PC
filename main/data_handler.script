@@ -54,6 +54,7 @@ end
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day}
+	print(coins)
 	for i, v in ipairs(values) do
 		table.insert(data, i,encode(tostring(v)))
 	end
@@ -75,10 +76,11 @@ function final(self)
 	save_data()
 end
 
-local msg_save_data = hash("msg_save_data") 
+local msg_save_data = hash("save_data") 
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_save_data then
+		print('shahas')
 		save_data()
 	end
 end

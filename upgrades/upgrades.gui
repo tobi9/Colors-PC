@@ -1425,7 +1425,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "AMAZING DEALS !!"
+  text: "WEELKY SALES"
   font: "galindo"
   id: "deals_txt"
   xanchor: XANCHOR_NONE
