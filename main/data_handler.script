@@ -54,7 +54,6 @@ end
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day}
-	print(coins)
 	for i, v in ipairs(values) do
 		table.insert(data, i,encode(tostring(v)))
 	end
@@ -63,6 +62,7 @@ end
 
 function init(self)
 	retrieve_data()
+	print(get_day(os.time()))
 	--calculate the daily reward
 	if last_day == nil or get_day(os.time()) - last_day == 1 then
 		daily_reward_streak = daily_reward_streak + 1

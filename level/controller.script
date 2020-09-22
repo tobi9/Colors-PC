@@ -3,19 +3,19 @@ local Color = require("modules.colors")
 local colorFac = '#color_factory' -- this is the game object to be spawned 
 local spawn_pos = vmath.vector3(-160, 650, 0.1)-- where the game objects are to be spawned
 local color = nil -- this variable contains the factory of the game object that will b spawned
-spawn = nil -- the id of the spawned game object it is also a global variable it is needed by the input script
+spawn = nil -- the id of the spawned game object it is also a global variable it is needed by the level gui script
 answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script
 level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
-speed = 300 --pixels per second ^ 2
+speed = 5
 total_spawns = 0 
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
 
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
 	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
 	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
-	if speed < 600 then
-		speed = speed + 5
+	if speed < 9 then -- 9 is the max speed
+		speed = speed + 0.05
 	end
 	total_spawns = total_spawns + 1
 end

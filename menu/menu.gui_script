@@ -9,8 +9,9 @@ local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_e
 local menu_nodes = {'title', 'start', "_start", "upgrades", "_upgrades", "sound", 
 "_sound", "exit", "_exit", "_customize", "customize", "_board", "brakes", "lives", "coins",
 "money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward"}
+local chal_prompt_nodes = {"chal_dialogue_box", "chal_prompt", "yes_chal", "yes1", "no_chal", "no1"}
 local is_exit_prompt_active
-
+local is_chal_prompt_active
 local chal_status -- this is the status of the challenge. It is true if the challenge has been passed and false otherwise
 chal_changes_allowed = nil -- the number of times the player can change the challenge it is a global variable
 
@@ -35,20 +36,42 @@ local function handle_input()
 			msg.post("main:/main#challenges", "change_challenge")
 			timer.delay(0.001, false, req_challenge)
 		else
-			--[[if chal_changes_allowed > 0 then
-				chal_changes_allowed = chal_changes_allowed - 1]]
-				msg.post("main:/main#challenges", "change_challenge")
-				timer.delay(0.001, false, req_challenge)
-			--end
+			Prompt.prompt(menu_nodes, chal_prompt_nodes)
+			local node = gui.get_node("chal_prompt")
+			local text
+			if chal_changes_allowed > 0 then
+				text = "CHANGE CHALLENGE\nChanges left\n"..chal_changes_allowed.."\n Are you sure ?"
+			else
+				text = "CHANGE CHALLENGE\nCoins left\n"..coins.."\nit will cost 2 COINS ?"
+			end
+			gui.set_text(node, text)
+			is_chal_prompt_active = true
 		end
 	elseif button_tapped == 'exit' then
-		Prompt.prompt(menu_nodes, exit_dialogue_nodes, is_exit_prompt_active)
+		Prompt.prompt(menu_nodes, exit_dialogue_nodes)
 		is_exit_prompt_active = true
 	elseif button_tapped == 'yes' then
 		msg.post("@system:", "exit", {code = 0})
-	else
-		Prompt.prompt(exit_dialogue_nodes, menu_nodes, is_exit_prompt_active)
+	elseif button_tapped == 'no' then
+		Prompt.prompt(exit_dialogue_nodes, menu_nodes)
 		is_exit_prompt_active = false
+	elseif button_tapped == 'yes_chal' then
+		if chal_changes_allowed > 0 then
+			chal_changes_allowed = chal_changes_allowed - 1
+			msg.post("main:/main#challenges", "change_challenge")
+			timer.delay(0.001, false, req_challenge)
+		elseif coins > 0 then
+			coins = coins - 2 --the player can change the challenge for two coins
+			local c = gui.get_node("coins")
+			gui.set_text(c, "COINS\n"..tostring(coins))		
+			msg.post("main:/main#challenges", "change_challenge")
+			timer.delay(0.001, false, req_challenge)
+		end
+		Prompt.prompt(chal_prompt_nodes, menu_nodes)
+		is_chal_prompt_active = false
+	elseif button_tapped == 'no_chal' then
+		Prompt.prompt(chal_prompt_nodes, menu_nodes)
+		is_chal_prompt_active = false
 	end
 end
 
@@ -63,8 +86,7 @@ local update_info = function()
     local l = gui.get_node("lives")
     gui.set_text(l, "LIVES\n"..tostring(lives))
 	local c = gui.get_node("coins")
-	print(coins)
-    gui.set_text(c, "COINS\n"..tostring(coins))
+	gui.set_text(c, "COINS\n"..tostring(coins))
 end
 
 function init(self)
@@ -79,7 +101,9 @@ function init(self)
 	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
 	
 	Prompt.prompt(exit_dialogue_nodes, menu_nodes)
+	Prompt.prompt(chal_prompt_nodes, menu_nodes)
 	is_exit_prompt_active = false
+	is_chal_prompt_active = false
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	-- retrive the value from memory or set it to the default
 	local folder = "Trick Colors Test"
@@ -133,8 +157,9 @@ function on_input(self, action_id, action)
 		local chal_but = gui.get_node("_chal_but")
 		local yes = gui.get_node("yes_exit")
 		local no = gui.get_node("no_exit")
-		--main = "main:/main#main"
-		if is_exit_prompt_active == false then
+		local yes_chal = gui.get_node("yes_chal")
+		local no_chal = gui.get_node("no_chal")
+		if is_exit_prompt_active == false and is_chal_prompt_active == false then
 			if gui.pick_node(start, action.x, action.y) then
 				button_tapped = 'start'
 				TouchFb.touch_feedback(start, handle_input)
@@ -154,7 +179,7 @@ function on_input(self, action_id, action)
 				button_tapped = 'chal_but'
 				TouchFb.touch_feedback(chal_but, handle_input)
 			end
-		else
+		elseif is_exit_prompt_active then
 			if gui.pick_node(yes, action.x, action.y) then
 				button_tapped = 'yes'
 				TouchFb.touch_feedback(yes, handle_input)
@@ -162,14 +187,27 @@ function on_input(self, action_id, action)
 				button_tapped = 'no'
 				TouchFb.touch_feedback(no,handle_input)
 			end
+		elseif is_chal_prompt_active then
+			if gui.pick_node(yes_chal, action.x, action.y) then
+				button_tapped = 'yes_chal'
+				TouchFb.touch_feedback(yes_chal, handle_input)
+			elseif gui.pick_node(no_chal, action.x, action.y) then
+				button_tapped = 'no_chal'
+				TouchFb.touch_feedback(no_chal , handle_input)
+			end
 		end
 	elseif action_id == back then
 		if is_exit_prompt_active == false then
 			button_tapped = 'exit'
 			TouchFb.touch_feedback(exit, handle_input)
 		else
-			Prompt.prompt(exit_dialogue_nodes, menu_nodes)
-			is_exit_prompt_active = false
+			if is_exit_prompt_active then
+				Prompt.prompt(exit_dialogue_nodes, menu_nodes)
+				is_exit_prompt_active = false
+			else
+				Prompt.prompt(chal_prompt_nodes, menu_nodes)
+				is_chal_prompt_active = false
+			end
 		end
 	end
 end

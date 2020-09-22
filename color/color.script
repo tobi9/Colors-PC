@@ -12,10 +12,11 @@ local answer_type -- this variable is needed by the controller script in ascerta
 local answer = nil -- this is the value the script sends so it can be compared with the button the was clicked
 
 local movement  = function (self)
-	pos.x = pos.x + 5
+	pos.x = pos.x + speed
 	go.set_position(pos)
 	msg.post("#", "check_pos")
 end
+
 
 local check_pos = function (self)
 	pos = go.get_position()
@@ -24,23 +25,25 @@ local check_pos = function (self)
 	else
 		if answered == false then
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
-			chances = 0--chances - 1
-			if chances <= 0 then
-				chances = p_chances
+			if lives == 0 then
 				msg.post(main, "gameover")
+			else
+				msg.post(level_gui, "show_prompt", {situation = "gameover"})
 			end
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
-			msg.post(level_gui, "adjust_chances")
 		end
 		go.delete() -- the go deletes after it passes 700 on the x-axis
 	end
 end	
 
 function init(self)
+	if ad_for_hints_played == false and speed > 7 then -- video_watched is a global varible declared in the controller script
+		msg.post(level_gui, "show_prompt", {situation = "hints"})
+	end
 	--CHECK HERE FOR BUGS
 	my_words = color_strings
 	my_colors = colors
-	timer.delay(0.5, false, check_pos)
+	timer.delay(0, false, check_pos)
 	math.randomseed(os.time()*1001)
 	self.color_ptr = math.random(#my_colors)-- position of the color in the table
 	color = my_colors[self.color_ptr]
@@ -57,14 +60,17 @@ end
 
 local answer = nil -- this is the value the script sends so it can be compared with the button the was clicked
 local hint
+local current_speed -- records the speed of the object at the time the prompt was shown
 --message ids
 local color_is = hash("your_color_is")
 local check_this = hash("check_this")
 local msg_check_pos = hash("check_pos")
+local msg_hide = hash("hide")
+local msg_unhide = hash("unhide")
 
 function on_message(self, message_id, message, sender)
 	if message_id == color_is then
-		if question == "What Word ?" then -- this sets the answer to any of the questions so it can be sent to the input
+		if question == "WHAT WORD ?" then -- this sets the answer to any of the questions so it can be sent to the input
 			answer = my_word
 			hint = self.word_ptr
 			answer_type = "word"
@@ -83,16 +89,21 @@ function on_message(self, message_id, message, sender)
 		else
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
-			chances = 0--chances - 1
-			if chances <= 0 then
-				chances = p_chances
+			if lives == 0 then
 				msg.post(main, "gameover")
-				msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
+			else
+				msg.post(level_gui, "show_prompt", {situation = "gameover"})
 			end
-			msg.post(level_gui, "adjust_chances")
 		end
 		answered = true -- this is a global variable declared in the controller script
 	elseif message_id == msg_check_pos then
 		check_pos()
+	elseif message_id == msg_hide then
+		current_speed = speed
+		speed = 0
+		label.set_text("#label", " ")
+	elseif message_id == msg_unhide then
+		label.set_text("#label", my_word)
+		speed = current_speed
 	end
 end

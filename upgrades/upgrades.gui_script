@@ -4,7 +4,7 @@ local input_nodes = {"_menu", 'buy_brakes', 'buy_lives', 'buy_coins', 'unlck_clr
 
 --prices of the commodities sold in the shop and their currencies
 local brake_price = 50 -- $
-local live_price = 2 -- coins
+local live_price = 5 -- coins
 local coin_price = 3000 -- $
 
 local update_info = function()
@@ -18,11 +18,66 @@ local update_info = function()
     gui.set_text(c, "COINS\n"..tostring(coins))
     local u = gui.get_node("unlckd_clrs")
     local Colors = require("modules.colors")
-    local len = tostring(Colors.check_len_of_unlkd_clrs())
+    local len = #unlocked_colors_table
     gui.set_text(u, len)
 end
 
+--Countdown timer stuff
+local is_timer_zero -- a boolean value true if timer is on 0 and false if timer > 0
+local duration
+
+local start_countdown = function()
+    if duration > 0 then
+        duration = duration - 1
+    end
+    local sec = duration % 60
+    if sec < 10 then
+        sec = "0"..sec
+    end
+    local min = math.floor(duration/60) % 60
+    if min < 10 then
+        min = "0"..min
+    end
+    local hour = math.floor(math.floor(duration/60)/60)
+    if hour < 10 then
+        hour = "0"..hour
+    end
+    local countdown_node = gui.get_node('gift')
+    gui.set_text(countdown_node, hour..":"..min..":"..sec)
+    if duration > 0 then
+        msg.post(".", "continue_countdown")
+    else
+        msg.post(".", "countdown_done")        
+    end
+end
+
+local clear_info = function()
+    local node = gui.get_node("info")
+    gui.set_text(node, " ")
+end
+
+
 function init(self)
+    math.randomseed(os.time() * 1007)
+    --retrieve countdown data
+    local folder = "tc2 test"
+    local file = sys.get_save_file(folder, "countdown_data")
+    local table = sys.load(file)
+    if #table ~= 0 then
+        local elapsed_time = os.time() - table[1] --calculate how many seconds have passed since the last exit.table[1] is the time of exit 
+        local time_left = table[2] - elapsed_time -- calulate how much time left the countdown has. table[2] is the duration of the coundown at exit
+        if time_left <= 0 then
+            duration = 0
+        else
+            duration = time_left
+        end
+        is_timer_zero = false
+        start_countdown()    
+    else
+        duration = 0
+        start_countdown()
+    end
+    
     msg.post(".", 'acquire_input_focus')
     -- node each node to its appropriate color
     local Customizer = require("modules.customizer")
@@ -37,6 +92,14 @@ function init(self)
         gui.set_color(gui.get_node(v), gui.get_color(gui.get_node("_board")))
     end
     update_info()
+end
+
+function final(self)
+    local exit_time = os.time()
+    local folder = "tc2 test"
+    local file = sys.get_save_file(folder, "countdown_data")
+    local table = {exit_time, duration}
+    sys.save(file, table)
 end
 
 local clear_info = function()
@@ -78,7 +141,18 @@ local handle_input = function()
     elseif button_tapped == "unlck_clrs" then
         msg.post(main, "load_color_options")
     elseif button_tapped == "daily_gift" then
-        msg.post(main, "show_ad")
+        local node = gui.get_node("info")
+        if is_timer_zero then
+            if sys.get_connectivity() ~= sys.NETWORK_DISCONNECTED then
+                msg.post(main, "show_ad")
+            else
+                gui.set_text(node, "CONNECT TO\nTHE INTERNET")
+                timer.delay(1, false, clear_info)
+            end
+        else
+            gui.set_text(node, "COME BACK\nLATER")
+            timer.delay(1, false, clear_info)
+        end
     elseif button_tapped == "get_money" then
         msg.post(main, "load_iap")
     elseif button_tapped == "deals" then
@@ -87,6 +161,52 @@ local handle_input = function()
     update_info()
 end
 
+--message ids
+local cont_countdown = hash('continue_countdown')
+local countdown_done = hash('countdown_done')
+local msg_completed = hash('completed')
+function on_message(self, message_id, message, sender)
+    if message_id == cont_countdown then
+        timer.delay(0.5, false, start_countdown) -- The delay is not set to 1 because it's slower
+    elseif message_id == countdown_done then
+        local countdown_node = gui.get_node('gift')
+        gui.set_text(countdown_node, "WATCH\nVIDEO")
+        is_timer_zero = true    
+    elseif message_id == msg_completed then
+        local gifts = {
+            --cash
+            50, 100, 250, 500,
+            --brakes
+            2, 3, 4, 5,
+            --lives
+            1, 2, 3,
+            --coins
+            5, 10, 20
+        }
+        local random_key = math.random(#gifts)
+        local node = gui.get_node("info")
+        if random_key <= 4 then
+            money = money + gifts[random_key]
+            gui.set_text(node, "YOU GOT\n$"..gifts[random_key])
+            timer.delay(1, false, clear_info)
+        elseif random_key > 4 and random_key <= 8 then
+            brakes = brakes + gifts[random_key]
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."BRAKES")
+            timer.delay(1, false, clear_info)
+        elseif random_key > 8 and random_key <= 11 then
+            lives = lives + gifts[random_key]
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."LIVES")
+            timer.delay(1, false, clear_info)
+        elseif random_key > 11 then
+            coins = coins + gifts[random_key]
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."COINS")
+            timer.delay(1, false, clear_info)
+        end
+        --set the countdown to 24 hours 
+        duration = 86400
+        start_countdown()
+    end
+end
 local touch = hash("touch")
 function on_input(self, action_id, action)
     if action_id == touch and action.released then

@@ -2,9 +2,12 @@ INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
 
-INFO:ADMOB: init
-DEBUG:SCRIPT: 3020
+DEBUG:SCRIPT: 18526
+ERROR:SCRIPT: /ads/ads.script:28: attempt to index global 'admob' (a nil value)
+stack traceback:
+	/ads/ads.script:28: in function </ads/ads.script:27>
+WARNING:DLIB: Profiler Engine.Init took 2.038 seconds
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-DEBUG:SCRIPT: 3020
-INFO:SOUND: Waiting for OpenAL device to complete
+INFO:DLIB: SSDP: Started on address 192.168.43.132
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132

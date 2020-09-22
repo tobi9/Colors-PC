@@ -159,7 +159,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "MENU"
+  text: "BACK"
   font: "galindo"
   id: "menu"
   xanchor: XANCHOR_NONE
