@@ -70,7 +70,7 @@ local msg_unhide = hash("unhide")
 
 function on_message(self, message_id, message, sender)
 	if message_id == color_is then
-		if question == "WHAT WORD ?" then -- this sets the answer to any of the questions so it can be sent to the input
+		if question == "WHAT WORD?" then -- this sets the answer to any of the questions so it can be sent to the input
 			answer = my_word
 			hint = self.word_ptr
 			answer_type = "word"

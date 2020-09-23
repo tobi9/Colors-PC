@@ -26,10 +26,10 @@ local option_nodes = {} -- this table is need to set the correct colors
 local function set_question()
 	local top_node = gui.get_node("question")
 	local mid_node = gui.get_node("question1")
-	if question == "WHAT WORD ?" or question == nil then
-		question = "WHAT COLOR ?"
+	if question == "WHAT WORD?" or question == nil then
+		question = "WHAT COLOR?"
 	else
-		question = "WHAT WORD ?"
+		question = "WHAT WORD?"
 	end
 	gui.set_text(top_node, question)
 	gui.set_text(mid_node, question)
@@ -101,6 +101,17 @@ function init(self)
 			gui.set_enabled(text, false)
 		end
 	end
+	local Customizer = require("modules.customizer")
+	-- node each node to its appropriate color
+	local col_name = "level" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes = {"score", 'question', "pause", "_brakes", "brakes"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, --[[default_box_clr_info,]] col_name)
+	end
+	--set question1 to question's color
+	local clr = gui.get_color(gui.get_node("question"))
+	clr.w = 0.32 -- set the alpha
+	gui.set_color(gui.get_node("question1"), clr)
 end
 
 function final(self)

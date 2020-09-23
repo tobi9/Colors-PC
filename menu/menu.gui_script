@@ -1,5 +1,5 @@
 local TouchFb = require("modules.animation")
-local Colors = require("modules.colors")
+--local Colors = require("modules.colors")
 local Prompt = require("modules.prompt")
 
 local button_tapped = nil
@@ -75,7 +75,6 @@ local function handle_input()
 	end
 end
 
-local Customizer = require("modules.customizer")
 local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
 
 local update_info = function()
@@ -92,6 +91,7 @@ end
 function init(self)
 	req_challenge()
 	msg.post(".", "acquire_input_focus")
+	local Customizer = require("modules.customizer")
 	-- node each node to its appropriate color
 	local box_nodes = {'title', '_start', '_customize','_upgrades', '_sound', '_exit', '_board'}
 	for k, v in ipairs(box_nodes) do

@@ -5,6 +5,7 @@ local customizer_menu_proxy = "#customizer_menu_proxy"
 local menu_shell_proxy = "#menu_shell_proxy"
 local upgrades_shell_proxy = "#upgrades_shell_proxy"
 local palette_proxy = "#palette_proxy"
+local level_shell_proxy = "#level_shell_proxy"
 
 local load_col = function(col)
 	msg.post(col, "load")
@@ -46,6 +47,8 @@ function on_message(self, message_id, message, sender)
 	local ld_palette = hash("load_palette")
 	local unld_palette = hash("unload_palette")
 	local actv_shl = hash("active_shell")
+	local ld_lvl_shl = hash("load_level_shell")
+	local unld_lvl_shl = hash("unload_level_shell")
 	if message_id == proxy_loaded then
 		msg.post(sender, "init")
 		msg.post(sender, "enable")
@@ -72,5 +75,11 @@ function on_message(self, message_id, message, sender)
 		unload_col(palette_proxy)
 		local receiver = active_col.."_shell:/"..active_col.."#"..active_col.."_shell"
 		msg.post(receiver, "enabled")
+	elseif message_id == ld_lvl_shl then
+		load_col(level_shell_proxy)
+		unload_col(customizer_menu_proxy)
+	elseif message_id == unld_lvl_shl then
+		unload_col(level_shell_proxy)
+		load_col(customizer_menu_proxy)
 	end
 end

@@ -1,9 +1,9 @@
 local Customizer = require("modules.customizer")
 local TouchFb = require("modules.animation")
-local col_name = "upgrades" -- this is needed by the customizer to avoid conflicts in memory
+local col_name = "level" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {'title', "_menu", "_board"}
+local node_strings = {"score", 'question', "pause", "_brakes", "brakes"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -11,21 +11,14 @@ function init(self)
 	--take a snapshot of the unaltered state of the collection
 	Customizer.take_snapshot(node_strings, node_colors)
 	-- node each node to its appropriate color
-	local box_nodes = {'title', "_menu", "_board"}
-	for k, v in ipairs(box_nodes) do
+	for k, v in ipairs(node_strings) do
 		Customizer.set_node_color(v, col_name)
 	end
 	msg.post(".", "acquire_input_focus")
-	msg.post(customizer_controller, "active_shell", {collection = "upgrades"})
+	msg.post(customizer_controller, "active_shell", {collection = col_name})
 	--update the currency info
-	local m = gui.get_node("money")
-    gui.set_text(m, "$"..tostring(money))
     local b = gui.get_node("brakes")
-    gui.set_text(b, "BRAKES\n"..tostring(brakes))
-    local l = gui.get_node("lives")
-    gui.set_text(l, "LIVES\n"..tostring(lives))
-    local c = gui.get_node("coins")
-    gui.set_text(c, "COINS\n"..tostring(coins))
+    gui.set_text(b,brakes)
 end
 
 function final(self)
@@ -45,9 +38,8 @@ function on_message(self, message_id, message, sender)
 		else
 			-- This sets all the nodes to a particular color
 			local node_holder
-			local nodes = {'title', "_menu", "_board"}
 			if color_chosen ~= nil then
-				for k, v in ipairs(nodes) do
+				for k, v in ipairs(node_strings) do
 					--this is because of the title. As not to mix up the box with the text
 					node_holder = gui.get_node(v)
 					Customizer.record_change(node_holder, ledger)
@@ -61,46 +53,54 @@ end
 
 local button_tapped
 local handle_input = function()
-	if button_tapped == "ok" then
-		msg.post(customizer_controller, "unload_upgrades_shell")
-	elseif button_tapped == "undo" then
+	if button_tapped == "_ok" then
+		msg.post(customizer_controller, "unload_level_shell")
+	elseif button_tapped == "_undo" then
 		Customizer.undo_change(ledger)
-	elseif button_tapped == "clear_all" then
+	elseif button_tapped == "_clear_all" then
 		Customizer.clear_changes(node_strings, node_colors)
-	elseif button_tapped == "set_all" then
+	elseif button_tapped == "_set_all" then
 		change_all = true
-		msg.post(customizer_controller, "load_palette", {collection = "upgrades"})
+		msg.post(customizer_controller, "load_palette", {collection = col_name})
 	else
-		local buttons = {'title', "menu", "board"}
-		for k, v in ipairs(buttons) do
+		--local buttons = {"score", 'question', "pause", "_brakes", "brakes", }
+		for k, v in ipairs(node_strings) do
 			if button_tapped == v then
 					chosen_node = v
-					--this is because of the title. As not to mix up the box with the text
-					if k > 1 then
-						node_holder = gui.get_node("_"..chosen_node)
-					else
 						node_holder = gui.get_node(chosen_node)
-					end
-					msg.post(customizer_controller, "load_palette", {collection = "upgrades"})
+					msg.post(customizer_controller, "load_palette", {collection = col_name})
 				break 
 			end
 		end
 	end
 	button_tapped = nil
+	local transperent_qst = gui.get_node("question")
+	gui.set_inherit_alpha(transperent_qst, 0.22)
 end
 
 function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	if action_id == touch and action.released then
-		local buttons = {"menu", "board", "clear_all", "set_all", "undo", "ok"}
-		local title = gui.get_node('_title') -- this is specific because it's a box node that is to be invisible 
-		if gui.pick_node(title, action.x, action.y) then
-			button_tapped = 'title'
-			local node = gui.get_node("title")
+		local buttons = {"_brakes", "pause", "_clear_all", "_set_all", "_undo", "_ok"}
+		-- this is specific because it's a box node that is to be invisible 
+		local score = gui.get_node("_score")
+		local question = gui.get_node("_question")
+		local brakes1 = gui.get_node("_brakes1")
+		if gui.pick_node(score, action.x, action.y) then
+			button_tapped = 'score'
+			local node = gui.get_node("score")
+			TouchFb.touch_feedback(node, handle_input)
+		elseif gui.pick_node(question, action.x, action.y) then
+			button_tapped = 'question'
+			local node = gui.get_node("question")
+			TouchFb.touch_feedback(node, handle_input)
+		elseif gui.pick_node(brakes1, action.x, action.y) then
+			button_tapped = 'brakes'
+			local node = gui.get_node("brakes")
 			TouchFb.touch_feedback(node, handle_input)
 		else
 			for k, v in ipairs(buttons) do
-				local node = gui.get_node("_"..v)
+				local node = gui.get_node(v)
 				if gui.pick_node(node, action.x, action.y) then
 					button_tapped = v
 					TouchFb.touch_feedback(node, handle_input)
