@@ -60,7 +60,7 @@ end
 function init(self)
     math.randomseed(os.time() * 1007)
     --retrieve countdown data
-    local folder = "tc2 test"
+    local folder = "tc2"
     local file = sys.get_save_file(folder, "countdown_data")
     local table = sys.load(file)
     if #table ~= 0 then
@@ -96,7 +96,7 @@ end
 
 function final(self)
     local exit_time = os.time()
-    local folder = "tc2 test"
+    local folder = "tc2"
     local file = sys.get_save_file(folder, "countdown_data")
     local table = {exit_time, duration}
     sys.save(file, table)
