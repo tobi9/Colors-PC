@@ -1,38 +1,9 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: http://127.0.0.1:54634/build
+INFO:ENGINE: Loading data from: http://127.0.0.1:55985/build
 INFO:ENGINE: Initialised sound device 'default'
 
-DEBUG:SCRIPT: 18529
+DEBUG:SCRIPT: 18535
 ERROR:SCRIPT: /ads/ads.script:28: attempt to index global 'admob' (a nil value)
 stack traceback:
 	/ads/ads.script:28: in function </ads/ads.script:27>
-DEBUG:SCRIPT: 
-{ --[[000001F83671ABE0]]
-  1 = "10_COINS",
-  2 = "20_COINS",
-  3 = "50_COINS",
-  4 = "100_COINS",
-  5 = "200_COINS",
-  6 = "300_COINS",
-  7 = "400_COINS",
-  8 = "500_COINS",
-  9 = "600_COINS",
-  10 = "700_COINS"
-}
-ERROR:SCRIPT: /upgrades/iap/iap.gui_script:137: attempt to index global 'iap' (a nil value)
-stack traceback:
-	/upgrades/iap/iap.gui_script:137: in function </upgrades/iap/iap.gui_script:129>
-ERROR:GAMESYS: Error when initializing gui component: -2.
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
-DEBUG:SCRIPT: shahas
 INFO:DLIB: SSDP: Done on address 192.168.1.1
-INFO:DLIB: SSDP: Done on address 192.168.43.132

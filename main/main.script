@@ -176,14 +176,14 @@ local function unload_color_options()
 	msg.post(upgradesProxy, "load")
 end
 
-local function load_sales(caller)
-	msg.post(caller, "unload")
+local function load_sales()
+	msg.post(upgradesProxy, "unload")
 	msg.post(salesProxy, "load")
 end
 
-local function unload_sales(caller)
+local function unload_sales()
 	msg.post(salesProxy, "unload")
-	msg.post(caller, "load")
+	msg.post(upgradesProxy, "load")
 end
 
 -- this function pauses the game if event focus is lost
@@ -239,7 +239,6 @@ end
 local ad_caller
 
 function on_message(self, message_id, message, sender)
-	local sales_caller -- after loading the sales collection it holds the location of the caller 
 	--message ids
 	local start = hash("start")
 	local load_lvl = hash("load_level")
@@ -373,13 +372,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == unload_clr_options then
 		unload_color_options()
 	elseif message_id == ld_sales then
-		if message.caller == "upgrades" then
-			sales_caller = upgradesProxy
-		else
-			sales_caller = iapProxy
-		end
-		load_sales(sales_caller)
+		load_sales()
 	elseif message_id == unld_sales then
-		unload_sales(sales_caller)
+		unload_sales()
 	end
 end

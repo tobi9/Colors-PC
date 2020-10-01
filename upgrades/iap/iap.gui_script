@@ -137,6 +137,7 @@ function init(self)
 end
 
 function final(self)
+	msg.post("main:/main#data_handler", "save_data")
 	msg.post(".", "release_input_focus")
 end
 
@@ -180,5 +181,4 @@ function on_input(self, action_id, action)
 		button_tapped = 'menu'
 		TouchFb.touch_feedback(menu, handle_input)
 	end
-	msg.post("main:/main#data_handler", "save_data")
 end

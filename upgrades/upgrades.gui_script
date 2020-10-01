@@ -5,7 +5,7 @@ local input_nodes = {"_menu", 'buy_brakes', 'buy_lives', 'buy_coins', 'unlck_clr
 --prices of the commodities sold in the shop and their currencies
 local brake_price = 50 -- $
 local live_price = 5 -- coins
-local coin_price = 3000 -- $
+local coin_price = 1000 -- $
 
 local update_info = function()
     local m = gui.get_node("money")

@@ -4,12 +4,12 @@
 -- in any script using the functions.
 local M = {}
 
---This function receives three arguments the first argument is the string id of a node, the
---second is the default color(a table) of the node and the third(a string) is the collection in which the node
+--This function receives two arguments the first argument is the string id of a node, the
 --is located. The color info tables are of the format {str, bool, vec4} where
 -- str is the name and identifier of the color, bool is it's unlock status and 
 --vec4 is the value of the color
-local folder = "trick colors"
+local folder = "trick colors test"
+local current_col -- needed by the undo function to save the changes
 
 M.set_node_color = function(node_id, col)
 	--col and node_id are concatenated to avoid conflicts in memory location.
@@ -17,9 +17,9 @@ M.set_node_color = function(node_id, col)
 	local table_of_colors = sys.load(file)
 	local node_color_info
 	if #table_of_colors ~= 0 then
-		node_color_info = table_of_colors
+		node_color_info = table_of_colors[1]
 		local node = gui.get_node(node_id)
-		gui.set_color(node, node_color_info[3])			
+		gui.set_color(node, node_color_info)			
 	end
 end
 
@@ -28,7 +28,8 @@ M.set_new_node_color = function(node, new_clr_info, col)
 	--col and node_id are concatenated to avoid conflicts in memory location.
 	local file = sys.get_save_file(folder, col..node_id)
     gui.set_color(node, new_clr_info[3])
-    sys.save(file, new_clr_info)
+	sys.save(file, {new_clr_info[3]})
+	current_col = col
 end
 
 --This function saves the inaltered state of the collection so the player can revert all the changes made.
@@ -56,7 +57,11 @@ end
 M.undo_change = function(ldgr)
 	local i = #ldgr
 	if i > 0 then
+		--print(ldgr[i][1], ldgr[i][2])
 		gui.set_color(ldgr[i][1], ldgr[i][2])
+		local node_id = gui.get_id(ldgr[i][1])
+		local file = sys.get_save_file(folder, current_col..node_id)
+		sys.save(file, {ldgr[i][2]})
 		table.remove(ldgr, i)
 	end
 end
