@@ -56,6 +56,7 @@ local save_to_memory_loc = function(str, n)
 	sys.save(file, tab)
 end
 
+local new_chal_qst = "new chal ?" --this is the location in the memory the script checks to know if the challenge being set is a new one. true if it is and false if not
 local challenge
 local challenges_passed = 0
 local challenge_status -- true if the challenge was passed and false if not
@@ -112,6 +113,13 @@ local set_challenge = function(index)
 	challenge = challenges[chosen_chal_index]
 	save_to_memory_loc("chal_index", chosen_chal_index)
 	save_to_memory_loc("chal_status", challenge_status)
+	--this enables the analyzer script that needs the information to know if it is a new challenge being set or not
+	if check_memory_loc(new_chal_qst) == true then
+		--notify the analyser
+		msg.post(analyzer, "new_chal")
+		--set the state to false
+		save_to_memory_loc(new_chal_qst, false)
+	end
 end
 
 local chal_status_check = function()
@@ -255,7 +263,12 @@ function on_message(self, message_id, message, sender)
 		save_to_memory_loc("chal_index", nil) -- clear the memory location
 		set_challenge()
 	elseif message_id == msg_give_reward then
-		msg.post(sender, "chal_reward", {reward = chal_reward})
+		money = money + chal_reward
+		msg.post(sender, "chal_reward")
+		msg.post(analyzer, "chal_passed")
+		-- This is needed by the analyser to check if a new challenge has been set. The code below allows the challenge
+		--script to know that the next challenge is a new one
+		save_to_memory_loc(new_chal_qst, true)
 	elseif message_id == msg_chal_req then
 		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = chal_reward})
 	elseif message_id == msg_reward then

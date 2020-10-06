@@ -36,7 +36,7 @@ local retrieve_data = function()
 		coins = 10
 		lives = 3
 		last_ad_time = 0
-		highscore = 12
+		highscore = 0
 		daily_reward_streak = 0
 		last_day = os.time()
 	else

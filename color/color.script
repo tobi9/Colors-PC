@@ -37,6 +37,7 @@ local check_pos = function (self)
 end	
 
 function init(self)
+	msg.post(analyzer, "new_spawn")
 	if ad_for_hints_played == false and speed > 7 then -- video_watched is a global varible declared in the controller script
 		msg.post(level_gui, "show_prompt", {situation = "hints"})
 	end

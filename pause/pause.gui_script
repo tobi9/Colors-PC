@@ -50,7 +50,7 @@ end
 
 local button_tapped = nil
 
-
+local chal_status
 local function handle_input()
 	if button_tapped == 'resume' then 
 		msg.post(main, 'resume', {col = "pause"})-- tells the controller script which collection to unload when resuming
@@ -111,8 +111,8 @@ end
 
 local msg_completed = hash("completed")
 local msg_chal = hash("chal")
+local msg_chal_reward = hash("chal_reward")
 
-local chal_reward
 function on_message(self, message_id, message, sender)
 	if message_id == msg_chal then
 		local node = gui.get_node("challenge")
@@ -125,7 +125,7 @@ function on_message(self, message_id, message, sender)
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 		end
 		node = gui.get_node("challenge_reward")
-		chal_reward = message.reward * NumOfColorsPicked
+		local chal_reward = message.reward * NumOfColorsPicked
 		gui.set_text(node, "REWARD\n$"..chal_reward)
 	elseif message_id == msg_completed then
 		msg.post("level:/controller#controller", "new hints")
@@ -133,6 +133,9 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(txt, "USED")
 		msg.post(ANALYZER, 'hint_used')
 		ad_for_hints_played = true
+	elseif message_id == msg_chal_reward then
+		local m = gui.get_node("money")
+		gui.set_text(m, "$"..tostring(money))
 	end
 end
 

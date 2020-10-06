@@ -8,7 +8,6 @@ answered = false -- this variable becomes true if the color has given its answer
 level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
 speed = 5
-total_spawns = 0 
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
 
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
@@ -17,7 +16,6 @@ local function spawn_color(clr, pos) -- this function spawns the stated game obj
 	if speed < 9 then -- 9 is the max speed
 		speed = speed + 0.05
 	end
-	total_spawns = total_spawns + 1
 end
 
 function init(self)
@@ -28,6 +26,8 @@ function init(self)
 	msg.post("main:/main#challenges", "set_challenge")
 	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
 	msg.post("main:/main#challenges", "reward", {num_of_clrs = NumOfColorsPicked}) -- give the challenge script the required info to calculate the actual reward
+	--send the color strings to the analyzer
+	msg.post(analyzer, "colors", {colors = color_strings})
 end
 
 --Color Streak System
@@ -43,7 +43,6 @@ local word1, word2, word3, word4, word5, word6 = 0, 0, 0, 0, 0, 0
 
 function final(self)
 	gamePaused = false -- the varible is declared in the main script
-	msg.post(ANALYZER, "level_ended", {score = score, spawns = total_spawns})
 end
 
 local spawn_counter = 3 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned

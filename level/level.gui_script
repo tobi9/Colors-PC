@@ -135,6 +135,7 @@ local function handle_input()
 		brake_score = score
 		msg.post("main:/main#data_handler", "save_data")
 		msg.post(level_gui, "adjust_brakes")
+		msg.post(analyzer, "brake_used")
 	elseif button_tapped == "yes" then
 		if prompt_context == "gameover" then
 			if lives > 0 then

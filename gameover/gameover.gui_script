@@ -15,13 +15,13 @@ local req_challenge = function()
 end
 
 function init(self)
+	msg.post(analyzer, "gameover")
 	req_challenge()
 	Prompt.prompt(exit_dialogue_nodes, menu_nodes)
 	Prompt.prompt(chal_prompt_nodes, menu_nodes)
 	is_exit_prompt_active = false
 	is_chal_prompt_active = false
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
-	msg.post(ANALYZER, 'gameover')
 	msg.post("/gameover#ended", "play_sound", {delay = 0, gain = 1})
 	msg.post(".", "acquire_input_focus")
 	--notify the controller script of the game over
@@ -52,6 +52,8 @@ function final(self)
 end
 
 local button_tapped = nil
+
+local chal_status
 
 local function handle_input()
 	if button_tapped == 'resume' then 
@@ -119,6 +121,7 @@ local msg_challenges = hash("challenges")
 local landmark = hash("landmark")
 local msg_completed = hash("completed")
 local msg_chal = hash("chal")
+local msg_chal_reward = hash("chal_reward")
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_chal then
@@ -132,7 +135,7 @@ function on_message(self, message_id, message, sender)
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 		end
 		node = gui.get_node("challenge_reward")
-		chal_reward = message.reward * NumOfColorsPicked
+		local chal_reward = message.reward * NumOfColorsPicked
 		gui.set_text(node, "REWARD\n$"..chal_reward)
 	elseif message_id == msg_completed then
 		msg.post("/gameover#reward", "play_sound", {delay = 0, gain = 1})
@@ -140,6 +143,9 @@ function on_message(self, message_id, message, sender)
 		-- adjust the lives
 		local lives_id = gui.get_node("lives")
 		gui.set_text(lives_id, "LIVES"..tostring(lives))
+	elseif message_id == msg_chal_reward then
+		local m = gui.get_node("money")
+		gui.set_text(m, "$"..tostring(money))
 	end
 end
 

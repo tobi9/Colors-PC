@@ -1,9 +1,14 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: http://127.0.0.1:55985/build
+INFO:ENGINE: Loading data from: http://127.0.0.1:56392/build
 INFO:ENGINE: Initialised sound device 'default'
 
-DEBUG:SCRIPT: 18535
+DEBUG:SCRIPT: 18540
 ERROR:SCRIPT: /ads/ads.script:28: attempt to index global 'admob' (a nil value)
 stack traceback:
 	/ads/ads.script:28: in function </ads/ads.script:27>
-INFO:DLIB: SSDP: Done on address 192.168.1.1
+DEBUG:SCRIPT: red
+DEBUG:SCRIPT: red
+ERROR:SCRIPT: /main/analyzer.script:111: bad argument #1 to 'ipairs' (table expected, got string)
+stack traceback:
+	[C]: in function 'ipairs'
+	/main/analyzer.script:111: in function </main/analyzer.script:92>

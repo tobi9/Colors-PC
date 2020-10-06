@@ -15,4 +15,15 @@ PLAN:
 Release only a handful of colours. Release the rest in a timely manner.
 The first type of multiplayer should be local with one mode
 (Formulate the rules later).
- 	
+
+PHASE 1:
+    (a)The main functions of the game or inner shell are done.(pretest)
+    (b)The outer shell of the game needs to be completed.
+        (i) The components of the outer shell include but are not limited to
+            *Analyser *Google play servises(android) *Asking for ratings *Notifications *Sound design *Animations 
+            *Tips and Tutorials(inc. rules) *Credits
+
+NEED TO DOS:
+(1) Create a new branch for the PC version on Github
+(2) Create a new branch for the IOS version too
+(3) Modify it for PCs  and IOS devices

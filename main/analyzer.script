@@ -1,135 +1,121 @@
-ANALYZER = "main:/analyzer#analyzer"
-local folder = 'tc2_analyzer_debug'
-local is_game_rated
-local timer = 0
-local total_sessions = 0
-local gameovers = 0
+analyzer = "main:/analyzer#analyzer"
+
+local folder = "tc2"
+local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
+
+local start_time -- The time the app is launched
+local exit_time -- the time the app is exited
+
+local time_totals = {} -- the time the player spends in the app each session is inserted into this table
+local scores = {} -- the scores are stored in this table
+
+local total_chals = 0 -- the total number of challenges set
+local chals_passed = 0 -- the number of challenges passed
+
 local total_spawns = 0
-local gold_challenges_completed = 0
-local diamond_challenges_completed = 0
-local restarts = 0
-local frictions_used = 0
-local respawns_used = 0
-local hints_used = 0
-local prob_to_use_frictions = 0
-local prob_to_use_respawns = 0
-local prob_to_use_hints = 0
-local prob_to_complete_a_gold_challenge = 0
-local prob_to_complete_a_diamond_challenge = 0
-local prob_to_restart = 0
-local scores = {}
-local avg_score
+local total_brakes_used = 0
 
-local prob_to_miss = 0
-local total_misses = 0
-local total_hits = 0
-
-local durations = {} -- the total time spent in the app in a session (in seconds)
-local avg_duration
-
-local data = {}
-
-local function retrieve_data()
-	local file = sys.get_save_file(folder, "tc2_analysis_data")
-	local table = sys.load(file)
-	if #table == 0 then
-		total_sessions = 0
-		gameovers = 0
-		total_spawns = 0
-		gold_challenges_completed = 0
-		diamond_challenges_completed = 0
-		restarts = 0
-		total_misses = 0
-		total_hits = 0
-		frictions_used = 0
-		respawns_used = 0
-		hints_used = 0
-		scores = {}
-		durations = {}
-		is_game_rated = false
-	else
-		total_sessions = table[1]
-		gameovers = table[2]
-		total_spawns = table[3]
-		gold_challenges_completed = table[4]
-		diamond_challenges_completed = table[5]
-		restarts = table[6]
-		total_misses = table[7]
-		total_hits = table[8]
-		frictions_used = table[9]
-		respawns_used = table[10]
-		hints_used = table[11]
-		scores = table[12]
-		durations = table[13]
-		is_game_rated = table[14]
-	end
-end
-
-local function save_data()
-	local file = sys.get_save_file(folder, "tc2_analysis_data")
-	local values = {total_sessions, gameovers, total_spawns, gold_challenges_completed,
-	diamond_challenges_completed, restarts, total_misses, total_hits, frictions_used,
-	respawns_used, hints_used, scores, durations, is_game_rated}
-	for i, v in ipairs(values) do
-		table.insert(data, i, v)
-	end
-	sys.save(file, data)
-end
+local colors_used = {} -- the color_strings of the colors the players has played with. These are not the unlocked colors
 
 function init(self)
-	retrieve_data()
+	start_time = os.time()
+	local check_memory_loc = function(str)
+		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
+		local file = sys.get_save_file(folder, str..suffix)
+		local cell = sys.load(file)
+		return cell
+	end
+	--get the time totals from memory
+	local table = check_memory_loc("time")
+	if #table > 0 then
+		time_totals = table
+	end
+	--get the scores from memomry
+	table = check_memory_loc("score")
+	if #table > 0 then
+		scores = table
+	end
+	--get the challenge info from memory
+	table = check_memory_loc("challenge")
+	if #table > 0 then
+		total_chals = table[1]
+		chals_passed = table[2]
+	end
+	--get the total spawns from memory
+	table = check_memory_loc("spawns")
+	if #table > 0 then
+		total_spawns = table[1]
+	end
+	--get the total spawns from memory
+	table = check_memory_loc("brakes")
+	if #table > 0 then
+		total_brakes_used = table[1]
+	end
+	--get the colors used form memory
+	table = check_memory_loc("colors used")
+	if #table > 0 then
+		colors_used = table[1]
+	end
+	pprint(colors_used)
 end
 
 function final(self)
-	table.insert(durations, timer)
-	save_data()
+	local save_to_memory_loc = function(str, tab)
+		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
+		local file = sys.get_save_file(folder, str..suffix)
+		sys.save(file, tab)
+	end
+
+	--save the duration to memory
+	exit_time = os.time()
+	local time_spent = exit_time - start_time
+	table.insert(time_totals, time_spent)
+	save_to_memory_loc("time", time_totals)
+	--save the challenge info to memory
+	save_to_memory_loc("challenge", {total_chals, chals_passed})
+	--save total spawns to memory
+	save_to_memory_loc("spawns", {total_spawns})
+	--save brakes to memory
+	save_to_memory_loc("brakes", {total_brakes_used})
+	--save colors used to memory
+	pprint(colors_used)
+	save_to_memory_loc("colors used", colors_used)
 end
 
-function update(self, dt)
-	timer = timer + 1
-end
-
--- message ids
-local level_ended = hash("level_ended")
-local hit_miss = hash("hit_miss")
-local gold_chal_completed = hash("gold_challenge_completed")
-local diamond_chal_completed = hash("diamond_challenge_completed")
-local game_restarted = hash("game_restarted")
-local gameover = hash("gameover")
-local friction_used = hash("friction_used")
-local respawn_used = hash("respawn_used")
-local hint_used = hash("hint_used")
+local msg_gameover = hash("gameover")
+local msg_chal_passed = hash("chal_passed")
+local msg_new_chal = hash("new_chal")
+local msg_new_spawn = hash("new_spawn")
+local msg_brake_used = hash("brake_used")
+local msg_colors = hash("colors")
 
 function on_message(self, message_id, message, sender)
-	if message_id == level_ended then
-		table.insert(scores, message.score)
-		local total = 0
-		for i in ipairs(scores) do
-			total = total + scores[i]
+	if message_id == msg_gameover then
+		table.insert(scores, score)
+		local file = sys.get_save_file(folder, "score"..suffix)
+		sys.save(file, scores)
+	elseif message_id == msg_chal_passed then
+		chals_passed = chals_passed + 1
+	elseif message_id == msg_new_chal then
+		total_chals = total_chals + 1
+	elseif message_id == msg_new_spawn then
+		total_spawns = total_spawns + 1
+	elseif message_id == msg_brake_used then
+		total_brakes_used = total_brakes_used + 1
+	elseif message_id == msg_colors then
+		local colors = message.colors
+		for k, v in ipairs(colors) do
+			local is_present = false
+			local current_color = v
+			print(colors_used)
+			for k, v in ipairs(colors_used) do
+				if current_color == v then
+					is_present = true
+				end	
+			end
+			if not is_present then
+				table.insert(colors_used, current_color)
+			end
 		end
-		avg_score = total / #scores
-		total_spawns = total_spawns + message.spawns
-		total_sessions = total_sessions + 1
-	elseif message_id == hit_miss then
-		total_hits = total_hits + message.hits
-		total_misses = total_misses + message.misses
-		if total_misses and total_hits ~= 0 then
-			hit_miss_ratio = total_hits / total_misses
-		end
-	elseif message_id == gold_chal_completed then
-		gold_challenges_completed = gold_challenges_completed + 1
-	elseif message_id == diamond_chal_completed then
-		diamond_challenges_completed = diamond_challenges_completed + 1
-	elseif message_id == game_restarted then
-		restarts = restarts + 1
-	elseif message_id == gameover then
-		gameovers = gameovers + 1
-		--msg.post(sender, "")
-	elseif message_id == friction_used then
-		frictions_used = frictions_used + 1
-	elseif message_id == respawn_used then
-		respawns_used = respawns_used + 1
-	elseif message_id == hint_used then
-		hints_used = hints_used + 1
 	end
 end
