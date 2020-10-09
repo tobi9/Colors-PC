@@ -63,8 +63,8 @@ local function handle_input()
 	elseif button_tapped == 'show_ad' then
 		msg.post("main:/main#main", "show_ad", {id = "gameover:/gameover#gameover"})
 	elseif button_tapped == 'restart' then
-		chances = const_chances
 		msg.post(main, 'restart', {col = "gameover"})-- tells the controller script which collection to unload when restarting	
+		msg.post(analyzer, "game_restarted")
 	elseif button_tapped == 'sound' then
 		msg.post("main:/main#main", "sound")
 	elseif button_tapped == 'menu' then
@@ -175,7 +175,6 @@ function on_input(self, action_id, action)
 			elseif gui.pick_node(_restart, action.x, action.y) and is_exit_prompt_active == false then
 				button_tapped = 'restart'
 				TouchFb.touch_feedback(_restart, handle_input)
-				msg.post(ANALYZER, "game_restarted")
 			elseif gui.pick_node(_sound, action.x, action.y) and is_exit_prompt_active == false then
 				button_tapped = 'sound'
 				TouchFb.touch_feedback(_sound, handle_input)

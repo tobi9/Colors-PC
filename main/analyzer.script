@@ -17,6 +17,17 @@ local total_brakes_used = 0
 
 local colors_used = {} -- the color_strings of the colors the players has played with. These are not the unlocked colors
 
+--The Color count records
+local color_ledger = {
+	{"red", 0},
+	{"lime", 0},
+	{"blue", 0}
+}
+
+--the player temperment stats
+local total_gameovers = 0
+local total_restarts = 0
+
 function init(self)
 	start_time = os.time()
 	local check_memory_loc = function(str)
@@ -54,9 +65,19 @@ function init(self)
 	--get the colors used form memory
 	table = check_memory_loc("colors used")
 	if #table > 0 then
-		colors_used = table[1]
+		colors_used = table
 	end
-	pprint(colors_used)
+	--get the color ledger from memory
+	table = check_memory_loc("color_ledger")
+	if #table > 0 then
+		color_ledger = table
+	end
+	--get the temperment stats
+	table = check_memory_loc("temp_stats")
+	if #table > 0 then
+		total_gameovers = table[1]
+		total_restarts = table[2]
+	end
 end
 
 function final(self)
@@ -78,22 +99,28 @@ function final(self)
 	--save brakes to memory
 	save_to_memory_loc("brakes", {total_brakes_used})
 	--save colors used to memory
-	pprint(colors_used)
 	save_to_memory_loc("colors used", colors_used)
+	--save color ledger to memory
+	save_to_memory_loc("color_ledger", color_ledger)
+	--save the temp stats to memory
+	save_to_memory_loc("temp_stats", {total_gameovers, total_restarts})
 end
 
-local msg_gameover = hash("gameover")
-local msg_chal_passed = hash("chal_passed")
-local msg_new_chal = hash("new_chal")
-local msg_new_spawn = hash("new_spawn")
-local msg_brake_used = hash("brake_used")
-local msg_colors = hash("colors")
-
 function on_message(self, message_id, message, sender)
+	local msg_gameover = hash("gameover")
+	local msg_chal_passed = hash("chal_passed")
+	local msg_new_chal = hash("new_chal")
+	local msg_new_spawn = hash("new_spawn")
+	local msg_brake_used = hash("brake_used")
+	local msg_colors = hash("colors")
+	local msg_updt_ldgr = hash("update_ledger")	
+	local msg_restart = hash("game_restarted")
+
 	if message_id == msg_gameover then
 		table.insert(scores, score)
 		local file = sys.get_save_file(folder, "score"..suffix)
 		sys.save(file, scores)
+		total_gameovers = total_gameovers + 1
 	elseif message_id == msg_chal_passed then
 		chals_passed = chals_passed + 1
 	elseif message_id == msg_new_chal then
@@ -107,7 +134,6 @@ function on_message(self, message_id, message, sender)
 		for k, v in ipairs(colors) do
 			local is_present = false
 			local current_color = v
-			print(colors_used)
 			for k, v in ipairs(colors_used) do
 				if current_color == v then
 					is_present = true
@@ -117,5 +143,27 @@ function on_message(self, message_id, message, sender)
 				table.insert(colors_used, current_color)
 			end
 		end
+		msg.post("#", "update_ledger", {colors = colors})
+	elseif message_id == msg_updt_ldgr then
+		local colors = message.colors
+		for k, v in ipairs(colors) do
+			local current_color = v
+			local match_found = false
+			local ledger_index  -- the position in the table where the match id found
+			for k, v in ipairs(color_ledger) do
+				if current_color == v[1] then
+					ledger_index = k
+					match_found = true
+					break
+				end
+			end
+			if match_found then
+				color_ledger[ledger_index][2] = color_ledger[ledger_index][2] + 1
+			else
+				table.insert(color_ledger, {current_color, 1})
+			end
+		end
+	elseif message_id == msg_restart then
+		total_restarts = total_restarts + 1
 	end
 end
