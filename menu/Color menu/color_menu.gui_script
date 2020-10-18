@@ -39,7 +39,6 @@ local nodes = {"_3_colors", "_4_colors", "_5_colors", "_6_colors", "_random"}
 
 function init(self)
 	math.randomseed(os.time())
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 	len_of_unlkd_clrs = #unlocked_colors_table
 	if len_of_unlkd_clrs <= 6 then

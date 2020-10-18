@@ -39,6 +39,7 @@ local retrieve_data = function()
 		highscore = 0
 		daily_reward_streak = 0
 		last_day = os.time()
+		mode = "light"
 	else
 		money = tonumber(decode(table[1]))
 		brakes = tonumber(decode(table[2]))
@@ -48,14 +49,20 @@ local retrieve_data = function()
 		highscore = tonumber(decode(table[6]))
 		daily_reward_streak = tonumber(decode(table[7]))
 		last_day = tonumber(decode(table[8]))
+		mode = decode(table[9]) -- an exception
 	end
 end
 
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
-	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day}
+	print(mode)
+	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode}
 	for i, v in ipairs(values) do
-		table.insert(data, i,encode(tostring(v)))
+		if i ~= 9 then
+			table.insert(data, i,encode(tostring(v)))
+		else
+			table.insert(data, i,encode(v)) -- since the value is a string already there is no need to use the tostring function
+		end
 	end
 	sys.save(file, data)
 end
@@ -80,7 +87,6 @@ local msg_save_data = hash("save_data")
 
 function on_message(self, message_id, message, sender)
 	if message_id == msg_save_data then
-		print('shahas')
 		save_data()
 	end
 end

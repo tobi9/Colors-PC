@@ -1,7 +1,6 @@
 local TouchFb = require("modules.animation")
 
 function init(self)
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 
 end

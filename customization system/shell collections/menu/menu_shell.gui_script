@@ -4,7 +4,7 @@ local col_name = "menu" -- this is needed by the customizer to avoid conflicts i
 
 -- the tables below are needed to revert the changes made
 local node_strings = {--[['start', 'customize','upgrades', 'sound', 'exit',]]'title', '_start', '_customize', '_upgrades',
- '_sound', '_exit', "_board"}
+ '_sound', '_exit', "_board", "_dark"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -12,8 +12,8 @@ function init(self)
 	--take a snapshot of the unaltered state of the collection
 	Customizer.take_snapshot(node_strings, node_colors)
 	-- node each node to its appropriate color
-	local box_nodes = {'title', '_start', '_customize','_upgrades', '_sound', '_exit', '_board'}
-	for k, v in ipairs(box_nodes) do
+	--local box_nodes = {'title', '_start', '_customize','_upgrades', '_sound', '_exit', '_board'}
+	for k, v in ipairs(node_strings) do
 		Customizer.set_node_color(v, col_name)
 	end
 	msg.post(".", "acquire_input_focus")
@@ -45,7 +45,7 @@ function on_message(self, message_id, message, sender)
 			Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 		else
 			local node_holder
-			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board"}
+			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board", "dark"}
 			for k, v in ipairs(nodes) do
 				--this is because of the title. As not to mix up the box with the text
 				if k > 1 then
@@ -74,7 +74,7 @@ local handle_input = function()
 		change_all = true
 		msg.post(customizer_controller, "load_palette", {collection = "menu"})
 	else
-		local buttons = {'title', "start", "customize","upgrades", "sound", "exit", "board", "clear_all", "undo", "ok"}
+		local buttons = {'title', "start", "customize","upgrades", "sound", "exit", "dark", "board", "clear_all", "undo", "ok"}
 		for k, v in ipairs(buttons) do
 			if button_tapped == v then
 					chosen_node = v
@@ -95,7 +95,7 @@ end
 function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	if action_id == touch and action.released then
-		local buttons = {"start", "customize","upgrades", "sound", "exit", "board", "clear_all", "set_all", "undo", "ok"}
+		local buttons = {"start", "customize","upgrades", "sound", "exit", "board", "dark", "clear_all", "set_all", "undo", "ok"}
 		local title = gui.get_node('_title') -- this is specific because it's a box node that is to be invisible 
 		if gui.pick_node(title, action.x, action.y) then
 			button_tapped = 'title'

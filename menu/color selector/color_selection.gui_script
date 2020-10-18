@@ -108,7 +108,6 @@ local change_page = function()
 end
 
 function init(self)
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 	spawn_boxes()
 	check_for_chosen_colors()

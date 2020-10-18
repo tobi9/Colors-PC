@@ -2,7 +2,7 @@ local TouchFb = require("modules.animation")
 local Prompt = require("modules.prompt")
 
 local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
-local menu_nodes = {'paused', "_resume", "_restart", "_sound",
+local menu_nodes = {'paused', "_resume", "_restart", "_sound", "score", "best",
 "_menu", 'resume', 'restart', 'sound', 'menu', 'show_ad', 'ad_text', "board", "brakes", "lives", "coins",
 "money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward"}
 local chal_prompt_nodes = {"chal_dialogue_box", "chal_prompt", "yes_chal", "yes1", "no_chal", "no1"}
@@ -20,7 +20,6 @@ function init(self)
 	Prompt.prompt(chal_prompt_nodes, menu_nodes)
 	is_exit_prompt_active = false
 	is_chal_prompt_active = false
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 	msg.post("main:/main#challenges", "challenges", {id = "pause:/pause#pause"})
 	-- set the score
