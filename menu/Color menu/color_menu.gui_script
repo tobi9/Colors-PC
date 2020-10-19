@@ -45,6 +45,13 @@ function init(self)
 		local node = gui.get_node(nodes[4])
 		gui.set_text(node, "LOCKED")
 	end
+	local Customizer = require("modules.customizer")
+	-- node each node to its appropriate color
+	local col_name = "color_menu" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes = {"title", "_3_colors", "_4_colors", "_5_colors", "_6_colors", "_random", "_menu"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, col_name)
+	end
 end
 
 local touch = hash("touch")

@@ -31,7 +31,6 @@ local spawn_boxes = function(tab)
 end
 
 function init(self)
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 	spawn_boxes(unlocked_colors_table)
 end

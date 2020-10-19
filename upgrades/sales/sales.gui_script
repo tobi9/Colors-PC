@@ -31,7 +31,6 @@ local function iap_listener(self, transaction, error)
 end
 
 function init(self)
-	msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
 	msg.post(".", "acquire_input_focus")
 	-- initiate  a fetch of products 
 	iap.list(package_ids, product_list)
