@@ -70,6 +70,13 @@ function init(self)
 	end
 	show_boxes(num_of_colors_picked)
 	set_box_colors()
+	local Customizer = require("modules.customizer")
+	-- node each node to its appropriate color
+	local col_name = "pick_colors" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes =  {"title", "_pick", "_play", "_clear", "_random", "_menu"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, col_name)
+	end
 end
 
 function final(self)

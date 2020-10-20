@@ -833,7 +833,7 @@ nodes {
   text: "CHOOSE 3  DIFFERENT\n"
   "COLORS"
   font: "galindo"
-  id: "Prompt"
+  id: "title"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

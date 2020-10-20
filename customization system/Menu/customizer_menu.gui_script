@@ -30,11 +30,14 @@ local handle_input = function()
 	elseif button_tapped == "_colormenucol" then
 		--load the color menu shell
 		msg.post(customizer_controller, "load_color_menu_shell")
+	elseif button_tapped == "_pickcolorscol" then
+		--load the pick colors shell
+		msg.post(customizer_controller, "load_pick_colors_shell")
 	end
 end
 
 function on_input(self, action_id, action)
-	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol"}
+	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol"}
 	local touch = hash("touch")
 
 	if action_id == touch and action.released then
