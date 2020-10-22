@@ -2,8 +2,8 @@ local TouchFb = require("modules.animation")
 local Prompt = require("modules.prompt")
 
 local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
-local menu_nodes = {'gameover', "_resume", "_restart", "_sound",
-"_menu", 'resume', 'restart', 'sound', 'menu', 'show_ad', 'ad_text', "board", "brakes", "lives", "coins",
+local menu_nodes = {'title', "_resume", "_restart", "_sound",
+"_menu", 'resume', 'restart', 'sound', 'menu', '_show_ad', 'ad_text', "_board", "brakes", "lives", "coins",
 "money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward", "score", "best"}
 local chal_prompt_nodes = {"chal_dialogue_box", "chal_prompt", "yes_chal", "yes1", "no_chal", "no1"}
 local is_exit_prompt_active
@@ -34,8 +34,18 @@ function init(self)
 	else
 
 	end
+	local Customizer = require("modules.customizer")
+	local col_name = "gameover"
+	-- node each node to its appropriate color
+	local box_nodes = {"title", "_board", "_resume", "_restart", "_sound", "_show_ad", "_menu"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, --[[default_box_clr_info,]] col_name)
+	end
+	--set chal_but to _board's color
+	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
+
 	local best_id = gui.get_node('best')
-	gui.set_text(best_id, "best\n"..tostring(highscore))
+	gui.set_text(best_id, "BEST\n"..tostring(highscore))
 	local m = gui.get_node("money")
 	gui.set_text(m, "$"..tostring(money))
 	local b = gui.get_node("brakes")
@@ -159,7 +169,7 @@ function on_input(self, action_id, action)
 		local _sound = gui.get_node('_sound')
 		local _menu = gui.get_node('_menu')
 		local chal_but = gui.get_node("_chal_but")
-		local show_ad = gui.get_node('show_ad')
+		local show_ad = gui.get_node('_show_ad')
 		local yes = gui.get_node("yes_exit")
 		local no = gui.get_node("no_exit")
 		local yes_chal = gui.get_node("yes_chal")
