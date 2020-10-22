@@ -10,6 +10,7 @@ local color_menu_shell_proxy = "#color_menu_shell_proxy"
 local pick_colors_shell_proxy = "#pick_colors_shell_proxy"
 local pause_shell_proxy = "#pause_shell_proxy"
 local gameover_shell_proxy = "#gameover_shell_proxy"
+local color_options_shell_proxy = "#color_options_shell_proxy"
 
 local load_col = function(col)
 	msg.post(col, "load")
@@ -61,6 +62,8 @@ function on_message(self, message_id, message, sender)
 	local unld_pause_shl = hash("unload_pause_shell")
 	local ld_gameover_shl = hash("load_gameover_shell")
 	local unld_gameover_shl = hash("unload_gameover_shell")
+	local ld_clr_options_shl = hash("load_color_options_shell")
+	local unld_clr_options_shl = hash("unload_color_options_shell")
 
 	if message_id == proxy_loaded then
 		msg.post(sender, "init")
@@ -117,6 +120,12 @@ function on_message(self, message_id, message, sender)
 		unload_col(customizer_menu_proxy)
 	elseif message_id == unld_gameover_shl then
 		unload_col(gameover_shell_proxy)
+		load_col(customizer_menu_proxy)
+	elseif message_id == ld_clr_options_shl then
+		load_col(color_options_shell_proxy)
+		unload_col(customizer_menu_proxy)
+	elseif message_id == unld_clr_options_shl then
+		unload_col(color_options_shell_proxy)
 		load_col(customizer_menu_proxy)
 	end
 end

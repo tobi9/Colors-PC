@@ -1,0 +1,99 @@
+local Customizer = require("modules.customizer")
+local TouchFb = require("modules.animation")
+local col_name = "color_options" -- this is needed by the customizer to avoid conflicts in memory
+
+-- the tables below are needed to revert the changes made
+local node_strings = {"title", "coins", "_menu"}
+local node_colors = {}
+local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
+
+function init(self)
+	--take a snapshot of the unaltered state of the collection
+	Customizer.take_snapshot(node_strings, node_colors)
+	-- node each node to its appropriate color
+	for k, v in ipairs(node_strings) do
+		Customizer.set_node_color(v, col_name)
+	end
+	msg.post(".", "acquire_input_focus")
+	msg.post(customizer_controller, "active_shell", {collection = col_name})
+	--update the coins
+	local node = gui.get_node("coins")
+	gui.set_text(node, "COINS\n"..coins)
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+color_chosen = nil
+node_holder = nil-- this is a global variable. It holds the node to be changed in memory until the color is chosen
+local chosen_node
+local change_all = false -- this variable is set to true when the players clicks the set all button
+function on_message(self, message_id, message, sender)
+	local enabled = hash("enabled")
+	if message_id == enabled then
+		if color_chosen ~= nil and #color_chosen > 0 and change_all == false then
+			Customizer.record_change(node_holder, ledger)
+			Customizer.set_new_node_color(node_holder, color_chosen, col_name)
+		else
+			-- This sets all the nodes to a particular color
+			local node_holder
+			if color_chosen ~= nil then
+				for k, v in ipairs(node_strings) do
+					--this is because of the title. As not to mix up the box with the text
+					node_holder = gui.get_node(v)
+					Customizer.record_change(node_holder, ledger)
+					Customizer.set_new_node_color(node_holder, color_chosen, col_name)
+				end
+			end
+		end
+	end
+	change_all = false -- reset to avoid repetition
+end
+
+local button_tapped
+local handle_input = function()
+	if button_tapped == "_ok" then
+		msg.post(customizer_controller, "unload_color_options_shell")
+	elseif button_tapped == "_undo" then
+		Customizer.undo_change(ledger)
+	elseif button_tapped == "_clear_all" then
+		Customizer.clear_changes(node_strings, node_colors)
+	elseif button_tapped == "_set_all" then
+		change_all = true
+		msg.post(customizer_controller, "load_palette", {collection = col_name})
+	else
+		for k, v in ipairs(node_strings) do
+			if button_tapped == v then
+					chosen_node = v
+					node_holder = gui.get_node(chosen_node)
+					msg.post(customizer_controller, "load_palette", {collection = col_name})
+				break 
+			end
+		end
+	end
+	button_tapped = nil
+end
+
+function on_input(self, action_id, action)
+	local touch = hash("touch") -- touch_id
+	if action_id == touch and action.released then
+		local buttons = {"title", "coins", "_menu", "_clear_all", "_set_all", "_undo", "_ok"}
+		for k, v in ipairs(buttons) do
+			local node = gui.get_node(v)
+			if gui.pick_node(node, action.x, action.y) then
+				button_tapped = v
+					if k > 2  then
+						TouchFb.touch_feedback(node, handle_input)
+					elseif k == 1 then
+						node = gui.get_node("title")
+						TouchFb.touch_feedback(node, handle_input)
+					else
+						node = gui.get_node("coins")
+						TouchFb.touch_feedback(node, handle_input)
+					end
+				break
+			end
+		end
+	end
+end

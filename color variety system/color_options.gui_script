@@ -36,6 +36,13 @@ function init(self)
 			gui.set_text(text_node, "locked")
 		end
 	end
+	local Customizer = require("modules.customizer")
+	-- node each node to its appropriate color
+	local col_name = "color_options" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes = {"title", "coins", "_menu"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, col_name)
+	end
 	msg.post(".", "acquire_input_focus")
 end
 

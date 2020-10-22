@@ -39,11 +39,15 @@ local handle_input = function()
 	elseif button_tapped == "_gameovercol" then
 		--load the gameover shell
 		msg.post(customizer_controller, "load_gameover_shell")	
+	elseif button_tapped == "_choosecol" then
+		--load the color options shell
+		msg.post(customizer_controller, "load_color_options_shell")
 	end
 end
 
 function on_input(self, action_id, action)
-	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol", "_pausecol", "_gameovercol"}
+	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol", "_pausecol", "_gameovercol", 
+	"_choosecol"}
 	local touch = hash("touch")
 
 	if action_id == touch and action.released then
