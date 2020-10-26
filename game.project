@@ -71,7 +71,7 @@ gravity_y = -1000.0
 scale = 0.01
 
 [collection_proxy]
-max_count = 20
+max_count = 50
 
 [graphics]
 default_texture_mag_filter = nearest

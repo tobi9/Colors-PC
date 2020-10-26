@@ -115,6 +115,13 @@ function init(self)
 		local node = gui.get_node("status")
 		gui.set_text(node, "READY")
 	end
+	local Customizer = require("modules.customizer")
+	-- node each node to its appropriate color
+	local col_name = "palette" -- this is needed by the customizer to avoid conflicts in memory
+	local box_nodes = {"title", "status", "_clear", "_ok"}
+	for k, v in ipairs(box_nodes) do
+		Customizer.set_node_color(v, col_name)
+	end
 end
 
 function final(self)
@@ -181,9 +188,9 @@ local button_tapped
 local handle_input = function()
 	if button_tapped == 'ok' then
 		msg.post(main, 'unload_color_selector')
-	elseif button_tapped == 'change_page' then
+	--[[elseif button_tapped == 'change_page' then
 		change_page()
-		button_tapped = nil
+		button_tapped = nil]]
 	elseif button_tapped == 'clear' then
 		clear_selection()
 		button_tapped = nil
@@ -199,15 +206,15 @@ end
 local touch = hash("touch")
 function on_input(self, action_id, action)
 	local ok = gui.get_node("_ok")
-	local change_page = gui.get_node("_change_page")
+	--local change_page = gui.get_node("_change_page")
 	local clear = gui.get_node("_clear")
 	if action_id == touch and action.released then
 		if gui.pick_node(ok, action.x, action.y) then
 			button_tapped = 'ok'
 			TouchFb.touch_feedback(ok, handle_input)
-		elseif gui.pick_node(change_page, action.x, action.y) then
+		--[[elseif gui.pick_node(change_page, action.x, action.y) then
 			button_tapped = 'change_page'
-			TouchFb.touch_feedback(change_page, handle_input)
+			TouchFb.touch_feedback(change_page, handle_input)]]
 		elseif gui.pick_node(clear, action.x, action.y) then
 			button_tapped = 'clear'
 			TouchFb.touch_feedback(clear, handle_input)
