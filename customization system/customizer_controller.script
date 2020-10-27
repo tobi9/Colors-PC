@@ -13,6 +13,7 @@ local gameover_shell_proxy = "#gameover_shell_proxy"
 local color_options_shell_proxy = "#color_options_shell_proxy"
 local palette_shell_proxy = "#palette_shell_proxy"
 local prompt_shell_proxy = "#prompt_shell_proxy"
+local canvas_shell_proxy = "#canvas_shell_proxy"
 
 local load_col = function(col)
 	msg.post(col, "load")
@@ -70,6 +71,8 @@ function on_message(self, message_id, message, sender)
 	local unld_plt_shl = hash("unload_palette_shell")
 	local ld_prmpt_shl = hash("load_prompt_shell")
 	local unld_prmpt_shl = hash("unload_prompt_shell")
+	local ld_cnvs_shl = hash("load_canvas_shell")
+	local unld_cnvs_shl = hash("unload_canvas_shell")
 
 	if message_id == proxy_loaded then
 		msg.post(sender, "init")
@@ -144,6 +147,12 @@ function on_message(self, message_id, message, sender)
 		unload_col(customizer_menu_proxy)
 	elseif message_id == unld_prmpt_shl then
 		unload_col(prompt_shell_proxy)
+		load_col(customizer_menu_proxy)
+	elseif message_id == ld_cnvs_shl then
+		load_col(canvas_shell_proxy)
+		unload_col(customizer_menu_proxy)
+	elseif message_id == unld_cnvs_shl then
+		unload_col(canvas_shell_proxy)
 		load_col(customizer_menu_proxy)
 	end
 end

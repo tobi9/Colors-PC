@@ -1,9 +1,9 @@
 local Customizer = require("modules.customizer")
 local TouchFb = require("modules.animation")
-local col_name = "palette" -- this is needed by the customizer to avoid conflicts in memory
+local col_name = "canvas" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {"title", "status", "_clear", "_ok"}
+local node_strings = {"prompt", "_clear_all", "_set_all", "_undo", "_ok"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -14,21 +14,12 @@ function init(self)
 	for k, v in ipairs(node_strings) do
 		Customizer.set_node_color(v, col_name)
 	end
+
 	--canvas customization
-	local canvas = {"prompt", "_clear_all", "_set_all", "_undo", "_ok1"}
+	local canvas = {"prompt1", "_clear_all1", "_set_all1", "_undo1", "_ok1"}
 	for k, v in ipairs(canvas) do
-		if v == "_ok1" then -- work around a naming conflict
-			gui.set_id(gui.get_node("_ok"), "temp")
-			gui.set_id(gui.get_node("_ok1"), "_ok")
-			Customizer.set_node_color("_ok", "canvas")
-			gui.set_id(gui.get_node("_ok"), "_ok1")
-			gui.set_id(gui.get_node("temp"), "_ok")
-
-		else
-			Customizer.set_node_color(v, "canvas")
-		end
+		gui.set_color(gui.get_node(v), gui.get_color(gui.get_node(node_strings[k])))
 	end
-
 	msg.post(".", "acquire_input_focus")
 	msg.post(customizer_controller, "active_shell", {collection = col_name})
 end
@@ -66,12 +57,12 @@ end
 local button_tapped
 local handle_input = function()
 	if button_tapped == "_ok1" then
-		msg.post(customizer_controller, "unload_palette_shell")
-	elseif button_tapped == "_undo" then
+		msg.post(customizer_controller, "unload_canvas_shell")
+	elseif button_tapped == "_undo1" then
 		Customizer.undo_change(ledger)
-	elseif button_tapped == "_clear_all" then
+	elseif button_tapped == "_clear_all1" then
 		Customizer.clear_changes(node_strings, node_colors)
-	elseif button_tapped == "_set_all" then
+	elseif button_tapped == "_set_all1" then
 		change_all = true
 		msg.post(customizer_controller, "load_palette", {collection = col_name})
 	else
@@ -90,18 +81,15 @@ end
 function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	if action_id == touch and action.released then
-		local buttons = {"title", "status", "_ok", "_clear", "_clear_all", "_set_all", "_undo", "_ok1"}
+		local buttons = {"prompt", "_clear_all1", "_set_all1", "_undo1", "_ok1","_clear_all", "_set_all", "_undo", "_ok"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
 			if gui.pick_node(node, action.x, action.y) then
 				button_tapped = v
-					if k > 2  then
-						TouchFb.touch_feedback(node, handle_input)
-					elseif k == 1 then
-						node = gui.get_node("title")
+					if k > 1 then
 						TouchFb.touch_feedback(node, handle_input)
 					else
-						node = gui.get_node("status")
+						node = gui.get_node("prompt")
 						TouchFb.touch_feedback(node, handle_input)
 					end
 				break

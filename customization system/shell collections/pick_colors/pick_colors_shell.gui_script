@@ -14,6 +14,11 @@ function init(self)
 	for k, v in ipairs(node_strings) do
 		Customizer.set_node_color(v, col_name)
 	end
+	--canvas customization
+	local canvas = {"prompt", "_clear_all", "_set_all", "_undo", "_ok"}
+	for k, v in ipairs(canvas) do
+		Customizer.set_node_color(v, "canvas")
+	end
 	msg.post(".", "acquire_input_focus")
 	msg.post(customizer_controller, "active_shell", {collection = col_name})
 end
