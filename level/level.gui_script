@@ -107,6 +107,18 @@ function init(self)
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, --[[default_box_clr_info,]] col_name)
 	end
+	--set the prompts to their app
+	local prompt0 = {"board", "yes_button", "no_button"}
+	local prompt1 = {"dialogue_box", "yes", "no"}
+	for k, v in ipairs(prompt0) do
+		gui.set_id(gui.get_node(prompt1[k]), v)
+		Customizer.set_node_color(v, "prompt")
+		gui.set_id(gui.get_node(v), prompt1[k])
+	end
+	--set the texts in the prompts to the 
+	gui.set_color(gui.get_node("yes1"), gui.get_color(gui.get_node("dialogue_box")))
+	gui.set_color(gui.get_node("no1"), gui.get_color(gui.get_node("dialogue_box")))
+	
 	--set question1 to question's color
 	local clr = gui.get_color(gui.get_node("question"))
 	clr.w = 0.32 -- set the alpha
