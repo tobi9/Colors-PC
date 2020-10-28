@@ -14,6 +14,7 @@ local color_options_shell_proxy = "#color_options_shell_proxy"
 local palette_shell_proxy = "#palette_shell_proxy"
 local prompt_shell_proxy = "#prompt_shell_proxy"
 local canvas_shell_proxy = "#canvas_shell_proxy"
+local customizer_menu_shell_proxy = "#customizer_menu_shell_proxy"
 
 local load_col = function(col)
 	msg.post(col, "load")
@@ -73,6 +74,11 @@ function on_message(self, message_id, message, sender)
 	local unld_prmpt_shl = hash("unload_prompt_shell")
 	local ld_cnvs_shl = hash("load_canvas_shell")
 	local unld_cnvs_shl = hash("unload_canvas_shell")
+	local ld_clr_menu_shl = hash("load_color_menu_shell")
+	local unld_clr_menu_shl = hash("unload_color_menu_shell")
+	local ld_cstmzr_menu_shl = hash("load_customizer_menu_shell")
+	local unld_cstmzr_menu_shl = hash("unload_customizer_menu_shell")
+
 
 	if message_id == proxy_loaded then
 		msg.post(sender, "init")
@@ -153,6 +159,12 @@ function on_message(self, message_id, message, sender)
 		unload_col(customizer_menu_proxy)
 	elseif message_id == unld_cnvs_shl then
 		unload_col(canvas_shell_proxy)
+		load_col(customizer_menu_proxy)
+	elseif message_id == ld_cstmzr_menu_shl then
+		load_col(customizer_menu_shell_proxy)
+		unload_col(customizer_menu_proxy)
+	elseif message_id == unld_cstmzr_menu_shl then
+		unload_col(customizer_menu_shell_proxy)
 		load_col(customizer_menu_proxy)
 	end
 end

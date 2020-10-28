@@ -51,20 +51,28 @@ local handle_input = function()
 	elseif button_tapped == "_canvascol" then
 		--load the canvas shell
 		msg.post(customizer_controller, "load_canvas_shell")
+	elseif button_tapped == "_customizercol" then
+		--load the color menu shell
+		msg.post(customizer_controller, "load_customizer_menu_shell")
 	end
 end
 
 function on_input(self, action_id, action)
 	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol", "_pausecol", "_gameovercol", 
-	"_choosecol", "_palettecol", "_promptcol", "_canvascol"}
+	"_choosecol", "_palettecol", "_promptcol", "_canvascol", "_customizercol"}
 	local touch = hash("touch")
-
 	if action_id == touch and action.released then
-		for k, v in ipairs(nodes) do
-			local node = gui.get_node(v)
-			if gui.pick_node(node, action.x, action.y) then
-				button_tapped = v
-				TouchFb.touch_feedback(node, handle_input)
+		local random = gui.get_node("_random")
+		if gui.pick_node(random, action.x, action.y) then
+			button_tapped = nodes[math.random(2, #nodes)]
+			TouchFb.touch_feedback(random, handle_input)
+		else
+			for k, v in ipairs(nodes) do
+				local node = gui.get_node(v)
+				if gui.pick_node(node, action.x, action.y) then
+					button_tapped = v
+					TouchFb.touch_feedback(node, handle_input)
+				end
 			end
 		end
 	end
