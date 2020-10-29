@@ -1,6 +1,6 @@
 analyzer = "main:/analyzer#analyzer"
 
-local folder = "tc2"
+--local folder = "tc2"
 local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
 
 local start_time -- The time the app is launched

@@ -1,7 +1,7 @@
 -- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY
 -- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY
 local enc = require("main.encryption")
-local folder = "Trick Colors test"
+--local folder = "Trick Colors test"
 local data = {}
 sound_playing = false -- this is used to filter the music
 

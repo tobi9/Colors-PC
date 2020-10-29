@@ -42,7 +42,7 @@ local n
 
 
 local check_memory_loc = function(str)
-	local folder = "Trick Colors test"
+	--local folder = "Trick Colors test"
 	local file = sys.get_save_file(folder, str)
 	local cell = sys.load(file)
 	return cell[1]
@@ -50,7 +50,7 @@ end
 
 local no_challenge = nil
 local save_to_memory_loc = function(str, n)
-	local folder = "Trick Colors test"
+	--local folder = "Trick Colors test"
 	local file = sys.get_save_file(folder, str)
 	local tab = {n}
 	sys.save(file, tab)

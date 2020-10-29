@@ -1,6 +1,5 @@
 --The folder that will contain a game data
 folder = "color and words"
-a = "wkjhs"
 --The tables below are global tables that hold the information on the colors the player can use.	
 color_info_table = nil
 unlocked_colors_table = {}
@@ -198,7 +197,7 @@ end
 
 function init(self)
 	--retrieve the colour information
-	local folder = "Trick Colors 2"
+	--local folder = "Trick Colors 2"
 	local file = sys.get_save_file(folder, "color_info_table")
 	color_info_table = sys.load(file)
 	if #color_info_table == 0 then

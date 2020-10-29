@@ -4,7 +4,7 @@
 -- in any script using the functions.
 local M = {}
 
-local folder = "Tc_debug"
+--local folder = "Tc_debug"
 --[[check if the lenght of the unlocked colors
 M.check_len_of_unlkd_clrs = function()
 	local file = sys.get_save_file(folder, "colors")
