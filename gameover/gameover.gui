@@ -668,7 +668,7 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
+    x: 0.9
     y: 0.9
     z: 1.0
     w: 1.0
@@ -687,8 +687,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "WATCH \n"
-  "THIS"
+  text: "WATCH  THIS\n"
+  "TO RESUME"
   font: "galindo"
   id: "ad_text"
   xanchor: XANCHOR_NONE

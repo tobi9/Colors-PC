@@ -1,4 +1,4 @@
--- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY
+-- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY (for the most part)
 -- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY
 local enc = require("main.encryption")
 --local folder = "Trick Colors test"
@@ -38,7 +38,7 @@ local retrieve_data = function()
 		last_ad_time = 0
 		highscore = 0
 		daily_reward_streak = 0
-		last_day = os.time()
+		last_day = get_day(os.time())
 		mode = "light"
 	else
 		money = tonumber(decode(table[1]))
@@ -69,12 +69,14 @@ end
 function init(self)
 	retrieve_data()
 	--calculate the daily reward
-	if last_day == nil or get_day(os.time()) - last_day == 1 then
+	if get_day(os.time()) - last_day == 1 then
 		daily_reward_streak = daily_reward_streak + 1
-	else
+		money = money + (base_reward * daily_reward_streak)
+	elseif get_day(os.time()) - last_day > 1 then
 		daily_reward_streak = 1
+		money = money + (base_reward * daily_reward_streak)
 	end
-	money = money + (daily_reward_streak * base_reward)
+	last_day = get_day(os.time()) -- record the date
 end
 
 function final(self)

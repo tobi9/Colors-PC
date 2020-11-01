@@ -1,11 +1,8 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: build/default
+INFO:ENGINE: Loading data from: http://127.0.0.1:60806/build
 INFO:ENGINE: Initialised sound device 'default'
 
-INFO:DLIB: SSDP: Started on address 192.168.1.1
-ERROR:GAMEOBJECT: Instance '/ads' could not be found when dispatching message 'show_ad' sent from main:/main#main
-ERROR:SCRIPT: /gameover/gameover.gui_script:90: The receiver shouldn't be `nil`
-stack traceback:
-	[C]: in function 'post'
-	/gameover/gameover.gui_script:90: in function </gameover/gameover.gui_script:86>
+DEBUG:SCRIPT: 1
+DEBUG:SCRIPT: 1
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132

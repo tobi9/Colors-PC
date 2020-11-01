@@ -143,7 +143,6 @@ function init(self)
 		gui.set_text(node, "LIGHT\nMODE")
 	end
 	-- retrive the value from memory or set it to the default
-	local folder = "Trick Colors Test"
 	local file = sys.get_save_file(folder, "chal_changes_allowed")
 	local tab = sys.load(file)
 	if #tab == 0 then
@@ -177,7 +176,6 @@ end
 
 function final(self)
 	msg.post(".", "release_input_focus")
-	local folder = "Trick Colors test"
 	local file = sys.get_save_file(folder, "chal_changes_allowed")
 	local tab = {chal_changes_allowed}
 	sys.save(file, tab)

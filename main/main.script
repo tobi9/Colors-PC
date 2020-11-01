@@ -1,5 +1,5 @@
 --The folder that will contain a game data
-folder = "color and words"
+folder = "colors temporary folder"
 --The tables below are global tables that hold the information on the colors the player can use.	
 color_info_table = nil
 unlocked_colors_table = {}
@@ -228,11 +228,9 @@ end
 function final(self)
 	msg.post(".", "release_input_focus")
 	--save the color_info_table
-	local folder = "Trick Colors 2"
 	local file = sys.get_save_file(folder, "color_info_table")
 	sys.save(file, color_info_table)
 	--save the default colors
-	local folder = "colors"
 	local file = sys.get_save_file(folder, "default_node_colors")
 	local default_clrs = {default_box_clr_info, default_text_clr_info}
 	sys.save(file, default_clrs)

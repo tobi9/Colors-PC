@@ -60,7 +60,6 @@ end
 function init(self)
     math.randomseed(os.time() * 1007)
     --retrieve countdown data
-    local folder = "tc2"
     local file = sys.get_save_file(folder, "countdown_data")
     local table = sys.load(file)
     if #table ~= 0 then
@@ -96,7 +95,6 @@ end
 
 function final(self)
     local exit_time = os.time()
-    local folder = "tc2"
     local file = sys.get_save_file(folder, "countdown_data")
     local table = {exit_time, duration}
     sys.save(file, table)
@@ -143,7 +141,8 @@ local handle_input = function()
     elseif button_tapped == "daily_gift" then
         local node = gui.get_node("info")
         if is_timer_zero then
-            if sys.get_connectivity() ~= sys.NETWORK_DISCONNECTED then
+            print(sys.get_connectivity())
+            if sys.get_connectivity() ~= sys.NETWORK_DISCONNECTED then -- it always returns 1 which is a problem
                 msg.post(main, "show_ad")
             else
                 gui.set_text(node, "CONNECT TO\nTHE INTERNET")
@@ -167,7 +166,7 @@ local countdown_done = hash('countdown_done')
 local msg_completed = hash('completed')
 function on_message(self, message_id, message, sender)
     if message_id == cont_countdown then
-        timer.delay(0.5, false, start_countdown) -- The delay is not set to 1 because it's slower
+        timer.delay(1, false, start_countdown) -- The delay is not set to 1 because it's slower
     elseif message_id == countdown_done then
         local countdown_node = gui.get_node('gift')
         gui.set_text(countdown_node, "WATCH\nVIDEO")
@@ -191,17 +190,18 @@ function on_message(self, message_id, message, sender)
             timer.delay(1, false, clear_info)
         elseif random_key > 4 and random_key <= 8 then
             brakes = brakes + gifts[random_key]
-            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."BRAKES")
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].." BRAKES")
             timer.delay(1, false, clear_info)
         elseif random_key > 8 and random_key <= 11 then
             lives = lives + gifts[random_key]
-            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."LIVES")
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].." LIVES")
             timer.delay(1, false, clear_info)
         elseif random_key > 11 then
             coins = coins + gifts[random_key]
-            gui.set_text(node, "YOU GOT\n"..gifts[random_key].."COINS")
+            gui.set_text(node, "YOU GOT\n"..gifts[random_key].." COINS")
             timer.delay(1, false, clear_info)
         end
+        update_info()
         --set the countdown to 24 hours 
         duration = 86400
         start_countdown()
