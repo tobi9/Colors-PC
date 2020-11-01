@@ -77,30 +77,66 @@ function on_message(self, message_id, message, sender)
 					--increment the streaks
 					if k == 1 then
 						color1 = color1 + 1
+						if color1 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color1})
+						end
 					elseif k == 2 then
 						color2 = color2 + 1
+						if color2 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color2})
+						end
 					elseif k == 3 then
 						color3 = color3 + 1
+						if color3 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color3})
+						end
 					elseif k == 4 then
 						color4 = color4 + 1
+						if color4 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color4})
+						end
 					elseif k == 5 then
 						color5 = color5 + 1
+						if color5 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color5})
+						end
 					elseif k == 6 then
 						color6 = color6 + 1	
+						if color6 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = color6})
+						end
 					end
 				else
 					if k == 1 then
 						word1 = word1 + 1
+						if word1 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word1})
+						end
 					elseif k == 2 then
 						word2 = word2 + 1
+						if word2 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word2})
+						end
 					elseif k == 3 then
 						word3 = word3 + 1
+						if word3 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word3})
+						end
 					elseif k == 4 then
 						word4 = word4 + 1
+						if word4 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word4})
+						end
 					elseif k == 5 then
 						word5 = word5 + 1
+						if word5 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word5})
+						end
 					elseif k == 6 then
 						word6 = word6 + 1
+						if word6 >= 3 then
+							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word6})
+						end
 					end
 				end
 			end

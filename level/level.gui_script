@@ -182,16 +182,18 @@ local hint_player = function(str)
 	gui.animate(option, "position.y", pos.y + 10, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 end
 
--- message ids
-local add_score = hash("add_score")
-local show_hint = hash("show_hint")
-local change_qst = hash("change_question")
-local what_is_the_question = hash("what_is_the_question")
-local msg_pointers = hash("pointers")
-local adj_brakes = hash("adjust_brakes")
-local msg_show_prompt = hash("show_prompt")
-local msg_completed = hash("completed")
 function on_message(self, message_id, message, sender)
+	-- message ids
+	local add_score = hash("add_score")
+	local show_hint = hash("show_hint")
+	local change_qst = hash("change_question")
+	local what_is_the_question = hash("what_is_the_question")
+	local msg_pointers = hash("pointers")
+	local adj_brakes = hash("adjust_brakes")
+	local msg_show_prompt = hash("show_prompt")
+	local msg_completed = hash("completed")
+	local msg_strk = hash("streak")
+
 	if message_id == add_score then
 		local score_id = gui.get_node("score") -- gets the id of the score node
 		score = score + 1  -- increments the score
@@ -211,6 +213,14 @@ function on_message(self, message_id, message, sender)
 		frictions_used = true
 		local b_id = gui.get_node("brakes")
 		gui.set_text(b_id, brakes)
+	elseif message_id == msg_strk then
+		--print(message.number.."X "..string.upper(color_strings[message.pointer]).." "..string.upper(message.type).." STREAK")
+		local node = gui.get_node("question1")
+		gui.set_text(node, message.number.."X ".." "..string.upper(message.type).." STREAK FOR "..string.upper(color_strings[message.pointer]))
+		local callback = function()
+			gui.set_text(node, question)
+		end
+		timer.delay(2, false, callback)
 	elseif message_id == msg_show_prompt then
 		Prompt.prompt(level_nodes, dialogue_nodes)
 		is_prompt_active = true
