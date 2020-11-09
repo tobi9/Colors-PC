@@ -111,6 +111,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	spawn_boxes()
 	check_for_chosen_colors()
+	--set the status
 	if #tray == num_of_colors_picked then
 		local node = gui.get_node("status")
 		gui.set_text(node, "READY")
@@ -149,6 +150,8 @@ local substitutes = {}
 local unload_color = function(pos)
 	table.remove(tray, pos)
 	table.insert(substitutes, 1, pos)
+	pprint(substitutes)
+	pprint(tray)
 end
 
 local load_color = function(clr, pos)
@@ -163,7 +166,7 @@ local load_color = function(clr, pos)
 			table.remove(substitutes, 1)
 		end
 	elseif in_tray == true then
-		unload_color(gui.get_text(box_label))
+		unload_color(tonumber(gui.get_text(box_label)))
 		gui.set_text(box_label, color_picked[1])
 	end
 	in_tray = false -- this statement resets the in_tray boolean to false to enable the player to pick other colors
@@ -193,7 +196,8 @@ local handle_input = function()
 		button_tapped = nil]]
 	elseif button_tapped == 'clear' then
 		clear_selection()
-		button_tapped = nil
+		local node = gui.get_node("status")
+		gui.set_text(node, "NOT READY")
 	else
 		if #substitutes == 0 then
 			load_color(color_picked)
@@ -201,6 +205,7 @@ local handle_input = function()
 			load_color(color_picked, substitutes[1])
 		end
 	end
+	button_tapped = nil
 end
 
 local touch = hash("touch")

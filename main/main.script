@@ -12,7 +12,7 @@ scripts they were put in the main script because they need to be immune ro resta
 ]]
 tray = {}
 -- This global variable is to be checked by the pick colors script so the correct number of colors are displayed
-num_of_colors_picked = nil 
+num_of_colors_picked = nil
 --the variables below are to be used by the level gui script 
 color_strings = {}
 colors = {}

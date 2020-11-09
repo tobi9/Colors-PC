@@ -9,23 +9,27 @@ local function handle_input()
 		num_of_colors_picked = 3
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
-	elseif button_tapped == '_4_colors' then
+	elseif button_tapped == '_4_colors' and len_of_unlkd_clrs >= 4 then
 		num_of_colors_picked = 4
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
-	elseif button_tapped == '_5_colors' then
+	elseif button_tapped == '_5_colors' and len_of_unlkd_clrs >= 5 then
 		num_of_colors_picked = 5
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
-	elseif button_tapped == '_6_colors' then
+	elseif button_tapped == '_6_colors' and len_of_unlkd_clrs >= 6 then
 		num_of_colors_picked = 6
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
 	elseif button_tapped == '_random' then
 		if len_of_unlkd_clrs >= 6 then
 			num_of_colors_picked = math.random(3, 6)
-		else
+		elseif len_of_unlkd_clrs == 5 then
 			num_of_colors_picked = math.random(3, 5)
+		elseif len_of_unlkd_clrs == 4 then
+			num_of_colors_picked = math.random(3, 4)
+		elseif len_of_unlkd_clrs == 3 then
+			num_of_colors_picked = 3
 		end
 		--load the pick colors collection
 		msg.post(main, "load_pick_colors")
@@ -38,12 +42,16 @@ end
 local nodes = {"_3_colors", "_4_colors", "_5_colors", "_6_colors", "_random"}
 
 function init(self)
-	math.randomseed(os.time())
+	math.randomseed(os.time() * 1002103)
 	msg.post(".", "acquire_input_focus")
 	len_of_unlkd_clrs = #unlocked_colors_table
-	if len_of_unlkd_clrs <= 6 then
-		local node = gui.get_node(nodes[4])
-		gui.set_text(node, "LOCKED")
+	local comparisons = {4, 5, 6}
+	local nodes = {"4_colors", "5_colors", "6_colors"}
+	for k,v in ipairs(comparisons) do
+		if len_of_unlkd_clrs < v then
+			local node = gui.get_node(nodes[v - 3])
+			gui.set_text(node, "LOCKED")
+		end
 	end
 	local Customizer = require("modules.customizer")
 	-- node each node to its appropriate color

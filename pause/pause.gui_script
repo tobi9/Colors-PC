@@ -21,7 +21,6 @@ function init(self)
 	is_exit_prompt_active = false
 	is_chal_prompt_active = false
 	msg.post(".", "acquire_input_focus")
-	msg.post("main:/main#challenges", "challenges", {id = "pause:/pause#pause"})
 	-- set the score
 	local score_id = gui.get_node("score")
 	gui.set_text(score_id, score)
@@ -80,12 +79,13 @@ local button_tapped = nil
 
 local chal_status
 local function handle_input()
-	if button_tapped == 'resume' then 
+	if button_tapped == 'resume' then
+		msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 		msg.post(main, 'resume', {col = "pause"})-- tells the controller script which collection to unload when resuming
 	elseif button_tapped == 'show_ad' and ad_for_hints_played == false then
 		msg.post("main:/main#main", "show_ad", {id = "pause:/pause#pause"})
 	elseif button_tapped == 'restart' then
-		chances = const_chances
+		msg.post("main:/main#challenges", "restart") -- give the challenge script the required info to update some parameters
 		msg.post(main, 'restart', {col = "pause"})-- tells the controller script which collection to unload when restarting	
 	elseif button_tapped == 'sound' then
 		msg.post("main:/main#main", "sound")
@@ -94,12 +94,14 @@ local function handle_input()
 		is_exit_prompt_active = true
 	elseif button_tapped == 'chal_but' then
 		if chal_status then
-			chal_changes_allowed = 2
-			--give reward
-			msg.post("main:/main#challenges", "give_reward")
-			msg.post("main:/main#challenges", "change_challenge")
-			timer.delay(0.001, false, req_challenge)
-		else
+			if not chal_passed then
+				chal_changes_allowed = 2
+				--give reward
+				msg.post("main:/main#challenges", "give_reward")
+				msg.post("main:/main#challenges", "change_challenge")
+				--timer.delay(0.001, false, req_challenge)
+			end
+		elseif chal_status == false and not chal_passed then
 			Prompt.prompt(menu_nodes, chal_prompt_nodes)
 			local node = gui.get_node("chal_prompt")
 			local text
@@ -113,6 +115,7 @@ local function handle_input()
 		end
 
 	elseif button_tapped == 'yes' then
+		msg.post("main:/main#challenges", "menu_loaded") -- give the challenge script the heads up with regard to the exit so it can update the reward
 		msg.post(main, 'return_2_menu', {col = "pause"})-- tells the controller script which collection to unload when returning to menu
 	elseif button_tapped == 'no' then
 		Prompt.prompt(exit_dialogue_nodes, menu_nodes)
@@ -137,11 +140,11 @@ local function handle_input()
 	end
 end
 
-local msg_completed = hash("completed")
-local msg_chal = hash("chal")
-local msg_chal_reward = hash("chal_reward")
-
 function on_message(self, message_id, message, sender)
+	local msg_completed = hash("completed")
+	local msg_chal = hash("chal")
+	local msg_chal_reward = hash("chal_reward")
+
 	if message_id == msg_chal then
 		local node = gui.get_node("challenge")
 		gui.set_text(node, message.c)
@@ -155,6 +158,12 @@ function on_message(self, message_id, message, sender)
 		node = gui.get_node("challenge_reward")
 		local chal_reward = message.reward * NumOfColorsPicked
 		gui.set_text(node, "REWARD\n$"..chal_reward)
+		if chal_passed then
+			local node = gui.get_node("chal_but")
+			gui.set_text(node, "CHALLENGE\nPASSED")
+			node = gui.get_node("challenge_reward")
+			gui.set_text(node, " ")
+		end
 	elseif message_id == msg_completed then
 		msg.post("level:/controller#controller", "new hints")
 		local txt = gui.get_node("ad_text")
@@ -164,6 +173,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
 		gui.set_text(m, "$"..tostring(money))
+		chal_passed = true
+		local node = gui.get_node("chal_but")
+		gui.set_text(node, "CHALLENGE\nPASSED")
+		node = gui.get_node("challenge_reward")
+		gui.set_text(node, " ")
 	end
 end
 

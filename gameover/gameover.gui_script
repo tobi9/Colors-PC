@@ -15,24 +15,20 @@ local req_challenge = function()
 end
 
 function init(self)
-	msg.post(analyzer, "gameover")
 	req_challenge()
+	msg.post(analyzer, "gameover")
 	Prompt.prompt(exit_dialogue_nodes, menu_nodes)
 	Prompt.prompt(chal_prompt_nodes, menu_nodes)
 	is_exit_prompt_active = false
 	is_chal_prompt_active = false
 	msg.post("/gameover#ended", "play_sound", {delay = 0, gain = 1})
 	msg.post(".", "acquire_input_focus")
-	--notify the controller script of the game over
-	msg.post("level:/controller#controller", "streaks_needed")
 	-- set the score
 	local score_id = gui.get_node("score")
 	gui.set_text(score_id, score)
 	-- display the highscore
 	if score > highscore then
-
-	else
-
+		
 	end
 	local Customizer = require("modules.customizer")
 	local col_name = "gameover"
@@ -84,13 +80,14 @@ local button_tapped = nil
 local chal_status
 
 local function handle_input()
-	if button_tapped == 'resume' then 
+	if button_tapped == 'resume' then
+		msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 		msg.post(main, 'resume', {col = "gameover"})-- tells the controller script which collection to unload when resuming
 		lives = lives - 1
-		msg.post(ANALYZER, 'respawn_used')
 	elseif button_tapped == 'show_ad' then
 		msg.post("main:/main#main", "show_ad", {id = "gameover:/gameover#gameover"})
 	elseif button_tapped == 'restart' then
+		msg.post("main:/main#challenges", "restart") -- give the challenge script the required info to update some parameters
 		msg.post(main, 'restart', {col = "gameover"})-- tells the controller script which collection to unload when restarting	
 		msg.post(analyzer, "game_restarted")
 	elseif button_tapped == 'sound' then
@@ -100,12 +97,14 @@ local function handle_input()
 		is_exit_prompt_active = true
 	elseif button_tapped == 'chal_but' then
 		if chal_status then
-			chal_changes_allowed = 2
-			--give reward
-			msg.post("main:/main#challenges", "give_reward")
-			msg.post("main:/main#challenges", "change_challenge")
-			timer.delay(0.001, false, req_challenge)
-		else
+			if not chal_passed then
+				chal_changes_allowed = 2
+				--give reward
+				msg.post("main:/main#challenges", "give_reward")
+				msg.post("main:/main#challenges", "change_challenge")
+				--timer.delay(0.001, false, req_challenge)
+			end
+		elseif chal_status == false and not chal_passed then
 			Prompt.prompt(menu_nodes, chal_prompt_nodes)
 			local node = gui.get_node("chal_prompt")
 			local text
@@ -119,6 +118,7 @@ local function handle_input()
 		end
 
 	elseif button_tapped == 'yes' then
+		msg.post("main:/main#challenges", "menu_loaded") -- give the challenge script the heads up with regard to the exit so it can update the reward
 		msg.post(main, 'return_2_menu', {col = "gameover"})-- tells the controller script which collection to unload when returning to menu
 	elseif button_tapped == 'no' then
 		Prompt.prompt(exit_dialogue_nodes, menu_nodes)
@@ -144,15 +144,18 @@ local function handle_input()
 end
 
 
--- message ids
-local msg_challenges = hash("challenges")
-local landmark = hash("landmark")
-local msg_completed = hash("completed")
-local msg_chal = hash("chal")
-local msg_chal_reward = hash("chal_reward")
-
 function on_message(self, message_id, message, sender)
-	if message_id == msg_chal then
+	-- message ids
+	local msg_challenges = hash("challenges")
+	local landmark = hash("landmark")
+	local msg_completed = hash("completed")
+	local msg_chal = hash("chal")
+	local msg_chal_reward = hash("chal_reward")
+	local msg_req_chal = hash("request_challenge")
+
+	if message_id == msg_req_chal then
+		req_challenge()
+	elseif message_id == msg_chal then
 		local node = gui.get_node("challenge")
 		gui.set_text(node, message.c)
 		chal_status = message.status
@@ -165,6 +168,12 @@ function on_message(self, message_id, message, sender)
 		node = gui.get_node("challenge_reward")
 		local chal_reward = message.reward * NumOfColorsPicked
 		gui.set_text(node, "REWARD\n$"..chal_reward)
+		if chal_passed then
+			local node = gui.get_node("chal_but")
+			gui.set_text(node, "CHALLENGE\nPASSED")
+			node = gui.get_node("challenge_reward")
+			gui.set_text(node, " ")
+		end
 	elseif message_id == msg_completed then
 		msg.post("/gameover#reward", "play_sound", {delay = 0, gain = 1})
 		lives = lives + 1
@@ -174,6 +183,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
 		gui.set_text(m, "$"..tostring(money))
+		chal_passed = true
+		local node = gui.get_node("chal_but")
+		gui.set_text(node, "CHALLENGE\nPASSED")
+		node = gui.get_node("challenge_reward")
+		gui.set_text(node, " ")
 	end
 end
 

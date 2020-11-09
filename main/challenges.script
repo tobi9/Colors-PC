@@ -1,6 +1,3 @@
---[[local highscore
-local score
-local brake_score -- the score when the player used brakes for the first time]]
 local word_streaks
 local color_streaks
 local max_word_streak
@@ -9,298 +6,295 @@ local word_streak_scores
 local color_streak_scores
 local brake_used -- this boolean variable is used for challenge no 6 and 8 after so loops its value is set
 
---[[
-	The challenges should get harder as the player gets better. So it needs to communicate with the analyser script to determine the kind of 
-	challenges the player gets by looking at the player stats.
-]]
-
--- I need to decide what n is how to set the appropriate value of n
--- Some challenges will be very difficult so they either need to be changed or need to be set for the very best players(NB the analyer would take
---into account how often the players beats the highscore and how large the margin is) I have to make a decision
---I'm designing the challenges with the intention of making a miss gameover instead of giving the players chances
-local challenges = {--[[1]]	"REACH A SCORE OF "..tostring(n),
---[[2]]	"REACH A SCORE OF\n"..tostring(n).." WITHOUT USING FRICTIONS",
-
---[[3]]	"BEAT YOUR HIGHSCORE",
---[[4]] "BEAT YOUR HIGHSCORE\nWITHOUT USING FRICTIONS",
-
---[[5]]	"GET A "..tostring(n).."X COLOR STREAK",
---[[6]]	"GET A "..tostring(n).."X COLOR STREAK\nWITHOUT USING FRICTIONS",
-
---[[7]]	"GET A "..tostring(n).."X WORD STREAK",
---[[8]]	"GET A "..tostring(n).."X WORD STREAK\nWITHOUT USING FRICTIONS",
-
---[[9]]	"DOUBLE YOUR HIGHSCORE",
---[[10]]"DOUBLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS",
-
---[[11]]"TRIPLE YOUR HIGHSCORE",
---[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING FRICTIONS"
-}
-
-local chosen_chal_index
-local n
-
-
 local check_memory_loc = function(str)
-	--local folder = "Trick Colors test"
 	local file = sys.get_save_file(folder, str)
 	local cell = sys.load(file)
 	return cell[1]
 end
 
-local no_challenge = nil
 local save_to_memory_loc = function(str, n)
-	--local folder = "Trick Colors test"
 	local file = sys.get_save_file(folder, str)
 	local tab = {n}
 	sys.save(file, tab)
 end
 
-local new_chal_qst = "new chal ?" --this is the location in the memory the script checks to know if the challenge being set is a new one. true if it is and false if not
-local challenge
-local challenges_passed = 0
-local challenge_status -- true if the challenge was passed and false if not
-local prev_index -- this is the index of the previous challenge it is needed to avoid set the same challenge twice in a row after a change is reqested by the player
-local chal_reward
---This function sets the challenge.
-local set_challenge = function(index)
-	if check_memory_loc("chal_index") == nil then	
-		chosen_chal_index = math.random(#challenges)
-		if chosen_chal_index == prev_index then
-			if chosen_chal_index == #challenges then -- to stop it from passing the limit of the table
-				chosen_chal_index = chosen_chal_index - 1
+local challenge_ptr -- points to the challenge in the table
+local challenge_num -- the score the player is supposed to get
+local challenge_status -- passed or not
+local challenge_change = false -- boolean value that evaluates if the player wants to change the challenge
+local reward
+local num_of_colors -- the number of colors picked by the player. it is will be used to calculate the final reward. final_reward = num_of_colors * reward
+local final_reward
+local ptr_holder -- this holds the challenge pointer when the challenge is to be changed at the player's choosing
+local set_challenge = function()
+	local challenges = {--[[1]]	"REACH A SCORE OF "..tostring(challenge_num),
+	--[[2]]	"REACH A SCORE OF\n"..tostring(challenge_num).." WITHOUT USING BRAKES",
+
+	--[[3]]	"GET A "..tostring(challenge_num).."X COLOR STREAK",
+	--[[4]]	"GET A "..tostring(challenge_num).."X COLOR STREAK\nWITHOUT USING BRAKES",
+
+	--[[5]]	"GET A "..tostring(challenge_num).."X WORD STREAK",
+	--[[6]]	"GET A "..tostring(challenge_num).."X WORD STREAK\nWITHOUT USING BRAKES",
+
+	--[[7]]	"BEAT YOUR HIGHSCORE",
+	--[[8]] "BEAT YOUR HIGHSCORE\nWITHOUT USING BRAKES",
+
+	--[[9]]	"DOUBLE YOUR HIGHSCORE",
+	--[[10]]"DOUBLE YOUR HIGHSCORE\nWITHOUT USING BRAKES",
+
+	--[[11]]"TRIPLE YOUR HIGHSCORE",
+	--[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING BRAKES"
+	}
+	if check_memory_loc("challenge_ptr") == nil then
+		if not challenge_change then 
+			challenge_ptr = math.random(#challenges)
+			--if the highscore is less than  10, then the last four challenges should not be set
+			if challenge_ptr >= 7 and highscore < 10 then
+				repeat
+					challenge_ptr = math.random(#challenges)
+				until(challenge_ptr < 7)
+			end
+		else --if the challenge is to be changed
+			if challenge_ptr ~= #challenges then
+				repeat
+					challenge_ptr = 12
+				until(challenge_ptr ~= ptr_holder)
+				--if the highscore is less than  10, then the last four challenges should not be set
+				if challenge_ptr >= 7 and highscore < 10 then
+					repeat
+						challenge_ptr = math.random(#challenges)
+					until(challenge_ptr < 7 and challenge ~= ptr_holder)
+				end
 			else
-				chosen_chal_index = chosen_chal_index + 1
+				challenge_ptr = math.random(1, ptr_holder - 1)
 			end
 		end
 		challenge_status = false
-	else
-		chosen_chal_index = check_memory_loc("chal_index")
-		challenge_status = check_memory_loc("chal_status")
-	end
-	if check_memory_loc("n"..chosen_chal_index) == nil then
-		if chosen_chal_index == 1 or chosen_chal_index == 2 then
-			n = 5
-		else
-			n = 3
-		end
-	else
-		n = check_memory_loc("n"..chosen_chal_index)
-	end
-	challenges = {--[[1]]	"Reach a score of "..tostring(n),
-	--[[2]]	"Reach a score of "..tostring(n).."\nwithout using frictions",
-	
-	--[[3]]	"Beat your highscore",
-	--[[4]] "Beat your highscore\nwithout using frictions",
-	
-	--[[5]]	"Get a "..tostring(n).."X color streak",
-	--[[6]]	"Get a "..tostring(n).."X color streak\nwithout using frictions",
-	
-	--[[7]]	"Get a "..tostring(n).."X word streak",
-	--[[8]]	"Get a "..tostring(n).."X word streak\nwithout using frictions",
-	
-	--[[9]]	"Double your highscore",
-	--[[10]]"Double your highscore\nwithout using frictions",
-	
-	--[[11]]"Triple your highscore",
-	--[[12]]"Triple your highscore\nwithout using frictions"
-	}
-	if challenge_status then
-		chal_reward = check_memory_loc("reward")
-	else
-		chal_reward = n * chosen_chal_index
-	end
-	challenge = challenges[chosen_chal_index]
-	save_to_memory_loc("chal_index", chosen_chal_index)
-	save_to_memory_loc("chal_status", challenge_status)
-	--this enables the analyzer script that needs the information to know if it is a new challenge being set or not
-	if check_memory_loc(new_chal_qst) == true then
+		change_challenge = false
 		--notify the analyser
 		msg.post(analyzer, "new_chal")
-		--set the state to false
-		save_to_memory_loc(new_chal_qst, false)
+	else
+		challenge_ptr = check_memory_loc("challenge_ptr")
+		challenge_status = check_memory_loc("challenge_status")
 	end
-end
-
-local chal_status_check = function()
-	if chosen_chal_index == 1 then
-		if score == n then
-			if n <= 1000 then
-				n = n + 5
-				save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			end
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
+	-- The block of code below checks the memory for the challenge number. If empty, it sets it to the default values.
+	if check_memory_loc("challenge_num"..challenge_ptr) == nil then
+		--[[changes]]
+		if challenge_ptr == 1 or challenge_ptr == 2 then
+			challenge_num = 5
+		else --what if the challenge has to do with highscore!!!!!!!!!!!!!!!!!!!
+			challenge_num = 3
 		end
-	elseif chosen_chal_index == 2 then
-		if score == n and brake_score < n then
-			if n <= 1000 then
-				n = n + 5
-				save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			end
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 3 then
-		if score > highscore then
+	else
+		challenge_num = check_memory_loc("challenge_num"..challenge_ptr)
+	end
+	challenges = {--[[1]]	"REACH A SCORE OF "..tostring(challenge_num),
+	--[[2]]	"REACH A SCORE OF\n"..tostring(challenge_num).." WITHOUT USING BRAKES",
 
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 4 then
-		if score > n and brake_score < n then
+	--[[3]]	"GET A "..tostring(challenge_num).."X COLOR STREAK",
+	--[[4]]	"GET A "..tostring(challenge_num).."X COLOR STREAK\nWITHOUT USING BRAKES",
 
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)	
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 5 then
-		if n >= max_color_streak then
+	--[[5]]	"GET A "..tostring(challenge_num).."X WORD STREAK",
+	--[[6]]	"GET A "..tostring(challenge_num).."X WORD STREAK\nWITHOUT USING BRAKES",
 
-			n = n + 1
-			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 6 then
-		if n >= max_color_streak and brake_used == false then
+	--[[7]]	"BEAT YOUR HIGHSCORE",
+	--[[8]] "BEAT YOUR HIGHSCORE\nWITHOUT USING BRAKES",
 
-			n = n + 1
-			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			challenge_status = true
-			challenges_passed = challenges_passed + 1
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 7 then
-		if n >= max_word_streak then
+	--[[9]]	"DOUBLE YOUR HIGHSCORE",
+	--[[10]]"DOUBLE YOUR HIGHSCORE\nWITHOUT USING BRAKES",
 
-			n = n + 1
-			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 8 then
-		if n >= max_word_streak and brake_used == false then
-
-			n = n + 1
-			save_to_memory_loc("n"..tostring(chosen_chal_index), n)
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 9 then
-		local val = 2 * highscore
-		if score >= val then
-
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 10 then
-		local val = 2 * highscore
-		if score >= val and brake_score <= val then
-
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 11 then
-		local val = 3 * highscore
-		if score >= val then
-
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
-		end
-	elseif chosen_chal_index == 12 then
-		local val = 3 * highscore
-		if score >= val and brake_score <= val then
-
-			challenges_passed = challenges_passed + 1
-			challenge_status = true
-			save_to_memory_loc("chal_status", true)
-			save_to_memory_loc("reward", chal_reward)
+	--[[11]]"TRIPLE YOUR HIGHSCORE",
+	--[[12]]"TRIPLE YOUR HIGHSCORE\nWITHOUT USING BRAKES"
+	}
+	--Set the reward
+	if challenge_status then
+		reward = check_memory_loc("reward")
+		final_reward = reward
+	else
+		--there is no reward structure they are arbitrary
+		if challenge_ptr == 1 or challenge_ptr == 3 or challenge_ptr == 4 or challenge_ptr == 5 or challenge_ptr == 6 then
+			reward = challenge_num * challenge_ptr
+		elseif challenge_ptr == 2 then
+			reward = challenge_num * (challenge_ptr + 1)
+		elseif challenge_ptr == 7 or challenge_ptr == 8 then
+			reward = challenge_num * highscore
+		elseif challenge_ptr == 9 or challenge_ptr == 10 then
+			reward = challenge_num * highscore * 2
+		elseif challenge_ptr == 11 or challenge_ptr == 12 then
+			reward = challenge_num * highscore * 3		
 		end
 	end
+	challenge = challenges[challenge_ptr]
+	save_to_memory_loc("challenge_ptr", challenge_ptr)
+	save_to_memory_loc("challenge_status", challenge_status)
+	save_to_memory_loc("reward", reward)
 end
 
 function init(self)
-	math.randomseed(os.time() * 1005)
+	math.randomseed(os.time())
 	set_challenge()
 end
 
-function final(self)
-
+-- the highscore the instant the player gets a new highscore
+local highscore_snapshot
+--the variables below are needed by the function below
+local double_highscore
+local triple_highscore
+local check_challenge_status = function()
+	if challenge_ptr == 1 then
+		if score >= challenge_num then
+			challenge_num = challenge_num + 5
+			save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 2 then
+		if score >= challenge_num then
+			if brake_score == 0 or brake_score > challenge_num then
+				challenge_num = challenge_num + 5
+				save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+				challenge_status = true
+				save_to_memory_loc("challenge_status", true)
+				save_to_memory_loc("reward", final_reward)
+			end
+		end
+	elseif challenge_ptr == 3 then
+		if challenge_num == max_color_streak then
+			challenge_num = challenge_num + 1
+			save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 4 then
+		if challenge_num == max_color_streak and brake_score == 0 then
+			challenge_num = challenge_num + 1
+			save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 5 then
+		if challenge_num == max_word_streak then
+			challenge_num = challenge_num + 1
+			save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 6 then
+		if challenge_num == max_word_streak and brake_score == 0 then
+			challenge_num = challenge_num + 1
+			save_to_memory_loc("challenge_num"..challenge_ptr, challenge_num)
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 7 then
+		if highscore_snapshot ~= nil then
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 8 then
+		if highscore_snapshot ~= nil then
+			if brake_score == 0 then
+				challenge_status = true
+				save_to_memory_loc("challenge_status", true)
+				save_to_memory_loc("reward", final_reward)	
+			end
+		end
+	elseif challenge_ptr == 9 then
+		if highscore_snapshot ~= nil and score >= double_highscore then
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 10 then
+		if highscore_snapshot ~= nil and score >= double_highscore then
+			if brake_score == 0 then
+				challenge_status = true
+				save_to_memory_loc("challenge_status", true)
+				save_to_memory_loc("reward", final_reward)	
+			end
+		end
+	elseif challenge_ptr == 11 then
+		if highscore_snapshot ~= nil and score >= triple_highscore then
+			challenge_status = true
+			save_to_memory_loc("challenge_status", true)
+			save_to_memory_loc("reward", final_reward)
+		end
+	elseif challenge_ptr == 12 then
+		if highscore_snapshot ~= nil and score >= triple_highscore then
+			if brake_score == 0 then
+				challenge_status = true
+				save_to_memory_loc("challenge_status", true)
+				save_to_memory_loc("reward", final_reward)	
+			end
+		end
+	end
 end
 
--- message ids
-local msg_set_chal = hash("set_chal")
-local msg_change_chal = hash("change_challenge")
-local msg_chal_req = hash("challenges_requested")
-local msg_check_chal = hash("check_challenge")
-local msg_reward = hash("reward")
-local msg_give_reward = hash("give_reward")
-
 function on_message(self, message_id, message, sender)
+	-- message ids
+	local msg_set_chal = hash("set_chal")
+	local msg_change_chal = hash("change_challenge")
+	local msg_chal_req = hash("challenges_requested")
+	local msg_check_chal = hash("check_challenge")
+	local msg_num_of_clrs = hash("num_of_colors")
+	local msg_give_reward = hash("give_reward")
+	local msg_new_highscore = hash("new_highscore")
+	local msg_menu_loaded = hash("menu_loaded")
+	local msg_restart = hash("restart")
+
 	if message_id == msg_change_chal then
-		prev_index = chosen_chal_index
-		save_to_memory_loc("chal_index", nil) -- clear the memory location
+		ptr_holder = challenge_ptr
+		save_to_memory_loc("challenge_ptr", nil) -- clear the memory location
+		challenge_change = true
 		set_challenge()
 	elseif message_id == msg_give_reward then
-		money = money + chal_reward
+		money = money + final_reward
+		save_to_memory_loc("reward", nil)
 		msg.post(sender, "chal_reward")
 		msg.post(analyzer, "chal_passed")
-		-- This is needed by the analyser to check if a new challenge has been set. The code below allows the challenge
-		--script to know that the next challenge is a new one
-		save_to_memory_loc(new_chal_qst, true)
 	elseif message_id == msg_chal_req then
-		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = chal_reward})
-	elseif message_id == msg_reward then
-		chal_reward = chal_reward * message.num_of_clrs -- calculate the actual reward for the challenge
+		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = reward})
+	elseif message_id == msg_num_of_clrs then
+		--num_of_colors = message.num_of_clrs
+		if num_of_colors_picked ~= nil then -- this is to fix a problem with the pasuse and gameover scripts
+			num_of_colors = num_of_colors_picked
+		end
+		if not challenge_status then -- if the challenge has not been passed
+			final_reward = reward * num_of_colors
+		end
 	elseif message_id == msg_check_chal then
 		word_streaks = message.word
 		color_streaks = message.color
-		word_streak_scores = message.word_score
-		color_streak_scores = message.color_score
-		max_word_streak = table.maxn(word_streaks)
-		max_color_streak = table.maxn(color_streaks)
-		--The if statement below check if the player used brakes before getting the streak
-		if chosen_chal_index == 6 then
-			for k, v in ipairs(color_streaks) do
-				if v == n then
-					if color_streak_scores[k] < brake_score then
-						brake_used = false
-						break
-					end
-				end
-			end
-		elseif chosen_chal_index == 8 then
-			for k, v in ipairs(word_streaks) do
-				if v == n then
-					if word_streak_scores[k] < brake_score then
-						brake_used = false
-						break
-					end
-				end
+		max_word_streak = 0
+		max_color_streak = 0
+		--get the max values in each table
+		for k, v in ipairs(word_streaks) do
+			if v > max_word_streak then
+				max_word_streak = v
 			end
 		end
-		chal_status_check()
-		msg.post(sender, "chal", {c = challenge, status = challenge_status, reward = chal_reward})
+		for k, v in ipairs(color_streaks) do
+			if v > max_color_streak then
+				max_color_streak = v
+			end
+		end
+		check_challenge_status()
+	elseif message_id == msg_new_highscore then
+		highscore_snapshot = highscore
+		double_highscore = (highscore_snapshot - 1) * 2
+		triple_highscore = (highscore_snapshot - 1) * 3
+	elseif message_id == msg_menu_loaded then
+		if challenge_status == true then
+			reward = final_reward
+		end
+	elseif message_id == msg_restart then
+		double_highscore = highscore * 2
+		triple_highscore = highscore * 3
 	end
 end

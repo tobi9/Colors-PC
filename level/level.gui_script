@@ -126,6 +126,7 @@ function init(self)
 end
 
 function final(self)
+	msg.post("main:/main#challenges", "level_ended", {num_of_clrs = NumOfColorsPicked}) -- give the challenge script the required info to calculate the actual reward
 	msg.post(".", "release_input_focus")
 end
 
@@ -182,6 +183,7 @@ local hint_player = function(str)
 	gui.animate(option, "position.y", pos.y + 10, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 end
 
+local highscore_notification_sent = false -- this stops the level script from notifying the challenge script more than once
 function on_message(self, message_id, message, sender)
 	-- message ids
 	local add_score = hash("add_score")
@@ -200,9 +202,15 @@ function on_message(self, message_id, message, sender)
 		if score > highscore then
 			gui.animate(score_id , "position.x", 360, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 			highscore = score
+			if not highscore_notification_sent then
+				msg.post("main:/main#challenges", "new_highscore")
+				highscore_notification_sent = true
+			end
 			msg.post("main:/main#data_handler", "save_data")
 		end
 		gui.set_text(score_id, score)-- this displays the incremented score
+			--notify the controller script to supply the challenge script with the data needed to chcl if the challenge has been passed
+		msg.post("level:/controller#controller", "streaks_needed")
 	elseif message_id == show_hint then
 		hint_player('option'..tostring(message.hint))
 	elseif message_id == change_qst then
@@ -210,7 +218,6 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == what_is_the_question then
 		msg.post(sender, "the_question_is", {q = questionPtr})
 	elseif message_id == adj_brakes then
-		frictions_used = true
 		local b_id = gui.get_node("brakes")
 		gui.set_text(b_id, brakes)
 	elseif message_id == msg_strk then

@@ -11,18 +11,29 @@ local qst
 local answer_type -- this variable is needed by the controller script in ascertaining the correct type of streak to record. it can only be two strings "word" or "color"
 local answer = nil -- this is the value the script sends so it can be compared with the button the was clicked
 
-local movement  = function (self)
-	pos.x = pos.x + speed
-	go.set_position(pos)
-	msg.post("#", "check_pos")
+function init(self)
+	msg.post(analyzer, "new_spawn")
+	if ad_for_hints_played == false and speed > 700 then -- ad_for_hints is a global variable declared in the level gui script
+		msg.post(level_gui, "show_prompt", {situation = "hints"})
+	end
+	--CHECK HERE FOR BUGS
+	my_words = color_strings
+	my_colors = colors
+	math.randomseed(os.time()*1001)
+	self.color_ptr = math.random(#my_colors)-- position of the color in the table
+	color = my_colors[self.color_ptr]
+	my_color = my_words[self.color_ptr]
+	Color.set_label_color('#label', color)
+	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
+	my_word = my_words[self.word_ptr]
+	label.set_text("#label", my_word) -- sets itself to the randomly selected word	
 end
 
-
-local check_pos = function (self)
-	pos = go.get_position()
-	if pos.x < 700 then
-		timer.delay(0, false, movement)
-	else
+function update(self, dt)
+	local pos = go.get_position()
+	pos.x = pos.x + speed * dt
+	go.set_position(pos)
+	if pos.x > 700 then
 		if answered == false then
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
 			if lives == 0 then
@@ -34,25 +45,6 @@ local check_pos = function (self)
 		end
 		go.delete() -- the go deletes after it passes 700 on the x-axis
 	end
-end	
-
-function init(self)
-	msg.post(analyzer, "new_spawn")
-	if ad_for_hints_played == false and speed > 7 then -- video_watched is a global varible declared in the controller script
-		msg.post(level_gui, "show_prompt", {situation = "hints"})
-	end
-	--CHECK HERE FOR BUGS
-	my_words = color_strings
-	my_colors = colors
-	timer.delay(0, false, check_pos)
-	math.randomseed(os.time()*1001)
-	self.color_ptr = math.random(#my_colors)-- position of the color in the table
-	color = my_colors[self.color_ptr]
-	my_color = my_words[self.color_ptr]
-	Color.set_label_color('#label', color)
-	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
-	my_word = my_words[self.word_ptr]
-	label.set_text("#label", my_word) -- sets itself to the randomly selected word	
 end
 
 function final(self)
@@ -65,7 +57,6 @@ local current_speed -- records the speed of the object at the time the prompt wa
 --message ids
 local color_is = hash("your_color_is")
 local check_this = hash("check_this")
-local msg_check_pos = hash("check_pos")
 local msg_hide = hash("hide")
 local msg_unhide = hash("unhide")
 
@@ -97,8 +88,7 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		answered = true -- this is a global variable declared in the controller script
-	elseif message_id == msg_check_pos then
-		check_pos()
+	--the following two messages are needed when the hint prompt is shown to the player
 	elseif message_id == msg_hide then
 		current_speed = speed
 		speed = 0

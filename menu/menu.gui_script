@@ -72,7 +72,7 @@ local function handle_input()
 			chal_changes_allowed = chal_changes_allowed - 1
 			msg.post("main:/main#challenges", "change_challenge")
 			timer.delay(0.001, false, req_challenge)
-		elseif coins > 0 then
+		elseif coins > 1 then
 			coins = coins - 2 --the player can change the challenge for two coins
 			local c = gui.get_node("coins")
 			gui.set_text(c, "COINS\n"..tostring(coins))		
@@ -163,11 +163,13 @@ function on_message(self, message_id, message, sender)
 		node = gui.get_node("chal_but") -- I reused the node variable to accomodate the text on the challenge button
 		if chal_status then
 			gui.set_text(node, "TAP TO GET\nREWARD")
+			node = gui.get_node("challenge_reward")
+			gui.set_text(node, "YOUR REWARD IS \n$"..message.reward)	
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
+			node = gui.get_node("challenge_reward")
+			gui.set_text(node, "REWARD\n$"..message.reward.."\nX\nCOLORS USED")	
 		end
-		node = gui.get_node("challenge_reward")
-		gui.set_text(node, "REWARD\n$"..message.reward.."\nX\nCOLORS USED")
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
 		gui.set_text(m, "$"..tostring(money))

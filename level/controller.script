@@ -7,14 +7,14 @@ spawn = nil -- the id of the spawned game object it is also a global variable it
 answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script
 level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
-speed = 5
+speed = 500
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
-
+chal_passed = false -- true if so and false if not
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
 	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
 	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
 	if speed < 9 then -- 9 is the max speed
-		speed = speed + 0.05
+		speed = speed + 5
 	end
 end
 
@@ -23,9 +23,9 @@ function init(self)
 	Color.extract_color_info(tray, colors, 3) -- extracts the vector4 color values
 	spawn_color(colorFac, spawn_pos) -- spawns the first go of the session
 	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
-	msg.post("main:/main#challenges", "set_challenge")
+	--msg.post("main:/main#challenges", "set_challenge")
 	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
-	msg.post("main:/main#challenges", "reward", {num_of_clrs = NumOfColorsPicked}) -- give the challenge script the required info to calculate the actual reward
+	msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 	--send the color strings to the analyzer
 	msg.post(analyzer, "colors", {colors = color_strings})
 end
@@ -43,20 +43,22 @@ local word1, word2, word3, word4, word5, word6 = 0, 0, 0, 0, 0, 0
 
 function final(self)
 	gamePaused = false -- the varible is declared in the main script
+	chal_passed = false
 end
 
 local spawn_counter = 3 -- this counts the number of objects spawned so the hints will stop being displayed after 10 objects have been spawned
 local hint
---message ids
-local im_dead = hash("im_dead")
-local answer = hash("answer")
-local new_hints = hash("new_hints")
-local msg_correct = hash("correct")
-local msg_wrong = hash("wrong")
-local msg_gameover = hash("gameover")
-local strks_needed = hash("streaks_needed")
-
+local sender_container
 function on_message(self, message_id, message, sender)
+	--message ids
+	local im_dead = hash("im_dead")
+	local answer = hash("answer")
+	local new_hints = hash("new_hints")
+	local msg_correct = hash("correct")
+	local msg_wrong = hash("wrong")
+	local msg_gameover = hash("gameover")
+	local strks_needed = hash("streaks_needed")
+
 	if message_id == im_dead then
 		msg.post(level_gui, "change_question")
 		spawn_color(colorFac, spawn_pos)
@@ -67,8 +69,13 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == new_hints then
 		spawn_counter = 3
 	elseif message_id == strks_needed then
-		-- although it requests streaks all the info needed by the challenge script to check if a challenge has been passed
-		msg.post("main:/main#challenges", "check_challenge", {word = word_streak_table, color = color_streak_table, word_score = word_streak_scores, color_score = color_streak_scores})
+		sender_container = sender
+		local color_streak_table = {color1, color2, color3, color4, color5, color6}
+		local word_streak_table = {word1, word2, word3, word4, word5, word6}
+		-- although it requests streaks all the info needed by the challenge script to check if a challenge has been passed is sent
+		if not chal_passed then
+			msg.post("main:/main#challenges", "check_challenge", {word = word_streak_table, color = color_streak_table--[[, word_score = word_streak_scores, color_score = color_streak_scores]]})
+		end
 	elseif message_id == msg_correct then
 		local temp -- this a container that is used to hold numbers from the streak tables
 		for k, v in ipairs(color_strings) do
@@ -138,55 +145,6 @@ function on_message(self, message_id, message, sender)
 							msg.post(level_gui, "streak", {pointer = k, type = message.type, number = word6})
 						end
 					end
-				end
-			end
-		end
-	elseif message_id == msg_wrong then
-		local temp -- this a container that is used to hold numbers from the streak tables
-		for k, v in ipairs(color_strings) do
-			if message.answer == v then
-				if message.type == "color" then
-					if k == 1 then
-						table.insert(color_streak_table, color1)
-						color1 = 0
-					elseif k == 2 then
-						table.insert(color_streak_table, color2)
-						color2 = 0
-					elseif k == 3 then
-						table.insert(color_streak_table, color3)
-						color3 = 0
-					elseif k == 4 then
-						table.insert(color_streak_table, color4)
-						color4 = 0
-					elseif k == 5 then
-						table.insert(color_streak_table, color5)
-						color5 = 0
-					elseif k == 6 then
-						table.insert(color_streak_table, color6)
-						color6 = 0
-					end
-					table.insert(color_streak_scores, score)
-				else
-					if k == 1 then
-						table.insert(word_streak_table, word1)
-						word1 = 0
-					elseif k == 2 then
-						table.insert(word_streak_table, word2)
-						word2 = 0
-					elseif k == 3 then
-						table.insert(word_streak_table, word3)
-						word3 = 0
-					elseif k == 4 then
-						table.insert(word_streak_table, word4)
-						word4 = 0
-					elseif k == 5 then
-						table.insert(word_streak_table, word5)
-						word5 = 0
-					elseif k == 6 then
-						table.insert(word_streak_table, word6)
-						word6 = 0
-					end
-					table.insert(word_streak_scores, score)
 				end
 			end
 		end
