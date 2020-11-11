@@ -79,7 +79,6 @@ local set_challenge = function()
 	end
 	-- The block of code below checks the memory for the challenge number. If empty, it sets it to the default values.
 	if check_memory_loc("challenge_num"..challenge_ptr) == nil then
-		--[[changes]]
 		if challenge_ptr == 1 or challenge_ptr == 2 then
 			challenge_num = 5
 		else --what if the challenge has to do with highscore!!!!!!!!!!!!!!!!!!!
@@ -87,6 +86,19 @@ local set_challenge = function()
 		end
 	else
 		challenge_num = check_memory_loc("challenge_num"..challenge_ptr)
+	end
+	-- the challenge num increases even if the player hasn't collected the reward yet so it needs to be re-adjusted
+	if challenge_status then
+		print(challenge_status, challenge_num)
+		if challenge_ptr <= 2 then
+			if challenge_num > 5 then
+				challenge_num = challenge_num - 5
+			end
+		elseif challenge_ptr > 2 and challenge_num <= 6 then
+			if challenge_num > 3 then
+				challenge_num = challenge_num - 1
+			end
+		end
 	end
 	challenges = {--[[1]]	"REACH A SCORE OF "..tostring(challenge_num),
 	--[[2]]	"REACH A SCORE OF\n"..tostring(challenge_num).." WITHOUT USING BRAKES",

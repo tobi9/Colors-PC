@@ -121,8 +121,10 @@ function init(self)
 	
 	--set question1 to question's color
 	local clr = gui.get_color(gui.get_node("question"))
-	clr.w = 0.32 -- set the alpha
+	clr.w = 0.30 -- set the alpha
 	gui.set_color(gui.get_node("question1"), clr)
+
+	initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session
 end
 
 function final(self)
@@ -154,7 +156,8 @@ local function handle_input()
 				lives = lives - 1
 				Prompt.prompt(dialogue_nodes, level_nodes)
 				is_prompt_active = false
-				msg.post(spawn, "unhide")		
+				msg.post(spawn, "unhide")
+				gamePaused = false
 			end
 		else
 			--show prompt
@@ -199,8 +202,9 @@ function on_message(self, message_id, message, sender)
 	if message_id == add_score then
 		local score_id = gui.get_node("score") -- gets the id of the score node
 		score = score + 1  -- increments the score
+		local pos = gui.get_position(score_id)
+		gui.animate(score_id , "position.x", pos.x + 5, gui.EASING_INBACK, 0.1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 		if score > highscore then
-			gui.animate(score_id , "position.x", 360, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 			highscore = score
 			if not highscore_notification_sent then
 				msg.post("main:/main#challenges", "new_highscore")
@@ -234,6 +238,7 @@ function on_message(self, message_id, message, sender)
 		local prompt = gui.get_node("prompt")
 		if message.situation == "gameover" then
 			gui.set_text(prompt, "WOULD YOU LIKE TO CONTINUE?\nLIVES\n"..tostring(lives).."\nIT WILL COST 1 LIVE")
+			gamePaused = true
 		else
 			gui.set_text(prompt, "WOULD YOU LIKE SOME HINTS?\n TAP YES TO WATCH THE VIDEO")
 		end

@@ -26,10 +26,6 @@ function init(self)
 	-- set the score
 	local score_id = gui.get_node("score")
 	gui.set_text(score_id, score)
-	-- display the highscore
-	if score > highscore then
-		
-	end
 	local Customizer = require("modules.customizer")
 	local col_name = "gameover"
 	-- node each node to its appropriate color
@@ -69,6 +65,10 @@ function init(self)
 	gui.set_text(l, "LIVES\n"..tostring(lives))
 	local c = gui.get_node("coins")
 	gui.set_text(c, "COINS\n"..tostring(coins))
+
+	if score > initial_highscore then
+		TouchFb.dance_on_x_axis("best")
+	end
 end
 
 function final(self)
@@ -162,12 +162,14 @@ function on_message(self, message_id, message, sender)
 		node = gui.get_node("chal_but") -- I reused the node variable to accomodate the text on the challenge button
 		if chal_status then
 			gui.set_text(node, "TAP TO GET\nREWARD")
+			--animate the button
+			TouchFb.bounce_on_y_axis("_chal_but")			
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 		end
 		node = gui.get_node("challenge_reward")
 		local chal_reward = message.reward * NumOfColorsPicked
-		gui.set_text(node, "REWARD\n$"..chal_reward)
+		gui.set_text(node, " "--[["REWARD\n$"..chal_reward]]) -- This is a temporary fix.Until I find a proper solution to this the reward wouldn't be shown
 		if chal_passed then
 			local node = gui.get_node("chal_but")
 			gui.set_text(node, "CHALLENGE\nPASSED")

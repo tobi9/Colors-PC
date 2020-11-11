@@ -91,6 +91,8 @@ function init(self)
         gui.set_color(gui.get_node(v), gui.get_color(gui.get_node("_board")))
     end
     update_info()
+    --animate the button
+    TouchFb.bounce_on_y_axis("deals")
 end
 
 function final(self)
@@ -141,9 +143,11 @@ local handle_input = function()
     elseif button_tapped == "daily_gift" then
         local node = gui.get_node("info")
         if is_timer_zero then
-            print(sys.get_connectivity())
             if sys.get_connectivity() ~= sys.NETWORK_DISCONNECTED then -- it always returns 1 which is a problem
                 msg.post(main, "show_ad")
+      			--stop the button animation
+	    		local node = gui.get_node("daily_gift")
+    			gui.cancel_animation(node, "position.y")
             else
                 gui.set_text(node, "CONNECT TO\nTHE INTERNET")
                 timer.delay(1, false, clear_info)
@@ -170,7 +174,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == countdown_done then
         local countdown_node = gui.get_node('gift')
         gui.set_text(countdown_node, "WATCH\nVIDEO")
-        is_timer_zero = true    
+        is_timer_zero = true
+    	--animate the button
+    	TouchFb.bounce_on_y_axis("daily_gift")
     elseif message_id == msg_completed then
         local gifts = {
             --cash
@@ -207,6 +213,7 @@ function on_message(self, message_id, message, sender)
         start_countdown()
     end
 end
+
 local touch = hash("touch")
 function on_input(self, action_id, action)
     if action_id == touch and action.released then

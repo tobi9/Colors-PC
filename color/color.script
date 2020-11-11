@@ -19,7 +19,7 @@ function init(self)
 	--CHECK HERE FOR BUGS
 	my_words = color_strings
 	my_colors = colors
-	math.randomseed(os.time()*1001)
+	math.randomseed(os.time()*(os.time() + 1))
 	self.color_ptr = math.random(#my_colors)-- position of the color in the table
 	color = my_colors[self.color_ptr]
 	my_color = my_words[self.color_ptr]
@@ -27,6 +27,7 @@ function init(self)
 	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
 	my_word = my_words[self.word_ptr]
 	label.set_text("#label", my_word) -- sets itself to the randomly selected word	
+	
 end
 
 function update(self, dt)
