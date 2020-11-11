@@ -197,7 +197,6 @@ end
 
 function init(self)
 	--retrieve the colour information
-	--local folder = "Trick Colors 2"
 	local file = sys.get_save_file(folder, "color_info_table")
 	color_info_table = sys.load(file)
 	if #color_info_table == 0 then
@@ -220,8 +219,8 @@ function init(self)
 	msg.post("@system:", "set_update_frequency", { frequency = 100 } ) -- think carefully before touching this
 	msg.post("#intro", "play_sound", {delay = 0, gain = 1})
 	msg.post(".", "acquire_input_focus")
-	--msg.post("#intro_proxy", "load")
-	load_menu()
+	msg.post("#intro_proxy", "load")
+	--load_menu()
 	window.set_listener(window_callback)
 end
 
@@ -307,10 +306,12 @@ function on_message(self, message_id, message, sender)
 		local col = nil -- this variable will contain the collection to be unloaded
 		if message.col == "pause" then -- this if statement determines which collection to be unloaded
 			col = pauseProxy
+			resume_game(col)
 		else
 			col = gameOverProxy
+			resume_game(col)
+			gamePaused = true
 		end
-		resume_game(col)
 	elseif message_id == return_to_menu then -- return to the main menu
 		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		local col = nil -- this variable will contain the collection to be unloaded

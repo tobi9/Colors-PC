@@ -46,6 +46,9 @@ local function handle_input()
 			--give reward
 			msg.post("main:/main#challenges", "give_reward")
 			msg.post("main:/main#challenges", "change_challenge")
+			--stop the button animation
+			local node = gui.get_node("_chal_but")
+			gui.cancel_animation(node, "position.y")
 			timer.delay(0.001, false, req_challenge)
 		else
 			Prompt.prompt(menu_nodes, chal_prompt_nodes)
@@ -164,7 +167,9 @@ function on_message(self, message_id, message, sender)
 		if chal_status then
 			gui.set_text(node, "TAP TO GET\nREWARD")
 			node = gui.get_node("challenge_reward")
-			gui.set_text(node, "YOUR REWARD IS \n$"..message.reward)	
+			gui.set_text(node, "YOUR REWARD IS \n$"..message.reward)
+			--animate the button
+			TouchFb.bounce_on_y_axis("_chal_but")
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 			node = gui.get_node("challenge_reward")

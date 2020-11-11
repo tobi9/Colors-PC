@@ -1,0 +1,35 @@
+local tips = {"YOU CAN CUSTOMIZE YOUR\nMENUS WITH THE COLORS\nYOU'VE UNLOCKED",
+	"YOU CAN CONTINUE AFTER\nA MISS BUT IT WILL COST\n1 LIFE",
+	"YOU CAN USE BRAKES TO\nSLOW THE CLUES DOWN\nWHILE PLAYING",
+	"YOU CAN SWITCH BETWEEN\nTHE LIGHT AND DARK\nMODES FREELY",
+	"YOU CAN UNLOCK NEW\nCOLORS IN THE SHOP",
+	"YOU CAN CHANGE YOUR\n BOUNTY",
+	"YOU HAVE JUST ONE CHANCE\nTO ANSWER THE QUESTION",
+	"YOU GET A DAILY CASH REWARD\n THAT INCREASES\nEACH CONSECUTIVE\nDAY AND RESETS TO DAY ONE\n IF A DAY IS MISSED"
+}
+local ptr = 1
+
+local folder = "colors temporary folder"
+function init(self)
+	local file = sys.get_save_file(folder, "tip_ptr")
+	local cell = sys.load(file)
+	if #cell > 0 then
+		ptr = cell[1]
+	end
+	gui.set_text(gui.get_node("tip"), "TIP\n"..tips[ptr])
+	local callback = function()
+		msg.post(main, "unload_intro")
+	end
+	timer.delay(3, false, callback)
+end
+
+function final(self)
+	local file = sys.get_save_file(folder, "tip_ptr")
+	if ptr < #tips then
+		ptr = ptr + 1
+	else
+		ptr = 1
+	end
+local tab = {ptr}
+	sys.save(file, tab)
+end

@@ -11,7 +11,7 @@ speed = 500
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
 chal_passed = false -- true if so and false if not
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
-	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 4 is the scale of the game object 
+	spawn = factory.create(clr, pos, nil, {}, 1) -- the clr is a string and pos is vector3 value. 1 is the scale of the game object 
 	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
 	if speed < 9 then -- 9 is the max speed
 		speed = speed + 5

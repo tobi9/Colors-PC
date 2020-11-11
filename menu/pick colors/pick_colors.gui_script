@@ -57,6 +57,8 @@ local set_box_colors = function()
 		gui.set_color(enabled_boxes[k], v[3])
 		local text = gui.get_node("text"..options[k])
 		gui.set_text(text, v[1])
+		TouchFb.bounce_on_y_axis(options[k])
+		--TouchFb.dance_on_x_axis(options[k])
 	end
 end
 
@@ -77,6 +79,7 @@ function init(self)
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, col_name)
 	end
+	
 end
 
 function final(self)
