@@ -113,6 +113,7 @@ local handle_input = function()
         msg.post(main, "unload_upgrades")
     elseif button_tapped == "buy_brakes" then
         if money >= brake_price then
+            msg.post("#cash_sound", "play_sound", {delay = 0, gain = 1})
             money = money - brake_price
             brakes = brakes + 1
         else
@@ -122,6 +123,7 @@ local handle_input = function()
         end
     elseif button_tapped == "buy_lives" then
         if coins >= live_price then
+            msg.post("#coin_sound", "play_sound", {delay = 0, gain = 1})
             coins = coins - live_price
             lives = lives + 1
         else
@@ -131,6 +133,7 @@ local handle_input = function()
         end
     elseif button_tapped == "buy_coins" then
         if money >= coin_price then
+            msg.post("#cash_sound", "play_sound", {delay = 0, gain = 1})
             money = money - coin_price
             coins = coins + 1
         else
@@ -178,6 +181,7 @@ function on_message(self, message_id, message, sender)
     	--animate the button
     	TouchFb.bounce_on_y_axis("daily_gift")
     elseif message_id == msg_completed then
+        msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
         local gifts = {
             --cash
             50, 100, 250, 500,

@@ -79,8 +79,8 @@ local function unload_color_selector()
 end
 
 local function load_level() -- loads the level collection
-	msg.post("#soundtrack", "stop_sound", {delay = 0, gain = 1})
-	sound_playing = false
+	--[[msg.post("#soundtrack", "stop_sound", {delay = 0, gain = 1})
+	sound_playing = false]]
 	msg.post(levelProxy, "load")
 	lvl_loaded = true
 end
@@ -196,6 +196,7 @@ local function window_callback(self, event, data) --gamePaused is declared in th
 end
 
 function init(self)
+	sound.set_group_gain('master', 1)
 	--retrieve the colour information
 	local file = sys.get_save_file(folder, "color_info_table")
 	color_info_table = sys.load(file)
@@ -268,25 +269,24 @@ function on_message(self, message_id, message, sender)
 	local unload_clr_options = hash("unload_color_options")
 	local ld_sales = hash("load_sales")
 	local unld_sales = hash("unload_sales")
-	if message_id == start then
+	local msg_click = hash("click")
+
+	if message_id == msg_click then
+		msg.post("#click", "play_sound", {delay = 0, gain = 1})
+	elseif message_id == start then
 		load_color_menu()
 		unload_menu()
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 	elseif message_id == load_lvl then
 		load_level()
 		unload_pick_colors()
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 	elseif message_id == unload_intro then
 		msg.post("#intro_proxy", "unload")
 		load_menu()
 	elseif message_id == msg_customizer then
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		load_customizer()
 	elseif message_id == msg_upgrades then
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		load_upgrades()
 	elseif message_id == msg_sound then
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		function handle_sound() -- this is a global function
 			local gain = sound.get_group_gain('master')
 			if gain == 0 then
@@ -299,10 +299,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == exit then
 		os.exit()
 	elseif message_id == pause then -- pause the game
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		pause_game()
 	elseif message_id == resume then -- resume the game
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		local col = nil -- this variable will contain the collection to be unloaded
 		if message.col == "pause" then -- this if statement determines which collection to be unloaded
 			col = pauseProxy
@@ -313,7 +311,6 @@ function on_message(self, message_id, message, sender)
 			gamePaused = true
 		end
 	elseif message_id == return_to_menu then -- return to the main menu
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		local col = nil -- this variable will contain the collection to be unloaded
 		if message.col == "pause" then -- this if statement determines which collection to be unloaded
 			col = pauseProxy
@@ -324,7 +321,6 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == gameover then -- end the game
 		end_game()
 	elseif message_id == restart then -- this condition modifies the variables that will enable this script to restart the level
-		msg.post("#click", "play_sound", {delay = 0, gain = 1})
 		if message.col == "pause" then -- this if statement determines which collection to be unloaded
 			restart_col = pauseProxy
 		else

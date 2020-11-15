@@ -27,6 +27,7 @@ local function iap_listener(self, transaction, error)
 		brakes = brakes + selected_offer.brks
 		lives = lives + selected_offer.lvs
 		money = money + selected_offer.csh
+		msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
 	end
 end
 

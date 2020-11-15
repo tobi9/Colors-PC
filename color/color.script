@@ -26,7 +26,7 @@ function init(self)
 	Color.set_label_color('#label', color)
 	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
 	my_word = my_words[self.word_ptr]
-	label.set_text("#label", my_word) -- sets itself to the randomly selected word	
+	label.set_text("#label", string.upper(my_word)) -- sets itself to the randomly selected word	
 	
 end
 

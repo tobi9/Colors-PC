@@ -24,16 +24,16 @@ function init(self)
 		local pos = positions[k]
 		local size = vmath.vector3(200, 100, 0)
 		local box_scale = vmath.vector3(0.65, 1.3, 0)
-		local text_scale = vmath.vector3(0.65, 0.65, 1)
+		local text_scale = vmath.vector3(0.55, 0.55, 1)
 		local box_node = gui.new_box_node(pos, size)
-		local text_node = gui.new_text_node(pos, v[1])
+		local text_node = gui.new_text_node(pos, string.upper(v[1]))
 		gui.set_color(box_node, v[3])
 		gui.set_scale(box_node, box_scale)
 		gui.set_scale(text_node, text_scale)
 		table.insert(box_nodes, box_node)
 		table.insert(text_nodes, text_node)
 		if v[2] == false then
-			gui.set_text(text_node, "locked")
+			gui.set_text(text_node, "LOCKED")
 		end
 	end
 	local Customizer = require("modules.customizer")
@@ -64,12 +64,13 @@ function on_input(self, action_id, action)
 					TouchFb.touch_feedback(v)
 					if coins >= color_price then
 						if color_info_table[k][2] == false then
+							msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
 							coins = coins - color_price
 							update_coin_balance()
 							table.remove(color_info_table[k], 2)
 							table.insert(color_info_table[k], 2, true)
 							table.insert(unlocked_colors_table, color_info_table[k])
-							gui.set_text(text_nodes[k], color_info_table[k][1])
+							gui.set_text(text_nodes[k], string.upper(color_info_table[k][1]))
 						end
 					end
 					return

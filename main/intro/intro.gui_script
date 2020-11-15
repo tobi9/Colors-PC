@@ -16,11 +16,11 @@ function init(self)
 	if #cell > 0 then
 		ptr = cell[1]
 	end
-	gui.set_text(gui.get_node("tip"), "TIP\n"..tips[ptr])
+	gui.set_text(gui.get_node("tip"), "DID YOU KNOW?\n\n"..tips[ptr])
 	local callback = function()
 		msg.post(main, "unload_intro")
 	end
-	timer.delay(3, false, callback)
+	timer.delay(2.5, false, callback)
 end
 
 function final(self)

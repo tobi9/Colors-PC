@@ -7,6 +7,7 @@ local M = {}
 local BUTTON_ANIMATION_DURATION = 0.04
 
 function M.touch_feedback(node, hdl)
+	msg.post(main, "click")
 	local pos = gui.get_position(node)
 	gui.animate(node, "position.x", pos.x + 10, gui.EASING_INOUTBOUNCE, BUTTON_ANIMATION_DURATION, 0, hdl, gui.PLAYBACK_ONCE_PINGPONG)
 end

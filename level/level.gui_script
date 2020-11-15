@@ -63,7 +63,7 @@ function init(self)
 		local node = gui.get_node("option"..tostring(counter))
 		local text = gui.get_node("color"..tostring(counter))
 		gui.set_color(node, colors[counter])
-		gui.set_text(text, color_strings[counter])
+		gui.set_text(text, string.upper(color_strings[counter]))
 		table.insert(option_nodes, node)
 		counter = counter + 1
 	until(counter > NumOfColorsPicked)
@@ -207,6 +207,7 @@ function on_message(self, message_id, message, sender)
 		if score > highscore then
 			highscore = score
 			if not highscore_notification_sent then
+				msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
 				msg.post("main:/main#challenges", "new_highscore")
 				highscore_notification_sent = true
 			end

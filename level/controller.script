@@ -7,7 +7,7 @@ spawn = nil -- the id of the spawned game object it is also a global variable it
 answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script
 level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
-speed = 500
+speed = 700
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
 chal_passed = false -- true if so and false if not
 local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
@@ -23,8 +23,7 @@ function init(self)
 	Color.extract_color_info(tray, colors, 3) -- extracts the vector4 color values
 	spawn_color(colorFac, spawn_pos) -- spawns the first go of the session
 	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
-	--msg.post("main:/main#challenges", "set_challenge")
-	msg.post("#background_music", "play_sound", {delay = 0, gain = 0.7})
+	--msg.post("#background_music", "play_sound", {delay = 0, gain = 1})
 	msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 	--send the color strings to the analyzer
 	msg.post(analyzer, "colors", {colors = color_strings})

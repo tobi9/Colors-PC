@@ -89,7 +89,6 @@ local set_challenge = function()
 	end
 	-- the challenge num increases even if the player hasn't collected the reward yet so it needs to be re-adjusted
 	if challenge_status then
-		print(challenge_status, challenge_num)
 		if challenge_ptr <= 2 then
 			if challenge_num > 5 then
 				challenge_num = challenge_num - 5

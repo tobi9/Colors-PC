@@ -33,9 +33,9 @@ local spawn_boxes = function()
 		next_grid(k)
 		local size = vmath.vector3(200, 100, 0)
 		local box_scale = vmath.vector3(0.65, 1.3, 0)
-		local text_scale = vmath.vector3(0.65, 0.65, 1)
+		local text_scale = vmath.vector3(0.5, 0.5, 1)
 		local box_node = gui.new_box_node(pos, size)
-		local text_node = gui.new_text_node(pos, v[1])
+		local text_node = gui.new_text_node(pos, string.upper(v[1]))
 		gui.set_color(box_node, v[3])
 		gui.set_scale(box_node, box_scale)
 		gui.set_scale(text_node, text_scale)
@@ -162,12 +162,12 @@ local load_color = function(clr, pos)
 			gui.set_text(box_label, #tray)
 		else
 			table.insert(tray, pos, clr)
-			gui.set_text(box_label, substitutes[1])
+			gui.set_text(box_label, string.upper(substitutes[1]))
 			table.remove(substitutes, 1)
 		end
 	elseif in_tray == true then
 		unload_color(tonumber(gui.get_text(box_label)))
-		gui.set_text(box_label, color_picked[1])
+		gui.set_text(box_label, string.upper(color_picked[1]))
 	end
 	in_tray = false -- this statement resets the in_tray boolean to false to enable the player to pick other colors
 	--set the status to ready
@@ -183,7 +183,7 @@ end
 local clear_selection = function()
 	tray = {}
 	for i in ipairs(text_nodes) do
-		gui.set_text(text_nodes[i], container[i][1])
+		gui.set_text(text_nodes[i], string.upper(container[i][1]))
 	end
 end
 

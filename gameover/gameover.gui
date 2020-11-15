@@ -785,8 +785,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -804,8 +804,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "do you want to return \n"
-  "to the menu ?"
+  text: "DO YOU WANT TO RETURN\n"
+  "TO THE MENU?"
   font: "galindo"
   id: "exit_text"
   xanchor: XANCHOR_NONE
@@ -956,8 +956,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -975,7 +975,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "yes"
+  text: "YES\n"
+  ""
   font: "galindo"
   id: "yes"
   xanchor: XANCHOR_NONE
@@ -1018,8 +1019,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -1037,7 +1038,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "no"
+  text: "NO\n"
+  ""
   font: "galindo"
   id: "no"
   xanchor: XANCHOR_NONE
@@ -1926,8 +1928,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -1945,7 +1947,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "yes"
+  text: "YES"
   font: "galindo"
   id: "yes1"
   xanchor: XANCHOR_NONE
@@ -2042,8 +2044,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 1.0
-    y: 1.0
+    x: 0.8
+    y: 0.8
     z: 1.0
     w: 1.0
   }
@@ -2061,7 +2063,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "no"
+  text: "NO"
   font: "galindo"
   id: "no1"
   xanchor: XANCHOR_NONE

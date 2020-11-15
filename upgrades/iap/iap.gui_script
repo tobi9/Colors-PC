@@ -123,6 +123,7 @@ local function iap_listener(self, transaction, error)
 	if transaction.state == iap.TRANS_STATE_PURCHASED then
 		money = money + money_inc
 		coins = coins + coin_inc
+		msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
 	end
 end
 

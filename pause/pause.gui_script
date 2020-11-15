@@ -100,6 +100,7 @@ local function handle_input()
 	elseif button_tapped == 'chal_but' then
 		if chal_status then
 			if not chal_passed then
+				msg.post("#cash_sound", "play_sound", {delay = 0, gain = 1})
 				chal_changes_allowed = 2
 				--give reward
 				msg.post("main:/main#challenges", "give_reward")
@@ -113,9 +114,9 @@ local function handle_input()
 			local node = gui.get_node("chal_prompt")
 			local text
 			if chal_changes_allowed > 0 then
-				text = "CHANGE CHALLENGE\nChanges left\n"..chal_changes_allowed.."\n Are you sure ?"
+				text = "CHANGE CHALLENGE\nCHANGES LEFT\n"..chal_changes_allowed.."\n ARE YOU SURE?"
 			else
-				text = "CHANGE CHALLENGE\nCoins left\n"..coins.."\nit will cost 2 COINS ?"
+				text = "CHANGE CHALLENGE\nCOINS LEFT\n"..coins.."\nIT WILL COST 2 COINS ?"
 			end
 			gui.set_text(node, text)
 			is_chal_prompt_active = true
@@ -133,6 +134,7 @@ local function handle_input()
 			msg.post("main:/main#challenges", "change_challenge")
 			timer.delay(0.001, false, req_challenge)
 		elseif coins > 0 then
+			msg.post("#coin_sound", "play_sound", {delay = 0, gain = 1})
 			coins = coins - 2 --the player can change the challenge for two coins
 			local c = gui.get_node("coins")
 			gui.set_text(c, "COINS\n"..tostring(coins))		
@@ -158,6 +160,7 @@ function on_message(self, message_id, message, sender)
 		chal_status = message.status
 		node = gui.get_node("chal_but") -- I reused the node variable to accomodate the text on the challenge button
 		if chal_status then
+			msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
 			gui.set_text(node, "TAP TO GET\nREWARD")
 			--animate the button
 			TouchFb.bounce_on_y_axis("_chal_but")			
