@@ -1,6 +1,6 @@
 [project]
 title = project
-dependencies = https://github.com/defold/extension-iap/archive/1.0.zip
+dependencies = https://github.com/defold/extension-iap/archive/2.0.2.zip
 compress_archive = 0
 write_log = 1
 version = 1.2
@@ -17,6 +17,8 @@ width = 640
 height = 1136
 dynamic_orientation = 0
 vsync = 1
+high_dpi = 1
+fullscreen = 0
 
 [ios]
 app_icon_120x120 = /assets/app_icons/icon_120.png
