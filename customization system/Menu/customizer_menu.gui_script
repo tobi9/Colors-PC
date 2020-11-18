@@ -61,6 +61,7 @@ function on_input(self, action_id, action)
 	local nodes = {"_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol", "_pausecol", "_gameovercol", 
 	"_choosecol", "_palettecol", "_promptcol", "_canvascol", "_customizercol"}
 	local touch = hash("touch")
+	local back = hash('back')
 	if action_id == touch and action.released then
 		local random = gui.get_node("_random")
 		if gui.pick_node(random, action.x, action.y) then
@@ -75,5 +76,9 @@ function on_input(self, action_id, action)
 				end
 			end
 		end
+	elseif action_id == back and action.released then
+		msg.post(main, "click")
+		button_tapped = "_menu"
+		handle_input()
 	end
 end

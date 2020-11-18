@@ -1,8 +1,6 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: http://127.0.0.1:53062/build
+INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
 
-INFO:RESOURCE: /pause/pause.guic was successfully reloaded.
-ERROR:RESOURCE: /gameover/gameover.guic could not be reloaded since it was never loaded before.
-ERROR:GAMEOBJECT: Instance '/ads' could not be found when dispatching message 'show_ad' sent from main:/main#main
+INFO:DLIB: SSDP: Started on address 192.168.1.1
 INFO:DLIB: SSDP: Done on address 192.168.1.1

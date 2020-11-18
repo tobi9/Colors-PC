@@ -344,8 +344,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "HOW MANY COLORS DO \n"
-  "YOU WANT PLAY WITH ?"
+  text: "UNLOCK A NEW COLOR \n"
+  "FOR 5 COINS"
   font: "galindo"
   id: "title"
   xanchor: XANCHOR_NONE
