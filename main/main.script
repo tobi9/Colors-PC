@@ -196,6 +196,7 @@ local function window_callback(self, event, data) --gamePaused is declared in th
 end
 
 function init(self)
+	msg.post("@render:", "use_fixed_fit_projection")
 	sound.set_group_gain('master', 1)
 	--retrieve the colour information
 	local file = sys.get_save_file(folder, "color_info_table")
