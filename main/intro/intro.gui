@@ -42,8 +42,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "BROUGHT TO YOU BY\n"
-  "POMPAYUS"
+  text: "ARTIFICIOM"
   font: "galindo"
   id: "studio_name"
   xanchor: XANCHOR_NONE

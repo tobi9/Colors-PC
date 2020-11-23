@@ -508,8 +508,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "TRICK COLORS \n"
-  ""
+  text: "POMPAYUS"
   font: "galindo"
   id: "title"
   xanchor: XANCHOR_NONE

@@ -66,7 +66,23 @@ local save_data = function()
 	sys.save(file, data)
 end
 
+function callback(self, message_id, message)
+	if message_id == gpgs.MSG_SIGN_IN or message_id == gpgs.MSG_SILENT_SIGN_IN then
+		if message.status == gpgs.STATUS_SUCCESS then
+
+		end
+	elseif message_id == gpgs.MSG_SIGN_OUT then
+	-- do something after logout
+	elseif message_id == gpgs.MSG_LOAD_SNAPSHOT then
+	-- do something when a save was loaded
+	end
+end
+
 function init(self)
+	gpgs.set_callback(gpgs_callback)
+	if gpgs then
+		gpgs.silent_login()
+	end
 	retrieve_data()
 	--calculate the daily reward
 	if get_day(os.time()) - last_day == 1 then
@@ -81,6 +97,9 @@ end
 
 function final(self)
 	save_data()
+	if gpgs then
+		gpgs.logout()
+	end
 end
 
 local msg_save_data = hash("save_data") 

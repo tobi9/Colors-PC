@@ -1,9 +1,9 @@
 [project]
-title = project
-dependencies = https://github.com/defold/extension-iap/archive/2.0.2.zip
-compress_archive = 0
+title = POMPAYUS
+dependencies = https://github.com/defold/extension-iap/archive/2.0.2.zip,https://github.com/defold/extension-gpgs/archive/2.1.0.zip
+compress_archive = 1
 write_log = 1
-version = 1.2
+version = 2.1.0
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -59,7 +59,7 @@ app_icon_72x72 = /secondlogotc2.png
 app_icon_96x96 = /secondlogotc2.png
 app_icon_144x144 = /secondlogotc2.png
 app_icon_192x192 = /secondlogotc2.png
-package = com.trickcolors2.rodio
+package = com.artificiom.pompayus
 manifest = /builtins/manifests/android/AndroidManifest.xml
 immersive_mode = 1
 input_method = KeyEvent
@@ -79,3 +79,8 @@ max_count = 50
 default_texture_mag_filter = nearest
 default_texture_min_filter = nearest
 
+[gpgs]
+app_id = 144499939783
+use_saved_games = 1
+request_server_auth_code = 0
+request_id_token = 0
