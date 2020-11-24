@@ -166,4 +166,10 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_restart then
 		total_restarts = total_restarts + 1
 	end
+	--send this to be saved on the cloud
+	local time_spent = exit_time - start_time--time spent so far
+	table.insert(time_totals, time_spent)
+	local data_table = {time_totals, scores, total_chals, chals_passed, total_spawns,
+	total_brakes_used, colors_used, color_ledger}	
+	msg.post("#data_handler", "analyzer_data", {data = data_table})
 end

@@ -1,9 +1,11 @@
 -- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY (for the most part)
--- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY
+-- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY AND THE CLOUD
 local enc = require("main.encryption")
 --local folder = "Trick Colors test"
 local data = {}
 sound_playing = false -- this is used to filter the music
+
+local analyzer_data -- to be saved on the cloud.
 
 --daily cash reward
 local daily_reward_streak
@@ -27,6 +29,9 @@ local get_day = function(total_seconds)
 	return time_days
 end
 
+local is_first_time = false --  this variable indicates if the game is started for the first time since installation
+local is_login_declined = false -- this is boolean that indicates whether or not the player declined gpgs login
+
 local retrieve_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local table = sys.load(file)
@@ -40,6 +45,8 @@ local retrieve_data = function()
 		daily_reward_streak = 0
 		last_day = get_day(os.time())
 		mode = "light"
+		--gpgs instructions
+		is_first_time = true
 	else
 		money = tonumber(decode(table[1]))
 		brakes = tonumber(decode(table[2]))
@@ -50,39 +57,79 @@ local retrieve_data = function()
 		daily_reward_streak = tonumber(decode(table[7]))
 		last_day = tonumber(decode(table[8]))
 		mode = decode(table[9]) -- an exception
+		is_login_declined = table[10]
+	end
+
+	if gpgs then
+		local is_opened = gpgs.snapshot_is_opened()
+		if is_opened and is_first_time then
+			local bytes, error_message = gpgs.snapshot_get_data()
+			if #bytes > 0 then
+				table = bytes[1]
+				money = tonumber(decode(table[1]))
+				brakes = tonumber(decode(table[2]))
+				coins = tonumber(decode(table[3]))
+				lives = tonumber(decode(table[4]))
+				last_ad_time = tonumber(decode(table[5]))
+				highscore = tonumber(decode(table[6]))
+				daily_reward_streak = tonumber(decode(table[7]))
+				last_day = tonumber(decode(table[8]))
+				mode = decode(table[9]) -- an exception
+				is_login_declined = table[10]
+				--color info
+				if is_first_time and #bytes[2] ~= 0 then
+					color_info_table = bytes[2]
+				end
+			end
+		end
 	end
 end
 
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
-	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode}
+	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode, is_login_declined}
 	for i, v in ipairs(values) do
 		if i ~= 9 then
 			table.insert(data, i,encode(tostring(v)))
+		elseif i == 10 then
+			table.insert(data, i, v) -- booleans cant be encoded
 		else
 			table.insert(data, i,encode(v)) -- since the value is a string already there is no need to use the tostring function
 		end
 	end
 	sys.save(file, data)
-end
-
-function callback(self, message_id, message)
-	if message_id == gpgs.MSG_SIGN_IN or message_id == gpgs.MSG_SILENT_SIGN_IN then
-		if message.status == gpgs.STATUS_SUCCESS then
-
-		end
-	elseif message_id == gpgs.MSG_SIGN_OUT then
-	-- do something after logout
-	elseif message_id == gpgs.MSG_LOAD_SNAPSHOT then
-	-- do something when a save was loaded
-	end
-end
-
-function init(self)
-	gpgs.set_callback(gpgs_callback)
 	if gpgs then
-		gpgs.silent_login()
+		local is_opened = gpgs.snapshot_is_opened()
+		if is_opened then
+			local cloud_data = {data, color_info_table, analyzer_data}
+			local success, error_message = gpgs.snapshot_set_data(cloud_data)
+			if not success then
+				--do something
+			end
+		end
 	end
+end
+
+local function gpgs_callback(self, message_id, message)
+    if message_id == gpgs.MSG_SIGN_IN or message_id == gpgs.MSG_SILENT_SIGN_IN then
+		if message.status == gpgs.STATUS_SUCCESS then
+			gpgs.snapshot_open("my_save", true, gpgs.RESOLUTION_POLICY_LAST_KNOWN_GOOD)
+		else
+			is_login_declined = true
+		end
+    elseif message_id == gpgs.MSG_SIGN_OUT then
+		is_login_declined = true
+	end
+end
+
+function init(self)--[[
+	gpgs.set_callback(gpgs_callback)
+	if is_first_time == true or is_login_declined == false then
+		--silent login
+		if gpgs then
+			gpgs.silent_login()
+		end
+	end]]
 	retrieve_data()
 	--calculate the daily reward
 	if get_day(os.time()) - last_day == 1 then
@@ -98,14 +145,26 @@ end
 function final(self)
 	save_data()
 	if gpgs then
-		gpgs.logout()
+		local is_opened = gpgs.snapshot_is_opened()
+		if is_opened then
+			gpgs.snapshot_commit_and_close({
+				description = "GAME DATA"
+			})
+		end
 	end
 end
 
 local msg_save_data = hash("save_data") 
-
+local msg_manual_log_in = hash("manual_login")
+local msg_analyzer_data = hash("analyzer_data")
 function on_message(self, message_id, message, sender)
 	if message_id == msg_save_data then
 		save_data()
+	elseif message_id == msg_manual_log_in then
+		if gpgs then
+			gpgs.login()
+		end
+	elseif message_id == msg_analyzer_data then
+		analyzer_data = message.data --update the data
 	end
 end
