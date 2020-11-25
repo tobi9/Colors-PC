@@ -146,7 +146,7 @@ local handle_input = function()
     elseif button_tapped == "daily_gift" then
         local node = gui.get_node("info")
         if is_timer_zero then
-            if sys.get_connectivity() ~= sys.NETWORK_DISCONNECTED then -- it always returns 1 which is a problem
+            if (sys.NETWORK_DISCONNECTED ~= sys.get_connectivity()) then -- it always returns 1 which is a problem
                 msg.post(main, "show_ad")
       			--stop the button animation
 	    		local node = gui.get_node("daily_gift")
@@ -184,29 +184,29 @@ function on_message(self, message_id, message, sender)
         msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
         local gifts = {
             --cash
-            50, 100, 250, 500,
+            50, 100, 200, 300, 400, 500,
             --brakes
             2, 3, 4, 5,
             --lives
             1, 2, 3,
             --coins
-            5, 10, 20
+            5, 10
         }
         local random_key = math.random(#gifts)
         local node = gui.get_node("info")
-        if random_key <= 4 then
+        if random_key <= 6 then
             money = money + gifts[random_key]
             gui.set_text(node, "YOU GOT\n$"..gifts[random_key])
             timer.delay(1, false, clear_info)
-        elseif random_key > 4 and random_key <= 8 then
+        elseif random_key > 6 and random_key <= 10 then
             brakes = brakes + gifts[random_key]
             gui.set_text(node, "YOU GOT\n"..gifts[random_key].." BRAKES")
             timer.delay(1, false, clear_info)
-        elseif random_key > 8 and random_key <= 11 then
+        elseif random_key > 10 and random_key <= 13 then
             lives = lives + gifts[random_key]
             gui.set_text(node, "YOU GOT\n"..gifts[random_key].." LIVES")
             timer.delay(1, false, clear_info)
-        elseif random_key > 11 then
+        elseif random_key > 13 then
             coins = coins + gifts[random_key]
             gui.set_text(node, "YOU GOT\n"..gifts[random_key].." COINS")
             timer.delay(1, false, clear_info)

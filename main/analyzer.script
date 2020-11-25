@@ -30,6 +30,9 @@ local total_restarts = 0
 
 function init(self)
 	start_time = os.time()
+	if (review and review.is_supported()) then
+		review.request_review()
+	end
 	local check_memory_loc = function(str)
 		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
 		local file = sys.get_save_file(folder, str..suffix)
@@ -167,9 +170,20 @@ function on_message(self, message_id, message, sender)
 		total_restarts = total_restarts + 1
 	end
 	--send this to be saved on the cloud
+	local exit_time = os.time()
 	local time_spent = exit_time - start_time--time spent so far
 	table.insert(time_totals, time_spent)
 	local data_table = {time_totals, scores, total_chals, chals_passed, total_spawns,
 	total_brakes_used, colors_used, color_ledger}	
-	msg.post("#data_handler", "analyzer_data", {data = data_table})
+	msg.post("main:/main#data_handler", "analyzer_data", {data = data_table})
+	table.remove(time_totals, #time_totals, time_spent) -- remove it as it was temporary
+	--ask for review if the criteria have been met
+	if (sys.NETWORK_DISCONNECTED ~= sys.get_connectivity()) and not has_been_reviewed then -- it always returns 1 which is a problem
+		if chals_passed >= 3 and #scores >= 10 and #colors_used >= 4 then
+			if (review and review.is_supported()) then
+				review.request_review()
+			end		
+			has_been_reviewed = true
+		end
+	end
 end

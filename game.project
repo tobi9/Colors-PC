@@ -1,6 +1,6 @@
 [project]
 title = POMPAYUS
-dependencies = https://github.com/defold/extension-iap/archive/2.0.2.zip,https://github.com/defold/extension-gpgs/archive/2.1.0.zip
+dependencies = https://github.com/defold/extension-iap/archive/2.0.2.zip,https://github.com/defold/extension-gpgs/archive/2.1.0.zip,https://github.com/Lerg/extension-admob/archive/legacy.zip,https://github.com/defold/extension-review/archive/3.0.1.zip
 compress_archive = 1
 write_log = 1
 version = 2.1.0
@@ -84,3 +84,4 @@ app_id = 144499939783
 use_saved_games = 1
 request_server_auth_code = 0
 request_id_token = 0
+

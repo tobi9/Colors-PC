@@ -1,9 +1,15 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
+WARNING:REVIEW: Registered review (null) Extension
+
 INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
 
-DEBUG:SCRIPT: 1
-DEBUG:SCRIPT: 2
+INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
+INFO:DLIB: SSDP: Started on address 192.168.43.132
+DEBUG:SCRIPT: 1
+INFO:ADMOB: show
+INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132

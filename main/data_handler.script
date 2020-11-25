@@ -4,7 +4,7 @@ local enc = require("main.encryption")
 --local folder = "Trick Colors test"
 local data = {}
 sound_playing = false -- this is used to filter the music
-
+has_been_reviewed = false -- this boolean tells us whether the game has been reviewed
 local analyzer_data -- to be saved on the cloud.
 
 --daily cash reward
@@ -58,6 +58,7 @@ local retrieve_data = function()
 		last_day = tonumber(decode(table[8]))
 		mode = decode(table[9]) -- an exception
 		is_login_declined = table[10]
+		has_been_reviewed = table[11]
 	end
 
 	if gpgs then
@@ -76,6 +77,7 @@ local retrieve_data = function()
 				last_day = tonumber(decode(table[8]))
 				mode = decode(table[9]) -- an exception
 				is_login_declined = table[10]
+				has_been_reviewed = table[11]
 				--color info
 				if is_first_time and #bytes[2] ~= 0 then
 					color_info_table = bytes[2]
@@ -87,11 +89,11 @@ end
 
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
-	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode, is_login_declined}
+	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode, is_login_declined, has_been_reviewed}
 	for i, v in ipairs(values) do
 		if i ~= 9 then
 			table.insert(data, i,encode(tostring(v)))
-		elseif i == 10 then
+		elseif i == 10 or i == 11 then
 			table.insert(data, i, v) -- booleans cant be encoded
 		else
 			table.insert(data, i,encode(v)) -- since the value is a string already there is no need to use the tostring function
