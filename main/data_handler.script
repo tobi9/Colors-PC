@@ -79,7 +79,7 @@ local retrieve_data = function()
 				is_login_declined = table[10]
 				has_been_reviewed = table[11]
 				--color info
-				if is_first_time and #bytes[2] ~= 0 then
+				if is_first_time and #bytes[2] > 0 then
 					color_info_table = bytes[2]
 				end
 			end

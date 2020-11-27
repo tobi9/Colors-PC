@@ -1,8 +1,16 @@
 local TouchFb = require("modules.animation")
+local Prompt = require("modules.prompt")
 
+local is_prompt_active = false
+local menu_nodes = {"title", "bronze_offer", "sale_type", "coin_offer", "other_offers", "bronze_offer_button",
+"bronze_offer_price", "silver_offer", "sale_type1", "coin_offer1", "other_offers1",
+"silver_offer_button", "silver_offer_price", "gold_offer", "sale_type2", "coin_offer2",
+"other_offers2", "gold_offer_button", "gold_offer_price", "_menu", "menu", "disclaimer"}
+
+local prompt_nodes = {"fail_dialogue_box", "fail_text", "_ok", "ok"}
 
 --the package ids are needed to correspond with the play console . Since the are chosen at random, they will be placed in the table below
-local package_ids = {} 
+local package_ids = {"bronze_bundle", "silver_bundle", "gold_bundle"} 
 
 local function product_list(self, products, error)
 	if error == nil then
@@ -28,12 +36,17 @@ local function iap_listener(self, transaction, error)
 		lives = lives + selected_offer.lvs
 		money = money + selected_offer.csh
 		msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
+		acknowledge(iap.TRANS_STATE_PURCHASED)
+	elseif transaction.state == iap.TRANS_STATE_FAILED or transaction.state == iap.REASON_USER_CANCELED then
+		Prompt.prompt(menu_nodes, prompt_nodes)
+		is_prompt_active = true	
 	end
 end
 
 function init(self)
+	Prompt.prompt(prompt_nodes, menu_nodes)
 	msg.post(".", "acquire_input_focus")
-	-- initiate  a fetch of products 
+	--initiate  a fetch of products 
 	iap.list(package_ids, product_list)
 end
 
@@ -46,9 +59,9 @@ function on_message(self, message_id, message, sender)
 end
 
 local offers = {
-	{cns = 150, brks = 60, lvs = 25, csh = 10000},
-	{cns = 300, brks = 120, lvs = 50, csh = 20000},
-	{cns = 450, brks = 180, lvs = 75, csh = 30000}
+	{cns = 15, brks = 5, lvs = 3, csh = 1000},
+	{cns = 100, brks = 12, lvs = 10, csh = 5000},
+	{cns = 500, brks = 30, lvs = 25, csh = 30000}
 }
 
 local item_ptr
@@ -56,10 +69,13 @@ local button_tapped
 local input_handler = function()
 	if button_tapped == 'menu' then
 		msg.post("main:/main#main", "unload_sales")
+	elseif button_tapped == "ok" then
+		Prompt.prompt(prompt_nodes, menu_nodes)
+		is_prompt_active = false
 	else
 		if item_ptr ~= nil then
 			selected_offer = offers[item_ptr]
-			local item_table = {"bronze_offer", "silver_offer", "gold_offer"}
+			local item_table = {"bronze_bundle", "silver_bundle", "gold_bundle"}
 			local package = item_table[item_ptr]
 			iap.set_listener(iap_listener)
 			iap.buy(package)	
@@ -73,19 +89,27 @@ function on_input(self, action_id, action)
 	local touch = hash("touch")
 	local back = hash('back')
 	if action_id == touch and action.released then
-		local menu = gui.get_node("_menu")
-		if gui.pick_node(menu, action.x, action.y) then
-			button_tapped = 'menu'
-			TouchFb.touch_feedback(menu, input_handler)
-		else
-			local nodes = {'bronze_offer_button', 'silver_offer_button', 'gold_offer_button'}
-			for k, v in ipairs(nodes) do
-				local node = gui.get_node(v)
-				if gui.pick_node(node, action.x, action.y) then
-					button_tapped = v
-					item_ptr = k
-					TouchFb.touch_feedback(node, input_handler)
+		if not is_prompt_active then
+			local menu = gui.get_node("_menu")
+			if gui.pick_node(menu, action.x, action.y) then
+				button_tapped = 'menu'
+				TouchFb.touch_feedback(menu, input_handler)
+			else
+				local nodes = {'bronze_offer_button', 'silver_offer_button', 'gold_offer_button'}
+				for k, v in ipairs(nodes) do
+					local node = gui.get_node(v)
+					if gui.pick_node(node, action.x, action.y) then
+						button_tapped = v
+						item_ptr = k
+						TouchFb.touch_feedback(node, input_handler)
+					end
 				end
+			end
+		else
+			local ok = gui.get_node("_ok")
+			if gui.pick_node(ok, action.x, action.y) then
+				button_tapped = "ok"
+				TouchFb.touch_feedback(ok, input_handler)
 			end
 		end
 	elseif action_id == back and action.released then

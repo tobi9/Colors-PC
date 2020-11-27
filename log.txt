@@ -8,8 +8,21 @@ INFO:ENGINE: Initialised sound device 'default'
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
 INFO:DLIB: SSDP: Started on address 192.168.43.132
-DEBUG:SCRIPT: 1
-INFO:ADMOB: show
-INFO:SOUND: Waiting for OpenAL device to complete
+ERROR:SCRIPT: /upgrades/iap/iap.gui_script:49: attempt to index global 'iap' (a nil value)
+stack traceback:
+	/upgrades/iap/iap.gui_script:49: in function </upgrades/iap/iap.gui_script:42>
+ERROR:GAMESYS: Error when initializing gui component: -2.
+ERROR:SCRIPT: /upgrades/sales/sales.gui_script:50: attempt to index global 'iap' (a nil value)
+stack traceback:
+	/upgrades/sales/sales.gui_script:50: in function </upgrades/sales/sales.gui_script:46>
+ERROR:GAMESYS: Error when initializing gui component: -2.
+ERROR:SCRIPT: /upgrades/sales/sales.gui_script:50: attempt to index global 'iap' (a nil value)
+stack traceback:
+	/upgrades/sales/sales.gui_script:50: in function </upgrades/sales/sales.gui_script:46>
+ERROR:GAMESYS: Error when initializing gui component: -2.
+ERROR:SCRIPT: /upgrades/iap/iap.gui_script:49: attempt to index global 'iap' (a nil value)
+stack traceback:
+	/upgrades/iap/iap.gui_script:49: in function </upgrades/iap/iap.gui_script:42>
+ERROR:GAMESYS: Error when initializing gui component: -2.
 INFO:DLIB: SSDP: Done on address 192.168.1.1
 INFO:DLIB: SSDP: Done on address 192.168.43.132

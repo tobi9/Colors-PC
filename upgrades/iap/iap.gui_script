@@ -1,7 +1,15 @@
 local TouchFb = require("modules.animation")
+local Prompt = require("modules.prompt")
 
 local items = {10, 20, 50, 100, 200, 300, 400, 500, 600, 700}
 local item_table = {}
+
+local is_prompt_active = false
+
+local menu_nodes = {"box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8", "box9", "box10", "text", "text1", "text2", "text3", "text4",
+"text5", "text6", "text7", "text8", "text9", "_menu", "menu", "disclaimer", "title"}
+
+local prompt_nodes = {"fail_dialogue_box", "fail_text", "_ok", "ok"}
 
 local function product_list(self, products, error)
 	if error == nil then
@@ -24,10 +32,15 @@ local function iap_listener(self, transaction, error)
 		money = money + money_inc
 		coins = coins + coin_inc
 		msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
+		acknowledge(iap.TRANS_STATE_PURCHASED)
+	elseif transaction.state == iap.TRANS_STATE_FAILED or transaction.state == iap.REASON_USER_CANCELED then
+		Prompt.prompt(menu_nodes, prompt_nodes)
+		is_prompt_active = true	
 	end
 end
 
 function init(self)
+	Prompt.prompt(prompt_nodes, menu_nodes)
 	msg.post(".", "acquire_input_focus")
 	-- initiate  a fetch of products
 	for k, v in ipairs(items) do
@@ -45,6 +58,9 @@ local item_ptr
 local function handle_input()
 	if button_tapped == 'menu' then
 		msg.post("main:/main#main", "unload_iap")
+	elseif button_tapped == "ok" then
+		Prompt.prompt(prompt_nodes, menu_nodes)
+		is_prompt_active = false
 	else
 		if item_ptr ~= nil then
 			coin_inc = items[item_ptr]
@@ -61,24 +77,31 @@ local touch = hash("touch")
 local back = hash("back")
 function on_input(self, action_id, action)
 	if action_id == touch and action.released then
-		local menu = gui.get_node("_menu")
-		if gui.pick_node(menu, action.x, action.y) then
-			button_tapped = 'menu'
-			TouchFb.touch_feedback(menu, handle_input)
-			msg.post("#click", "play_sound", {delay = 0, gain = 1})
-		else
-			local boxes = {"box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8", "box9", "box10"}
-			for k, v in ipairs(boxes) do
-				local node = gui.get_node(v)
-				if gui.pick_node(node, action.x, action.y) then
-					button_tapped = "item"
-					item_ptr = k
-					TouchFb.touch_feedback(node, handle_input)
+		if not is_prompt_active then		
+			local menu = gui.get_node("_menu")
+			if gui.pick_node(menu, action.x, action.y) then
+				button_tapped = 'menu'
+				TouchFb.touch_feedback(menu, handle_input)
+			else
+				local boxes = {"box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8", "box9", "box10"}
+				for k, v in ipairs(boxes) do
+					local node = gui.get_node(v)
+					if gui.pick_node(node, action.x, action.y) then
+						button_tapped = "item"
+						item_ptr = k
+						TouchFb.touch_feedback(node, handle_input)
+					end
 				end
+			end
+		else
+			local ok = gui.get_node("_ok")
+			if gui.pick_node(ok, action.x, action.y) then
+				button_tapped = "ok"
+				TouchFb.touch_feedback(ok, handle_input)
 			end
 		end
     elseif action_id == back and action.released then
-		msg.post(main, "click")
+		--msg.post(main, "click")
         button_tapped = 'menu'
         handle_input()
 	end
