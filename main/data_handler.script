@@ -36,7 +36,7 @@ local retrieve_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local table = sys.load(file)
 	if #table == 0 then
-		money = 1000000--100
+		money = 10000--100
 		brakes = 3
 		coins = 10
 		lives = 3

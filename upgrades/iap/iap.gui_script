@@ -44,7 +44,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	-- initiate  a fetch of products
 	for k, v in ipairs(items) do
-		table.insert(item_table, v.."_COINS")
+		table.insert(item_table, v.."_coins")
 	end
 	iap.list(item_table, product_list)
 end

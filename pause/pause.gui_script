@@ -60,7 +60,7 @@ function init(self)
 	gui.set_color(gui.get_node("no1"), gui.get_color(gui.get_node("exit_dialogue_box")))
 	
 	local best_id = gui.get_node('best')
-	gui.set_text(best_id, "BEST\n"..tostring(highscore))
+	gui.set_text(best_id, "HIGHSCORE\n"..tostring(highscore))
 	local m = gui.get_node("money")
 	gui.set_text(m, "$"..tostring(money))
 	local b = gui.get_node("brakes")

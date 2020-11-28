@@ -105,6 +105,8 @@ local update_info = function()
     gui.set_text(l, "LIVES\n"..tostring(lives))
 	local c = gui.get_node("coins")
 	gui.set_text(c, "COINS\n"..tostring(coins))
+	local best_id = gui.get_node('best')
+	gui.set_text(best_id, "HIGHSCORE\n"..tostring(highscore))
 end
 
 function init(self)
@@ -178,7 +180,7 @@ function on_message(self, message_id, message, sender)
 		else
 			gui.set_text(node, "CHANGE\nCHALLENGE")
 			node = gui.get_node("challenge_reward")
-			gui.set_text(node, "REWARD\n$"..message.reward.."\nX\nCOLORS USED")	
+			gui.set_text(node, "REWARD\n$"..message.reward.." X COLORS USED")	
 		end
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
