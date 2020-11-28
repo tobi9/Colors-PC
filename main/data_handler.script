@@ -1,6 +1,7 @@
 -- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY (for the most part)
 -- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY AND THE CLOUD
 local enc = require("main.encryption")
+local json = require("modules.json")
 --local folder = "Trick Colors test"
 local data = {}
 sound_playing = false -- this is used to filter the music
@@ -48,6 +49,7 @@ local retrieve_data = function()
 		--gpgs instructions
 		is_first_time = true
 	else
+		table = json.decode(table[1])
 		money = tonumber(decode(table[1]))
 		brakes = tonumber(decode(table[2]))
 		coins = tonumber(decode(table[3]))
@@ -66,7 +68,7 @@ local retrieve_data = function()
 		if is_opened and is_first_time then
 			local bytes, error_message = gpgs.snapshot_get_data()
 			if #bytes > 0 then
-				table = bytes[1]
+				table = json.decode(bytes[1])
 				money = tonumber(decode(table[1]))
 				brakes = tonumber(decode(table[2]))
 				coins = tonumber(decode(table[3]))
@@ -80,7 +82,7 @@ local retrieve_data = function()
 				has_been_reviewed = table[11]
 				--color info
 				if is_first_time and #bytes[2] > 0 then
-					color_info_table = bytes[2]
+					color_info_table = json.decode(bytes[2])
 				end
 			end
 		end
@@ -99,11 +101,12 @@ local save_data = function()
 			table.insert(data, i,encode(v)) -- since the value is a string already there is no need to use the tostring function
 		end
 	end
-	sys.save(file, data)
+	local data_enc = json.encode(data)
+	sys.save(file, {data_enc})
 	if gpgs then
 		local is_opened = gpgs.snapshot_is_opened()
 		if is_opened then
-			local cloud_data = {data, color_info_table, analyzer_data}
+			local cloud_data = {data_enc, color_info_table_enc, analyzer_data_enc}
 			local success, error_message = gpgs.snapshot_set_data(cloud_data)
 			if not success then
 				--do something

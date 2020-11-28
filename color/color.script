@@ -91,11 +91,11 @@ function on_message(self, message_id, message, sender)
 		answered = true -- this is a global variable declared in the controller script
 	--the following two messages are needed when the hint prompt is shown to the player
 	elseif message_id == msg_hide then
+		label.set_text("#label", " ")
 		current_speed = speed
 		speed = 0
-		label.set_text("#label", " ")
 	elseif message_id == msg_unhide then
-		label.set_text("#label", my_word)
+		label.set_text("#label", string.upper(my_word))
 		speed = current_speed
 	end
 end
