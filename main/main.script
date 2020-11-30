@@ -1,5 +1,5 @@
 --The folder that will contain a game data
-folder = "colors temporary folder"
+folder = "Pompayus"
 --The tables below are global tables that hold the information on the colors the player can use.	
 color_info_table = nil
 unlocked_colors_table = {}
@@ -206,9 +206,9 @@ function init(self)
 			{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)}, 
 			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', false, vmath.vector4(1, 0, 1, 1)},
 			{'yellow', false, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
-			{'gray', false, vmath.vector4(128/256, 128/256, 128/256, 1)}, {'olive', false, vmath.vector4(128/256, 128/256, 0, 1)},
-			{'purple', false, vmath.vector4(128/256, 0, 128/256, 1)}, {'pink', false, vmath.vector4(255/256, 192/256, 203/256, 1)},
-			{'orange', false, vmath.vector4(255/256, 165/256, 0, 1)}, {'brown', false, vmath.vector4(165/256, 42/256, 42/256, 1)}
+			{'gray', false, vmath.vector4(128/255, 128/255, 128/255, 1)}, {'olive', false, vmath.vector4(128/255, 128/255, 0, 1)},
+			{'purple', false, vmath.vector4(128/255, 0, 128/255, 1)}, {'pink', false, vmath.vector4(255/255, 192/255, 203/255, 1)},
+			{'orange', false, vmath.vector4(255/255, 165/255, 0, 1)}, {'brown', false, vmath.vector4(165/255, 42/255, 42/255, 1)}
 		}
 	end
 	--retrieve the unlocked colors from the color_info_table and put them into the unlocked_colors_table

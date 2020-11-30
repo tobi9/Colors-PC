@@ -4,6 +4,22 @@ WARNING:REVIEW: Registered review (null) Extension
 
 INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
+DEBUG:SCRIPT: 
+{ --[[000002A9180CE490]]
+  api_version = "",
+  device_model = "",
+  system_name = "Windows",
+  user_agent = "",
+  gmt_offset = 60,
+  territory = "US",
+  device_ident = "",
+  device_language = "en",
+  manufacturer = "",
+  system_version = "6.2",
+  language = "en"
+}
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
+INFO:DLIB: SSDP: Started on address 192.168.43.132
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132

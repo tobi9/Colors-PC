@@ -85,3 +85,10 @@ use_saved_games = 1
 request_server_auth_code = 0
 request_id_token = 0
 
+[admob]
+ios_app_id = 
+android_app_id = ca-app-pub-8430717424261932~7956131041
+
+[resource]
+max_resources = 2048
+

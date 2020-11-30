@@ -1,9 +1,4 @@
 --This uses admob not unity.
-local app_id = {
-	["iPhone OS"] = "",
-	["Android"] = "ca-app-pub-8430717424261932~7956131041"
-}
-
 local rewarded_id = {
 	["iPhone OS"] = "",
 	["Android"] = "ca-app-pub-8430717424261932/3118914944"
@@ -11,13 +6,15 @@ local rewarded_id = {
 
 local sysinfo = sys.get_sys_info()
 local function listener(event)
-	if event.phase == "init" or "closed" then
+	if event.phase == "init" or event.phase == "closed" then
 		admob.load{
 			type = "rewarded",
 			id = rewarded_id[sysinfo.system_name],
 			immersive = true,
-			keywords = {"game", "puzzle", "casual"},
-			is_designed_for_families = true
+			--keywords = {"game", "puzzle", "casual", "color", "word"},
+			non_personalized = true,
+			restricted_data_processing = true,
+			max_ad_content_rating = 'G'
 		}
 	elseif event.phase == "rewarded" then
 		msg.post("main:/main#main", "ad_completed")
@@ -26,9 +23,8 @@ end
 
 function init(self)
 	admob.init{
-		app_id = app_id[sysinfo.system_name],
-		listener = listener,
-		test  = true
+		test  = true,
+		listener = listener
 	}
 end
 
