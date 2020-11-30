@@ -18,6 +18,7 @@ local save_to_memory_loc = function(str, n)
 	sys.save(file, tab)
 end
 
+local challenge
 local challenge_ptr -- points to the challenge in the table
 local challenge_num -- the score the player is supposed to get
 local challenge_status -- passed or not
@@ -258,6 +259,7 @@ function on_message(self, message_id, message, sender)
 	local msg_new_highscore = hash("new_highscore")
 	local msg_menu_loaded = hash("menu_loaded")
 	local msg_restart = hash("restart")
+	local msg_shell = hash("shell")
 
 	if message_id == msg_change_chal then
 		ptr_holder = challenge_ptr
@@ -307,5 +309,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == msg_restart then
 		double_highscore = highscore * 2
 		triple_highscore = highscore * 3
+	elseif message_id == msg_shell then
+		msg.post(sender, "challenge", {chal = challenge})
 	end
 end

@@ -122,9 +122,9 @@ function init(self)
 	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
 	
 	--set the prompts to their app
-	local prompt0 = {"board", "yes_button", "no_button"}
-	local prompt1 = {"exit_dialogue_box", "yes_exit", "no_exit"}
-	local prompt2 = {"chal_dialogue_box", "yes_chal", "no_chal"}
+	local prompt0 = {"board", "yes_text", "no_text"}
+	local prompt1 = {"exit_dialogue_box", "yes", "no"}
+	local prompt2 = {"chal_dialogue_box", "yes1", "no1"}
 	for k, v in ipairs(prompt0) do
 		gui.set_id(gui.get_node(prompt1[k]), v)
 		Customizer.set_node_color(v, "prompt")
@@ -134,11 +134,6 @@ function init(self)
 		Customizer.set_node_color(v, "prompt")
 		gui.set_id(gui.get_node(v), prompt2[k])
 	end
-	--set the texts in the prompts to the 
-	gui.set_color(gui.get_node("yes"), gui.get_color(gui.get_node("exit_dialogue_box")))
-	gui.set_color(gui.get_node("no"), gui.get_color(gui.get_node("exit_dialogue_box")))
-	gui.set_color(gui.get_node("yes1"), gui.get_color(gui.get_node("exit_dialogue_box")))
-	gui.set_color(gui.get_node("no1"), gui.get_color(gui.get_node("exit_dialogue_box")))
 
 	Prompt.prompt(exit_dialogue_nodes, menu_nodes)
 	Prompt.prompt(chal_prompt_nodes, menu_nodes)

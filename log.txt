@@ -4,9 +4,6 @@ WARNING:REVIEW: Registered review (null) Extension
 
 INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
-
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:DLIB: SSDP: Started on address 192.168.43.132
 INFO:DLIB: SSDP: Done on address 192.168.1.1
-INFO:DLIB: SSDP: Done on address 192.168.43.132

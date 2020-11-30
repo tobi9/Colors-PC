@@ -148,9 +148,6 @@ local handle_input = function()
         if is_timer_zero then
             if (sys.NETWORK_DISCONNECTED ~= sys.get_connectivity()) then -- it always returns 1 which is a problem
                 msg.post(main, "show_ad")
-      			--stop the button animation
-	    		local node = gui.get_node("daily_gift")
-    			gui.cancel_animation(node, "position.y")
             else
                 gui.set_text(node, "CONNECT TO\nTHE INTERNET")
                 timer.delay(1, false, clear_info)
@@ -182,6 +179,9 @@ function on_message(self, message_id, message, sender)
     	TouchFb.bounce_on_y_axis("daily_gift")
     elseif message_id == msg_completed then
         msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
+        --stop the button animation
+        local node = gui.get_node("daily_gift")
+        gui.cancel_animation(node, "position.y")
         local gifts = {
             --cash
             50, 100, 200, 300, 400, 500,

@@ -19,7 +19,7 @@ local spawn_boxes = function(tab)
 		pos = positions[k]
 		local size = vmath.vector3(200, 100, 0)
 		local box_scale = vmath.vector3(0.65, 1.3, 0)
-		local text_scale = vmath.vector3(0.325, 0.35, 1)
+		local text_scale = vmath.vector3(0.25, 0.25, 1)
 		local box_node = gui.new_box_node(pos, size)
 		local text_node = gui.new_text_node(pos, string.upper(v[1]))
 		gui.set_color(box_node, v[3])

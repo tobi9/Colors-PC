@@ -9,6 +9,7 @@ local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
 function init(self)
+	msg.post("main:/main#challenges", "shell")
 	--take a snapshot of the unaltered state of the collection
 	Customizer.take_snapshot(node_strings, node_colors)
 	-- node each node to its appropriate color
@@ -45,6 +46,8 @@ local chosen_node
 local change_all = false -- this variable is set to true when the players clicks the set all button
 function on_message(self, message_id, message, sender)
 	local enabled = hash("enabled")
+	local chal = hash("challenge")
+	
 	if message_id == enabled then
 		if color_chosen ~= nil and #color_chosen > 0 and change_all == false then
 			Customizer.record_change(node_holder, ledger)
@@ -64,6 +67,8 @@ function on_message(self, message_id, message, sender)
 				Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 			end
 		end
+	elseif message_id == chal then
+		gui.set_text(gui.get_node("challenge"), message.chal)
 	end
 	change_all = false -- reset to avoid repetition
 end

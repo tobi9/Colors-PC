@@ -8,6 +8,7 @@ local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
 function init(self)
+	msg.post("main:/main#challenges", "shell")
 	--take a snapshot of the unaltered state of the collection
 	Customizer.take_snapshot(node_strings, node_colors)
 	-- node each node to its appropriate color
@@ -45,6 +46,8 @@ local chosen_node
 local change_all = false -- this variable is set to true when the players clicks the set all button
 function on_message(self, message_id, message, sender)
 	local enabled = hash("enabled")
+	local chal = hash("challenge")
+
 	if message_id == enabled then
 		if color_chosen ~= nil and #color_chosen > 0 and change_all == false then
 			Customizer.record_change(node_holder, ledger)
@@ -61,6 +64,8 @@ function on_message(self, message_id, message, sender)
 				end
 			end
 		end
+	elseif message_id == chal then
+		gui.set_text(gui.get_node("challenge"), message.chal)
 	end
 	change_all = false -- reset to avoid repetition
 end
@@ -93,7 +98,7 @@ function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	local back = hash("back")
 	if action_id == touch and action.released then
-		local buttons = {"title", "_board", "_resume", "_restart", "_sound", "_show_ad", "_menu", "_clear_all",
+		local buttons = {"_title", "_board", "_resume", "_restart", "_sound", "_show_ad", "_menu", "_clear_all",
 		 "_set_all", "_undo", "_ok"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
@@ -102,6 +107,7 @@ function on_input(self, action_id, action)
 					if k > 1 then
 						TouchFb.touch_feedback(node, handle_input)
 					else
+						button_tapped = "title"
 						node = gui.get_node("title")
 						TouchFb.touch_feedback(node, handle_input)
 					end

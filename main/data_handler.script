@@ -1,6 +1,5 @@
 -- THIS SCRIPT DOES NOT MODIFY THE DATA IN ANY WAY (for the most part)
 -- ITS JOB IS JUST RETRIEVE FROM AND SAVE TO MEMORY AND THE CLOUD
-local enc = require("main.encryption")
 local json = require("modules.json")
 --local folder = "Trick Colors test"
 local data = {}
@@ -50,18 +49,18 @@ local retrieve_data = function()
 		is_first_time = true
 	else
 		table = json.decode(table[1])
-		money = tonumber(decode(table[1]))
-		brakes = tonumber(decode(table[2]))
-		coins = tonumber(decode(table[3]))
-		lives = tonumber(decode(table[4]))
-		last_ad_time = tonumber(decode(table[5]))
-		highscore = tonumber(decode(table[6]))
-		daily_reward_streak = tonumber(decode(table[7]))
-		last_day = tonumber(decode(table[8]))
-		mode = decode(table[9]) -- an exception
+		money = table[1]
+		brakes = table[2]
+		coins = table[3]
+		lives = table[4]
+		last_ad_time = table[5]
+		highscore = table[6]
+		daily_reward_streak = table[7]
+		last_day = table[8]
+		mode = table[9]
 		is_login_declined = table[10]
 		has_been_reviewed = table[11]
-	end
+end
 
 	if gpgs then
 		local is_opened = gpgs.snapshot_is_opened()
@@ -69,15 +68,15 @@ local retrieve_data = function()
 			local bytes, error_message = gpgs.snapshot_get_data()
 			if #bytes > 0 then
 				table = json.decode(bytes[1])
-				money = tonumber(decode(table[1]))
-				brakes = tonumber(decode(table[2]))
-				coins = tonumber(decode(table[3]))
-				lives = tonumber(decode(table[4]))
-				last_ad_time = tonumber(decode(table[5]))
-				highscore = tonumber(decode(table[6]))
-				daily_reward_streak = tonumber(decode(table[7]))
-				last_day = tonumber(decode(table[8]))
-				mode = decode(table[9]) -- an exception
+				money = table[1]
+				brakes = table[2]
+				coins = table[3]
+				lives = table[4]
+				last_ad_time = table[5]
+				highscore = table[6]
+				daily_reward_streak = table[7]
+				last_day = table[8]
+				mode = table[9]
 				is_login_declined = table[10]
 				has_been_reviewed = table[11]
 				--color info
@@ -93,13 +92,7 @@ local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode, is_login_declined, has_been_reviewed}
 	for i, v in ipairs(values) do
-		if i ~= 9 then
-			table.insert(data, i,encode(tostring(v)))
-		elseif i == 10 or i == 11 then
-			table.insert(data, i, v) -- booleans cant be encoded
-		else
-			table.insert(data, i,encode(v)) -- since the value is a string already there is no need to use the tostring function
-		end
+		table.insert(data, i, v)
 	end
 	local data_enc = json.encode(data)
 	sys.save(file, {data_enc})

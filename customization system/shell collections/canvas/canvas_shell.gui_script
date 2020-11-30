@@ -82,7 +82,7 @@ function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	local back = hash("back")
 	if action_id == touch and action.released then
-		local buttons = {"prompt", "_clear_all1", "_set_all1", "_undo1", "_ok1","_clear_all", "_set_all", "_undo", "_ok"}
+		local buttons = {"_prompt", "_clear_all1", "_set_all1", "_undo1", "_ok1","_clear_all", "_set_all", "_undo", "_ok"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
 			if gui.pick_node(node, action.x, action.y) then
@@ -90,6 +90,7 @@ function on_input(self, action_id, action)
 					if k > 1 then
 						TouchFb.touch_feedback(node, handle_input)
 					else
+						button_tapped = "prompt"
 						node = gui.get_node("prompt")
 						TouchFb.touch_feedback(node, handle_input)
 					end

@@ -1,8 +1,15 @@
 local TouchFb = require("modules.animation")
+local Customizer = require("modules.customizer")
 
 function init(self)
+	local col_name = "customizer_menu"
 	msg.post(".", "acquire_input_focus")
-
+	local nodes = {"heading", "_menu", "_menucol", "_upgradescol", "_levelcol", "_colormenucol", "_pickcolorscol", "_pausecol", "_gameovercol", 
+	"_choosecol", "_palettecol", "_promptcol", "_canvascol", "_customizercol"}
+	-- node each node to its appropriate color
+	for k, v in ipairs(nodes) do
+		Customizer.set_node_color(v, col_name)
+	end
 end
 
 function final(self)

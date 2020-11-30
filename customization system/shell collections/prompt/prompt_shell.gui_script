@@ -3,7 +3,7 @@ local TouchFb = require("modules.animation")
 local col_name = "prompt" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {"board", "yes_button", "no_button"}
+local node_strings = {"board", "yes_text", "no_text"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -88,10 +88,10 @@ function on_input(self, action_id, action)
 		local yes = gui.get_node("yes_button")
 		local no = gui.get_node("no_button")
 		if gui.pick_node(yes, action.x, action.y) then
-			button_tapped = "yes_button"
+			button_tapped = "yes_text"
 			TouchFb.touch_feedback(yes, handle_input)
 		elseif gui.pick_node(no, action.x, action.y) then
-			button_tapped = "no_button"
+			button_tapped = "no_text"
 			TouchFb.touch_feedback(no, handle_input)		
 		else
 			local buttons = {"board", "_clear_all", "_set_all", "_undo", "_ok"}
