@@ -26,7 +26,6 @@ local function product_list(self, products, error)
 	end
 end
 
-local selected_offer
 --This holds the selected offer after the player clicks. It is needed by the callback to determine what the player bought.
 local selected_offer
 local function iap_listener(self, transaction, error)

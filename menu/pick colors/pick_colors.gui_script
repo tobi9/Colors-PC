@@ -63,6 +63,7 @@ end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	gui.set_text(gui.get_node("title"), "CHOOSE "..num_of_colors_picked.." DIFFERENT\nCOLORS")
 	for k, v in ipairs(options) do
 		local node = gui.get_node(v)
 		local text = gui.get_node("text"..v)

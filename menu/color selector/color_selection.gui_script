@@ -111,6 +111,7 @@ function init(self)
 	msg.post(".", "acquire_input_focus")
 	spawn_boxes()
 	check_for_chosen_colors()
+	gui.set_text(gui.get_node("title"), "SELECT "..num_of_colors_picked.." COLORS")
 	--set the status
 	if #tray == num_of_colors_picked then
 		local node = gui.get_node("status")

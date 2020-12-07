@@ -55,7 +55,7 @@ function init(self)
 	end
 	
 	local best_id = gui.get_node('best')
-	gui.set_text(best_id, "HIGHSCORE\n"..tostring(highscore))
+	gui.set_text(best_id, "BEST\n"..tostring(highscore))
 	local m = gui.get_node("money")
 	gui.set_text(m, "$"..tostring(money))
 	local b = gui.get_node("brakes")

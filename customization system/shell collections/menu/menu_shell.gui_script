@@ -54,7 +54,7 @@ function on_message(self, message_id, message, sender)
 			Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 		else
 			local node_holder
-			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board", "dark"}
+			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board", "dark", "log_in"}
 			for k, v in ipairs(nodes) do
 				--this is because of the title. As not to mix up the box with the text
 				if k > 1 then

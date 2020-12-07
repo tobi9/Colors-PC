@@ -281,6 +281,10 @@ function on_message(self, message_id, message, sender)
 		if not challenge_status then -- if the challenge has not been passed
 			final_reward = reward * num_of_colors
 		end
+		--clean up the highscore info from a concluded session
+		highscore_snapshot = nil
+		double_highscore = nil
+		triple_highscore = nil
 	elseif message_id == msg_check_chal then
 		word_streaks = message.word
 		color_streaks = message.color

@@ -121,7 +121,9 @@ function init(self)
 	clr.w = 0.30 -- set the alpha
 	gui.set_color(gui.get_node("question1"), clr)
 
-	initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session
+	--initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session
+	local best_id = gui.get_node('best')
+	gui.set_text(best_id, "BEST: "..tostring(highscore))
 end
 
 function final(self)
@@ -203,6 +205,8 @@ function on_message(self, message_id, message, sender)
 		gui.animate(score_id , "position.x", pos.x + 5, gui.EASING_INBACK, 0.1, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
 		if score > highscore then
 			highscore = score
+			local best_id = gui.get_node('best')
+			gui.set_text(best_id, "BEST: "..tostring(highscore))		
 			if not highscore_notification_sent then
 				msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
 				msg.post("main:/main#challenges", "new_highscore")
@@ -211,7 +215,7 @@ function on_message(self, message_id, message, sender)
 			msg.post("main:/main#data_handler", "save_data")
 		end
 		gui.set_text(score_id, score)-- this displays the incremented score
-			--notify the controller script to supply the challenge script with the data needed to chcl if the challenge has been passed
+		--notify the controller script to supply the challenge script with the data needed to chcl if the challenge has been passed
 		msg.post("level:/controller#controller", "streaks_needed")
 	elseif message_id == show_hint then
 		hint_player('option'..tostring(message.hint))

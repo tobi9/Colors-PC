@@ -14,9 +14,6 @@ function init(self)
 	for k, v in ipairs(node_strings) do
 		Customizer.set_node_color(v, col_name)
 	end
-	--set the texts in the prompts to the 
-	gui.set_color(gui.get_node("yes_text"), gui.get_color(gui.get_node("board")))
-	gui.set_color(gui.get_node("no_text"), gui.get_color(gui.get_node("board")))
 	--canvas customization
 	local canvas = {"prompt", "_clear_all", "_set_all", "_undo", "_ok"}
 	for k, v in ipairs(canvas) do

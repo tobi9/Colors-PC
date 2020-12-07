@@ -8,7 +8,7 @@ local button_tapped = nil
 local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
 local menu_nodes = {'title', 'start', "_start", "upgrades", "_upgrades", "sound", 
 "_sound", "exit", "_exit", "_customize", "customize", "_board", "brakes", "lives", "coins",
-"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward", "dark", "_dark", "_log_in", "log_in"}
+"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward", "dark", "_dark", "_log_in", "log_in", "best"}
 local chal_prompt_nodes = {"chal_dialogue_box", "chal_prompt", "yes_chal", "yes1", "no_chal", "no1"}
 local is_exit_prompt_active
 local is_chal_prompt_active
@@ -106,7 +106,7 @@ local update_info = function()
 	local c = gui.get_node("coins")
 	gui.set_text(c, "COINS\n"..tostring(coins))
 	local best_id = gui.get_node('best')
-	gui.set_text(best_id, "HIGHSCORE\n"..tostring(highscore))
+	gui.set_text(best_id, "BEST\n"..tostring(highscore))
 end
 
 function init(self)
@@ -192,7 +192,7 @@ end
 
 -- action ids
 local touch = hash('touch')
-local back = hash('backspace')
+local back = hash('back')
 function on_input(self, action_id, action)
 	if action_id == touch and action.released then
 		local start = gui.get_node("_start")

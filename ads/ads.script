@@ -11,7 +11,7 @@ local function listener(event)
 			type = "rewarded",
 			id = rewarded_id[sysinfo.system_name],
 			immersive = true,
-			--keywords = {"game", "puzzle", "casual", "color", "word"},
+			keywords = {"game", "casual"},
 			non_personalized = true,
 			restricted_data_processing = true,
 			max_ad_content_rating = 'G'
