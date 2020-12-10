@@ -3,6 +3,8 @@ INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-WARNING:DLIB: Profiler VSync.Wait took 2.425 seconds
-WARNING:DLIB: Profiler Engine.Frame took 2.427 seconds
+ERROR:SCRIPT: /pause/pause.gui_script:68: attempt to compare nil with number
+stack traceback:
+	/pause/pause.gui_script:68: in function </pause/pause.gui_script:17>
+ERROR:GAMESYS: Error when initializing gui component: -2.
 INFO:DLIB: SSDP: Done on address 192.168.1.1

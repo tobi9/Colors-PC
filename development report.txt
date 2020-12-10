@@ -3,25 +3,15 @@ LONG TERM PLAN:
         race and challenge modes for the multiplayer
 
 MAIN FOCUS:
-    1. Form a well planed strategy for asking for ratings. 
-    2. Redesign the ui
-    3. New sound design
-    4. think of better phrases for the exit prompt
-    5. Ask for ratings
-    6. Add the rules and credits(if required).
-    7. change the currency system (dont use currency names)
+    1. Finish up the android version
+    2. Start working in the pc version
 
 PLAN:
 Release only a handful of colours. Release the rest in a timely manner.
 The first type of multiplayer should be local with one mode
-(Formulate the rules later).
+(Form the rules later).
 
 PHASE 1:
-    (a)The main functions of the game or inner shell are done.(pretest)
-    (b)The outer shell of the game needs to be completed.
-        (i) The components of the outer shell include but are not limited to
-            *Analyser *Google play servises(android) *Asking for ratings *Notifications *Sound design *Animations 
-            *Tips and Tutorials(inc. rules) *Credits
 
 NEED TO DOS:
 (1) Create a new branch for the PC version on Github

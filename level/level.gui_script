@@ -121,7 +121,7 @@ function init(self)
 	clr.w = 0.30 -- set the alpha
 	gui.set_color(gui.get_node("question1"), clr)
 
-	--initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session
+	initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session needed by the gameover and pause scripts check their init functions
 	local best_id = gui.get_node('best')
 	gui.set_text(best_id, "BEST: "..tostring(highscore))
 end
