@@ -67,7 +67,7 @@ function on_message(self, message_id, message, sender)
 		spawn_counter = spawn_counter - 1
 		msg.post(level_gui, "show_hint", {hint = message.hint})
 	elseif message_id == new_hints then
-		spawn_counter = 3
+		spawn_counter = spawn_counter + 3
 	elseif message_id == strks_needed then
 		sender_container = sender
 		local color_streak_table = {color1, color2, color3, color4, color5, color6}

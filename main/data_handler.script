@@ -122,8 +122,8 @@ local function gpgs_callback(self, message_id, message)
 end
 
 function init(self)
-	gpgs.set_callback(gpgs_callback)
-	if --[[is_first_time == true or]] is_login_declined == false then
+	--[[gpgs.set_callback(gpgs_callback)
+	if --[[is_first_time == true or]-] is_login_declined == false then
 		--silent login
 		if gpgs then
 			gpgs.silent_login()
@@ -133,7 +133,7 @@ function init(self)
 				end
 			end)
 		end
-	end
+	end]]
 	retrieve_data()
 	--calculate the daily reward
 	if get_day(os.time()) - last_day == 1 then

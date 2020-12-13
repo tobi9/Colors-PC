@@ -1,17 +1,9 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
-INFO:GpgsExt: Registered extension Gpgs (null)
+WARNING:REVIEW: Registered review (null) Extension
+
 INFO:ENGINE: Initialised sound device 'default'
-ERROR:SCRIPT: /main/data_handler.script:125: attempt to index global 'gpgs' (a nil value)
-stack traceback:
-	/main/data_handler.script:125: in function </main/data_handler.script:124>
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:DLIB: SSDP: Started on address 192.168.43.132
-ERROR:SCRIPT: /menu/menu.gui_script:165: bad argument #2 to 'set_text' (string expected, got nil)
-stack traceback:
-	[C]: in function 'set_text'
-	/menu/menu.gui_script:165: in function </menu/menu.gui_script:162>
-ERROR:GAMESYS: Error when dispatching message to gui scene: -2. Message 'chal' sent from main:/main#challenges to menu:/gui#menu.
+INFO:ADMOB: show
 INFO:DLIB: SSDP: Done on address 192.168.1.1
-INFO:DLIB: SSDP: Done on address 192.168.43.132

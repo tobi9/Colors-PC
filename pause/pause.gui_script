@@ -69,6 +69,10 @@ function init(self)
 		TouchFb.dance_on_x_axis("best")
 	end
 
+	if ad_for_hints_played then
+		local txt = gui.get_node("ad_text")
+		gui.set_text(txt, "USED")
+	end
 end
 
 function final(self)
@@ -172,7 +176,8 @@ function on_message(self, message_id, message, sender)
 			gui.set_text(node, " ")
 		end
 	elseif message_id == msg_completed then
-		msg.post("level:/controller#controller", "new hints")
+		msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
+		msg.post("level:/controller#controller", "new_hints")
 		local txt = gui.get_node("ad_text")
 		gui.set_text(txt, "USED")
 		msg.post(ANALYZER, 'hint_used')

@@ -166,7 +166,7 @@ function on_message(self, message_id, message, sender)
 	-- message ids
 	local msg_challenges = hash("challenges")
 	local landmark = hash("landmark")
-	local msg_completed = hash("completed")
+	--local msg_completed = hash("completed")
 	local msg_chal = hash("chal")
 	local msg_chal_reward = hash("chal_reward")
 	local msg_req_chal = hash("request_challenge")
@@ -195,12 +195,12 @@ function on_message(self, message_id, message, sender)
 			node = gui.get_node("challenge_reward")
 			gui.set_text(node, " ")
 		end
-	elseif message_id == msg_completed then
+	--[[elseif message_id == msg_completed then
 		msg.post("/gameover#reward", "play_sound", {delay = 0, gain = 1})
 		lives = lives + 1
 		-- adjust the lives
 		local lives_id = gui.get_node("lives")
-		gui.set_text(lives_id, "LIVES"..tostring(lives))
+		gui.set_text(lives_id, "LIVES"..tostring(lives))]]
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
 		gui.set_text(m, "$"..tostring(money))
