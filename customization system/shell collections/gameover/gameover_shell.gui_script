@@ -34,6 +34,14 @@ function init(self)
 	gui.set_text(c, "COINS\n"..tostring(coins))	
 	local best_id = gui.get_node('best')
 	gui.set_text(best_id, "BEST\n"..tostring(highscore))
+
+	if mode == "light" then
+		local node = gui.get_node("ad_text")
+		gui.set_text(node, "DARK\nMODE")
+	else
+		local node = gui.get_node("ad_text")
+		gui.set_text(node, "LIGHT\nMODE")
+	end
 end
 
 function final(self)

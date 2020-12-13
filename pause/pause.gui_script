@@ -41,7 +41,7 @@ function init(self)
 	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
 
 	--set the prompts to their app
-	local prompt0 = {"board", "yes_button", "no_button"}
+	local prompt0 = {"board", "yes_text", "no_text"}
 	local prompt1 = {"exit_dialogue_box", "yes", "no"}
 	local prompt2 = {"chal_dialogue_box", "yes1", "no1"}
 	for k, v in ipairs(prompt0) do

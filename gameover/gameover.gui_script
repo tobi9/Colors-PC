@@ -37,7 +37,7 @@ function init(self)
 	gui.set_color(gui.get_node("chal_but"), gui.get_color(gui.get_node("_board")))
 
 	--set the prompts to their app
-	local prompt0 = {"board", "yes_button", "no_button"}
+	local prompt0 = {"board", "yes_text", "no_text"}
 	local prompt1 = {"exit_dialogue_box", "yes", "no"}
 	local prompt2 = {"chal_dialogue_box", "yes1", "no1"}
 	for k, v in ipairs(prompt0) do
@@ -65,6 +65,15 @@ function init(self)
 		TouchFb.dance_on_x_axis("best")
 		msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
 	end
+
+	--dark mode button
+	if mode == "light" then
+		local node = gui.get_node("ad_text")
+		gui.set_text(node, "DARK\nMODE")
+	else
+		local node = gui.get_node("ad_text")
+		gui.set_text(node, "LIGHT\nMODE")
+	end	
 end
 
 function final(self)
@@ -80,8 +89,19 @@ local function handle_input()
 		msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 		msg.post(main, 'resume', {col = "gameover"})-- tells the controller script which collection to unload when resuming
 		lives = lives - 1
-	elseif button_tapped == 'show_ad' then
-		msg.post("main:/main#main", "show_ad", {id = "gameover:/gameover#gameover"})
+	elseif button_tapped == 'show_ad' then -- this is the dark mode button. I changed the function for design reasons but I didn't rename the nodes.
+		--msg.post("main:/main#main", "show_ad", {id = "gameover:/gameover#gameover"})
+		if mode == "light" then
+			msg.post("@render:", "clear_color", { color = vmath.vector4(0, 0, 0, 0) } )
+			mode = "dark"
+			local node = gui.get_node("ad_text")
+			gui.set_text(node, "LIGHT\nMODE")
+		else
+			msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+			mode = "light"
+			local node = gui.get_node("ad_text")
+			gui.set_text(node, "DARK\nMODE")
+		end
 	elseif button_tapped == 'restart' then
 		msg.post("main:/main#challenges", "restart") -- give the challenge script the required info to update some parameters
 		msg.post(main, 'restart', {col = "gameover"})-- tells the controller script which collection to unload when restarting	

@@ -7,14 +7,14 @@ local level_nodes
 -- these are level node tables for each number of colors the player can pick. This is needed because if its just one
 --table, on disablng the exit prompt, all the nodes are re-enabled as opposed to the relevant nodes only being re-enabled  
 local level_nodes_3 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3",}
+"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "best"}
 local level_nodes_4 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "color4"}
+"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "color4", "best"}
 local level_nodes_5 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "option5", "color4", "color5"}
+"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "option5", "color4", "color5", "best"}
 local level_nodes_6 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
 "brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "option5", "option6",
-"color4", "color5", "color6"}
+"color4", "color5", "color6", "best"}
 local is_prompt_active
 question = nil -- this is a global variable
 ad_for_hints_played = false
@@ -227,7 +227,6 @@ function on_message(self, message_id, message, sender)
 		local b_id = gui.get_node("brakes")
 		gui.set_text(b_id, brakes)
 	elseif message_id == msg_strk then
-		--print(message.number.."X "..string.upper(color_strings[message.pointer]).." "..string.upper(message.type).." STREAK")
 		local node = gui.get_node("question1")
 		gui.set_text(node, message.number.."X ".." "..string.upper(message.type).." STREAK FOR "..string.upper(color_strings[message.pointer]))
 		local callback = function()
@@ -241,8 +240,8 @@ function on_message(self, message_id, message, sender)
 		if message.situation == "gameover" then
 			gui.set_text(prompt, "WOULD YOU LIKE TO CONTINUE?\nLIVES\n"..tostring(lives).."\nIT WILL COST 1 LIVE")
 			gamePaused = true
-		else
-			gui.set_text(prompt, "WOULD YOU LIKE SOME HINTS?\n TAP YES TO WATCH THE VIDEO")
+		--[[else
+			gui.set_text(prompt, "YOU CAN WATCH THIS VIDEO TO GET SOME HINTS. ")]]
 		end
 		prompt_context = message.situation
 		msg.post(sender, "hide")

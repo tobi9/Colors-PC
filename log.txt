@@ -1,10 +1,39 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1120]]
+  1 = "[18,7,49,7,2,11,19]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1390]]
+  1 = "[2]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A14F0]]
+  1 = "[0,0]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1650]]
+  1 = "[3]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A17B0]]
+  1 = "[0]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1910]]
+  1 = "["blue","red","lime"]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1AB0]]
+  1 = "[["red",1],["lime",1],["blue",1]]"
+}
+DEBUG:SCRIPT: 
+{ --[[000002203E6A1DF0]]
+  1 = "[1,0]"
+}
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-ERROR:SCRIPT: /pause/pause.gui_script:68: attempt to compare nil with number
-stack traceback:
-	/pause/pause.gui_script:68: in function </pause/pause.gui_script:17>
-ERROR:GAMESYS: Error when initializing gui component: -2.
+INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1

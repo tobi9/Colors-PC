@@ -1,3 +1,4 @@
+local json = require("modules.json")
 analyzer = "main:/analyzer#analyzer"
 
 --local folder = "tc2"
@@ -37,7 +38,12 @@ function init(self)
 		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
 		local file = sys.get_save_file(folder, str..suffix)
 		local cell = sys.load(file)
-		return cell
+		if #cell > 0 then
+			local value = json.decode(cell[1])
+			return value
+		else
+			return {}
+		end
 	end
 	--get the time totals from memory
 	local table = check_memory_loc("time")
@@ -87,7 +93,7 @@ function final(self)
 	local save_to_memory_loc = function(str, tab)
 		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
 		local file = sys.get_save_file(folder, str..suffix)
-		sys.save(file, tab)
+		sys.save(file, {json.encode(tab)})
 	end
 
 	--save the duration to memory
@@ -122,7 +128,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == msg_gameover then
 		table.insert(scores, score)
 		local file = sys.get_save_file(folder, "score"..suffix)
-		sys.save(file, scores)
+		sys.save(file, {json.encode(scores)})
 		total_gameovers = total_gameovers + 1
 	elseif message_id == msg_chal_passed then
 		chals_passed = chals_passed + 1
@@ -175,7 +181,7 @@ function on_message(self, message_id, message, sender)
 	table.insert(time_totals, time_spent)
 	local data_table = {time_totals, scores, total_chals, chals_passed, total_spawns,
 	total_brakes_used, colors_used, color_ledger}	
-	msg.post("main:/main#data_handler", "analyzer_data", {data = data_table})
+	msg.post("main:/main#data_handler", "analyzer_data", {data = json.encode(data_table)})
 	table.remove(time_totals, #time_totals, time_spent) -- remove it as it was temporary
 	--ask for review if the criteria have been met
 	if (sys.NETWORK_DISCONNECTED ~= sys.get_connectivity()) and not has_been_reviewed then -- it always returns 1 which is a problem

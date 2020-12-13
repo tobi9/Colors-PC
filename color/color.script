@@ -13,9 +13,10 @@ local answer = nil -- this is the value the script sends so it can be compared w
 
 function init(self)
 	msg.post(analyzer, "new_spawn")
-	if ad_for_hints_played == false and speed > 700 then -- ad_for_hints is a global variable declared in the level gui script
+	--[[if ad_for_hints_played == false and speed > 700 and ad_prompt_shown == false then -- ad_for_hints is a global variable declared in the level gui script
 		msg.post(level_gui, "show_prompt", {situation = "hints"})
-	end
+		ad_prompt_shown = true
+	end]]
 	--CHECK HERE FOR BUGS
 	my_words = color_strings
 	my_colors = colors
@@ -34,15 +35,16 @@ function update(self, dt)
 	local pos = go.get_position()
 	pos.x = pos.x + speed * dt
 	go.set_position(pos)
-	if pos.x > 700 then
+	if pos.x > 800 then
 		if answered == false then
+			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
-			if lives == 0 then
+			msg.post(main, "gameover")
+			--[[if lives == 0 then
 				msg.post(main, "gameover")
 			else
 				msg.post(level_gui, "show_prompt", {situation = "gameover"})
-			end
-			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
+			end]]
 		end
 		go.delete() -- the go deletes after it passes 700 on the x-axis
 	end
@@ -82,11 +84,12 @@ function on_message(self, message_id, message, sender)
 		else
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
-			if lives == 0 then
+			msg.post(main, "gameover")
+			--[[if lives == 0 then
 				msg.post(main, "gameover")
 			else
 				msg.post(level_gui, "show_prompt", {situation = "gameover"})
-			end
+			end]]
 		end
 		answered = true -- this is a global variable declared in the controller script
 	--the following two messages are needed when the hint prompt is shown to the player

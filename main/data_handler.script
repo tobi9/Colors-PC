@@ -36,7 +36,7 @@ local retrieve_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
 	local table = sys.load(file)
 	if #table == 0 then
-		money = 100000--100
+		money = 1000
 		brakes = 3
 		coins = 10
 		lives = 3
@@ -99,7 +99,8 @@ local save_data = function()
 	if gpgs then
 		local is_opened = gpgs.snapshot_is_opened()
 		if is_opened then
-			local cloud_data = {data_enc, color_info_table_enc, analyzer_data_enc}
+			local color_info_table_enc = json.encode(color_info_table) -- encode the color info table
+			local cloud_data = {data_enc, color_info_table_enc, analyzer_data}
 			local success, error_message = gpgs.snapshot_set_data(cloud_data)
 			if not success then
 				--do something
@@ -163,6 +164,6 @@ function on_message(self, message_id, message, sender)
 			gpgs.login()
 		end
 	elseif message_id == msg_analyzer_data then
-		analyzer_data = message.data --update the data
+		analyzer_data = message.data --update the data. the table has been encoded
 	end
 end
