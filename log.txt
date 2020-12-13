@@ -1,39 +1,17 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
+INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1120]]
-  1 = "[18,7,49,7,2,11,19]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1390]]
-  1 = "[2]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A14F0]]
-  1 = "[0,0]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1650]]
-  1 = "[3]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A17B0]]
-  1 = "[0]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1910]]
-  1 = "["blue","red","lime"]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1AB0]]
-  1 = "[["red",1],["lime",1],["blue",1]]"
-}
-DEBUG:SCRIPT: 
-{ --[[000002203E6A1DF0]]
-  1 = "[1,0]"
-}
+ERROR:SCRIPT: /main/data_handler.script:125: attempt to index global 'gpgs' (a nil value)
+stack traceback:
+	/main/data_handler.script:125: in function </main/data_handler.script:124>
 INFO:ADMOB: init
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:SOUND: Waiting for OpenAL device to complete
+INFO:DLIB: SSDP: Started on address 192.168.43.132
+ERROR:SCRIPT: /menu/menu.gui_script:165: bad argument #2 to 'set_text' (string expected, got nil)
+stack traceback:
+	[C]: in function 'set_text'
+	/menu/menu.gui_script:165: in function </menu/menu.gui_script:162>
+ERROR:GAMESYS: Error when dispatching message to gui scene: -2. Message 'chal' sent from main:/main#challenges to menu:/gui#menu.
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132
