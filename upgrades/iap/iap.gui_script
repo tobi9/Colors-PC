@@ -32,8 +32,7 @@ local function iap_listener(self, transaction, error)
 		money = money + money_inc
 		coins = coins + coin_inc
 		msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
-		acknowledge(iap.TRANS_STATE_PURCHASED)
-	elseif transaction.state == iap.TRANS_STATE_FAILED or transaction.state == iap.REASON_USER_CANCELED then
+	else
 		Prompt.prompt(menu_nodes, prompt_nodes)
 		is_prompt_active = true	
 	end

@@ -185,7 +185,7 @@ function on_message(self, message_id, message, sender)
 	table.remove(time_totals, #time_totals, time_spent) -- remove it as it was temporary
 	--ask for review if the criteria have been met
 	if (sys.NETWORK_DISCONNECTED ~= sys.get_connectivity()) and not has_been_reviewed then -- it always returns 1 which is a problem
-		if chals_passed >= 3 and #scores >= 10 and #colors_used >= 4 then
+		if chals_passed >= 3 and #scores >= 3 then
 			if (review and review.is_supported()) then
 				review.request_review()
 			end		
