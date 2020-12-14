@@ -92,3 +92,6 @@ android_app_id = ca-app-pub-8430717424261932~7956131041
 [resource]
 max_resources = 2048
 
+[native_extension]
+app_manifest = /generated.appmanifest
+
