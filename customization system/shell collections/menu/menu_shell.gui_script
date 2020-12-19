@@ -3,8 +3,8 @@ local TouchFb = require("modules.animation")
 local col_name = "menu" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {--[['start', 'customize','upgrades', 'sound', 'exit',]]'title', '_start', '_customize', '_upgrades',
- '_sound', '_exit', "_board", "_dark", "_log_in"}
+local node_strings = {'title', '_start', '_customize', '_upgrades',
+ '_sound', '_exit', "_board", "_dark", "_log_in", "_old_data"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -42,6 +42,15 @@ function init(self)
 		local node = gui.get_node("dark")
 		gui.set_text(node, "LIGHT\nMODE")
 	end
+
+	if user_logged_in then
+		local node = gui.get_node("log_in")
+		gui.set_text(node, "LOG\nOUT")
+	else
+		local node = gui.get_node("log_in")
+		gui.set_text(node, "LOG\nIN")
+	end
+
 end
 
 function final(self)
@@ -93,7 +102,7 @@ local handle_input = function()
 		change_all = true
 		msg.post(customizer_controller, "load_palette", {collection = "menu"})
 	else
-		local buttons = {'title', "start", "customize","upgrades", "sound", "exit", "dark", "log_in", "board", "clear_all", "undo", "ok"}
+		local buttons = {'title', "start", "customize","upgrades", "sound", "exit", "dark", "log_in", "old_data","board", "clear_all", "undo", "ok"}
 		for k, v in ipairs(buttons) do
 			if button_tapped == v then
 					chosen_node = v
@@ -115,7 +124,7 @@ function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	local back = hash("back")
 	if action_id == touch and action.released then
-		local buttons = {"start", "customize","upgrades", "sound", "exit", "board", "dark", "log_in", "clear_all", "set_all", "undo", "ok"}
+		local buttons = {"start", "customize","upgrades", "sound", "exit", "board", "dark", "log_in", "old_data","clear_all", "set_all", "undo", "ok"}
 		local title = gui.get_node('_title') -- this is specific because it's a box node that is to be invisible 
 		if gui.pick_node(title, action.x, action.y) then
 			button_tapped = 'title'

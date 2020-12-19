@@ -740,7 +740,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "DO YOU WANT TO RETURN\n"
+  text: "WOULD YOU LIKE TO RETURN\n"
   "TO THE MENU?"
   font: "galindo"
   id: "exit_text"
