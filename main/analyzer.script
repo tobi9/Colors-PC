@@ -31,9 +31,6 @@ local total_restarts = 0
 
 function init(self)
 	start_time = os.time()
-	if (review and review.is_supported()) then
-		review.request_review()
-	end
 	local check_memory_loc = function(str)
 		local suffix = "_an" -- the suffix is concatenated with the file names to avoid conficts 
 		local file = sys.get_save_file(folder, str..suffix)
@@ -188,8 +185,8 @@ function on_message(self, message_id, message, sender)
 		if chals_passed >= 3 and #scores >= 3 then
 			if (review and review.is_supported()) then
 				review.request_review()
-			end		
-			has_been_reviewed = true
+				has_been_reviewed = true
+			end
 		end
 	end
 end
