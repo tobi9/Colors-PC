@@ -49,7 +49,7 @@ local function handle_input()
 		is_exit_prompt_active = true
 		old_data_retrieval = true
 		local node = gui.get_node("exit_text")
-		gui.set_text(node, "RETRIEVE FORMER PROGRESS?")
+		gui.set_text(node, "RETRIEVE FORMER\nPROGRESS?")
 		--msg.post("main:/main#data_handler", "old_data")
 	elseif button_tapped == 'chal_but' then
 		if chal_status then
