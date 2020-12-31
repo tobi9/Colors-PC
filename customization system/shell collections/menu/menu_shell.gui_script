@@ -71,11 +71,10 @@ function on_message(self, message_id, message, sender)
 			Customizer.set_new_node_color(node_holder, color_chosen, col_name)
 		else
 			local node_holder
-			local nodes = {'title', "start", "customize","upgrades", "sound", "exit", "board", "dark", "log_in"}
-			for k, v in ipairs(nodes) do
+			for k, v in ipairs(node_strings) do
 				--this is because of the title. As not to mix up the box with the text
 				if k > 1 then
-					node_holder = gui.get_node("_"..v)
+					node_holder = gui.get_node(v)
 				else
 					node_holder = gui.get_node(v)
 				end

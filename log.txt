@@ -1,11 +1,15 @@
 INFO:DLIB: Writing log to: ./log.txt
-INFO:ENGINE: Loading data from: build/default
+INFO:ENGINE: Loading data from: http://127.0.0.1:50563/build
 WARNING:REVIEW: Registered review (null) Extension
 
 INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
 INFO:ADMOB: init
-INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:ADMOB: show
+INFO:DLIB: SSDP: Done on address 192.168.43.132
+INFO:DLIB: SSDP: Started on address 192.168.43.132
+WARNING:DLIB: Profiler GameObject.Final took 2.015 seconds
+WARNING:DLIB: Profiler GameObject.DeleteCollection took 2.078 seconds
+WARNING:DLIB: Profiler GameObject.PostUpdateRegister took 2.079 seconds
 INFO:SOUND: Waiting for OpenAL device to complete
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132
