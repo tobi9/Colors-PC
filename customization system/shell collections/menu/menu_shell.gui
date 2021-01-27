@@ -35,9 +35,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -98,8 +98,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -151,9 +151,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -214,8 +214,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -267,9 +267,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -330,8 +330,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -360,7 +360,7 @@ nodes {
 nodes {
   position {
     x: 190.0
-    y: 480.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
@@ -384,8 +384,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -414,7 +414,7 @@ nodes {
 nodes {
   position {
     x: 450.0
-    y: 480.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
@@ -438,8 +438,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -468,7 +468,7 @@ nodes {
 nodes {
   position {
     x: 190.0
-    y: 380.0
+    y: 400.0
     z: 0.0
     w: 1.0
   }
@@ -492,8 +492,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -521,8 +521,8 @@ nodes {
 }
 nodes {
   position {
-    x: 450.0
-    y: 280.0
+    x: 320.0
+    y: 300.0
     z: 0.0
     w: 1.0
   }
@@ -546,8 +546,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -576,7 +576,7 @@ nodes {
 nodes {
   position {
     x: 450.0
-    y: 380.0
+    y: 400.0
     z: 0.0
     w: 1.0
   }
@@ -600,8 +600,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -630,7 +630,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 725.0
+    y: 745.0
     z: 0.0
     w: 1.0
   }
@@ -654,8 +654,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -684,7 +684,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 575.0
+    y: 595.0
     z: 0.1
     w: 1.0
   }
@@ -707,9 +707,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -747,7 +747,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 770.0
+    y: 790.0
     z: 0.1
     w: 1.0
   }
@@ -770,9 +770,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -809,7 +809,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 720.0
+    y: 740.0
     z: 0.1
     w: 1.0
   }
@@ -832,9 +832,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -871,8 +871,8 @@ nodes {
 }
 nodes {
   position {
-    x: 450.0
-    y: 280.0
+    x: 320.0
+    y: 300.0
     z: 0.1
     w: 1.0
   }
@@ -895,9 +895,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -935,7 +935,7 @@ nodes {
 nodes {
   position {
     x: 190.0
-    y: 480.0
+    y: 500.0
     z: 0.1
     w: 1.0
   }
@@ -958,9 +958,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -997,7 +997,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 960.0
+    y: 980.0
     z: 0.1
     w: 1.0
   }
@@ -1021,8 +1021,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1059,7 +1059,7 @@ nodes {
 nodes {
   position {
     x: 190.0
-    y: 380.0
+    y: 400.0
     z: 0.1
     w: 1.0
   }
@@ -1082,9 +1082,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1122,7 +1122,7 @@ nodes {
 nodes {
   position {
     x: 180.0
-    y: 830.0
+    y: 850.0
     z: 0.1
     w: 1.0
   }
@@ -1145,9 +1145,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1185,7 +1185,7 @@ nodes {
 nodes {
   position {
     x: 450.0
-    y: 480.0
+    y: 500.0
     z: 0.1
     w: 1.0
   }
@@ -1208,9 +1208,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1248,7 +1248,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 880.0
+    y: 900.0
     z: 0.1
     w: 1.0
   }
@@ -1271,9 +1271,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1310,7 +1310,7 @@ nodes {
 nodes {
   position {
     x: 320.0
-    y: 830.0
+    y: 850.0
     z: 0.1
     w: 1.0
   }
@@ -1333,9 +1333,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1373,7 +1373,7 @@ nodes {
 nodes {
   position {
     x: 450.0
-    y: 380.0
+    y: 400.0
     z: 0.1
     w: 1.0
   }
@@ -1396,9 +1396,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1435,7 +1435,7 @@ nodes {
 nodes {
   position {
     x: 460.0
-    y: 830.0
+    y: 850.0
     z: 0.1
     w: 1.0
   }
@@ -1458,9 +1458,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1522,8 +1522,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1638,9 +1638,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1701,8 +1701,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -1730,7 +1730,7 @@ nodes {
 }
 nodes {
   position {
-    x: 190.0
+    x: -160.0
     y: 280.0
     z: 0.0
     w: 1.0
@@ -1755,8 +1755,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -1778,13 +1778,13 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 1.0
+  alpha: 0.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
 nodes {
   position {
-    x: 190.0
+    x: -160.0
     y: 280.0
     z: 0.1
     w: 1.0
@@ -1808,9 +1808,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1838,7 +1838,7 @@ nodes {
   line_break: false
   layer: "menu"
   inherit_alpha: true
-  alpha: 1.0
+  alpha: 0.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
   template_node_child: false
@@ -1847,8 +1847,8 @@ nodes {
 }
 nodes {
   position {
-    x: 190.0
-    y: 210.0
+    x: 270.0
+    y: 220.0
     z: 0.0
     w: 1.0
   }
@@ -1872,8 +1872,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -1901,8 +1901,8 @@ nodes {
 }
 nodes {
   position {
-    x: 190.0
-    y: 210.0
+    x: 270.0
+    y: 220.0
     z: 0.1
     w: 1.0
   }
@@ -1925,9 +1925,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -1964,8 +1964,8 @@ nodes {
 }
 nodes {
   position {
-    x: 450.0
-    y: 210.0
+    x: 370.0
+    y: 220.0
     z: 0.0
     w: 1.0
   }
@@ -1989,8 +1989,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_BOX
@@ -2018,8 +2018,8 @@ nodes {
 }
 nodes {
   position {
-    x: 450.0
-    y: 210.0
+    x: 370.0
+    y: 220.0
     z: 0.1
     w: 1.0
   }
@@ -2042,9 +2042,9 @@ nodes {
     w: 1.0
   }
   color {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   type: TYPE_TEXT

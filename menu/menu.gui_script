@@ -9,8 +9,9 @@ local old_data_retrieval = false --  this indiates whether or not the old data i
 local exit_dialogue_nodes = {'exit_dialogue_box', 'exit_text', 'yes_exit', 'no_exit', 'yes','no'}	
 local menu_nodes = {'title', 'start', "_start", "upgrades", "_upgrades", "sound", 
 "_sound", "exit", "_exit", "_customize", "customize", "_board", "brakes", "lives", "coins",
-"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward", "dark", "_dark", "_log_in", "log_in", "best", "old_data",
-"_old_data"}
+"money", "challenge_txt", "challenge", "_chal_but", "chal_but", "challenge_reward", "dark", "_dark",
+"_log_in", "log_in", "best", "old_data", "_old_data"}
+
 local chal_prompt_nodes = {"chal_dialogue_box", "chal_prompt", "yes_chal", "yes1", "no_chal", "no1"}
 local is_exit_prompt_active
 local is_chal_prompt_active
@@ -30,18 +31,18 @@ local function handle_input()
 		msg.post(main, "upgrades")
 	elseif button_tapped == 'sound' then
 		msg.post(main, "sound")
-	elseif button_tapped == 'dark' then
+	--[[elseif button_tapped == 'dark' then
 		if mode == "light" then
 			msg.post("@render:", "clear_color", { color = vmath.vector4(0, 0, 0, 0) } )
 			mode = "dark"
 			local node = gui.get_node("dark")
 			gui.set_text(node, "LIGHT\nMODE")
 		else
-			msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+			msg.post("@render:", "clear_color", { color = vmath.vector4(220/256, 220/256, 220/256, 0) } )
 			mode = "light"
 			local node = gui.get_node("dark")
 			gui.set_text(node, "DARK\nMODE")
-		end
+		end]]
 	elseif button_tapped == 'log_in' then
 		msg.post("main:/main#data_handler", "manual_login")
 	elseif button_tapped == "old_data" then
@@ -159,13 +160,13 @@ function init(self)
 	Prompt.prompt(chal_prompt_nodes, menu_nodes)
 	is_exit_prompt_active = false
 	is_chal_prompt_active = false
-	--Render
+	--[[Render
 	if mode == "light" then
-		msg.post("@render:", "clear_color", { color = vmath.vector4(1, 1, 1, 0) } )
+		msg.post("@render:", "clear_color", { color = vmath.vector4(220/256, 220/256, 220/256, 0) } )
 	else
 		local node = gui.get_node("dark")
 		gui.set_text(node, "LIGHT\nMODE")
-	end
+	end]]
 	-- retrive the value from memory or set it to the default
 	local file = sys.get_save_file(folder, "chal_changes_allowed")
 	local tab = sys.load(file)
