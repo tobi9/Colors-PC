@@ -103,8 +103,8 @@ local save_data = function()
 			local color_info_table_enc = json.encode(color_info_table) -- encode the color info table
 			local cloud_data = {data_enc, color_info_table_enc, analyzer_data}
 			local success, error_message = gpgs.snapshot_set_data(cloud_data)
-			if not success then
-				--do something
+			if success then
+				gpgs.snapshot_commit_and_close()
 			end
 		end
 	end
@@ -119,7 +119,7 @@ local function gpgs_callback(self, message_id, message)
 				msg.post("menu:/menu#menu", "logged_in")
 				manual_method = false
 			end
-			--gpgs.snapshot_open("my_save", true, gpgs.RESOLUTION_POLICY_LAST_KNOWN_GOOD)
+			gpgs.snapshot_open("my_save", true, gpgs.RESOLUTION_POLICY_LAST_KNOWN_GOOD)
 		--[[else
 			is_login_declined = true]]
 		end
@@ -152,14 +152,6 @@ end
 
 function final(self)
 	save_data()
-	if gpgs then
-		local is_opened = gpgs.snapshot_is_opened()
-		if is_opened then
-			gpgs.snapshot_commit_and_close({
-				description = "GAME DATA"
-			})
-		end
-	end
 end
 
 local msg_save_data = hash("save_data") 

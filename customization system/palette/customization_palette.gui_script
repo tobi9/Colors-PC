@@ -1,38 +1,81 @@
 local TouchFb = require("modules.animation")
-local Colors = require("modules.colors")
-
-local positions = {
-	vmath.vector3(100, 850, 0), vmath.vector3(320, 850, 0),	vmath.vector3(540, 850, 0),
-	vmath.vector3(100, 700, 0), vmath.vector3(320, 700, 0),	vmath.vector3(540, 700, 0),
-	vmath.vector3(100, 550, 0), vmath.vector3(320, 550, 0),	vmath.vector3(540, 550, 0),
-	vmath.vector3(100, 400, 0), vmath.vector3(320, 400, 0),	vmath.vector3(540, 400, 0),
-	vmath.vector3(100, 250, 0), vmath.vector3(320, 250, 0),	vmath.vector3(540, 250, 0)
-}
 
 local box_nodes = {}
 local text_nodes = {}
+local active_page
+local page1, page2, page3 = {}, {}, {}
+local pkd_tab = {} -- contains the id of the text node set to picked
 
+local show_options = function(page)
+	local positions = {
+		vmath.vector3(120, 900, 0), vmath.vector3(320, 900, 0), vmath.vector3(520, 900, 0),
+		vmath.vector3(120, 700, 0),	vmath.vector3(320, 700, 0),	vmath.vector3(520, 700, 0),
+		vmath.vector3(120, 500, 0),	vmath.vector3(320, 500, 0),	vmath.vector3(520, 500, 0),
+		vmath.vector3(120, 300, 0),	vmath.vector3(320, 300, 0),	vmath.vector3(520, 300, 0)
+	}
+	local tab
+	if page == 1 then
+		tab = page1
+		container = page1
+	elseif page == 2 then
+		tab = page2
+		container = page2
+	else
+		tab = page3
+		container = page3
+	end
 
-local spawn_boxes = function(tab)	
-	local pos
 	for k, v in ipairs(tab) do
-		pos = positions[k]
+		local pos = positions[k]
 		local size = vmath.vector3(200, 100, 0)
-		local box_scale = vmath.vector3(0.65, 1.3, 0)
+		local box_scale = vmath.vector3(0.7, 1.4, 0)
 		local text_scale = vmath.vector3(0.25, 0.25, 1)
 		local box_node = gui.new_box_node(pos, size)
 		local text_node = gui.new_text_node(pos, string.upper(v[1]))
 		gui.set_color(box_node, v[3])
 		gui.set_scale(box_node, box_scale)
 		gui.set_scale(text_node, text_scale)
+		gui.set_layer(box_node, "box")
+		gui.set_layer(text_node, "text")
 		table.insert(box_nodes, box_node)
 		table.insert(text_nodes, text_node)
+
+		--to make the text visible
+		if v[1] == "white" then
+			gui.set_color(text_node, vmath.vector4(0, 0, 0, 1))
+		end
+
 	end
+	active_page = page
+	-- undo the choice
+	color_chosen = nil
+	pkd_tab = {}
+end
+
+local remove_options = function()
+	for k, v in ipairs(box_nodes) do
+		gui.delete_node(v)
+	end
+
+	for k, v in ipairs(text_nodes) do
+		gui.delete_node(v)
+	end
+	box_nodes = {}
+	text_nodes = {}
 end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	spawn_boxes(unlocked_colors_table)
+	for k, v in ipairs(unlocked_colors_table) do
+		if k <= 12 then
+			table.insert(page1, v)
+		elseif k > 12 and k <= 24 then
+			table.insert(page2, v)
+		elseif k > 24 and k <= 36 then
+			table.insert(page3, v)
+		end
+	end
+	show_options(1)
 end
 
 function final(self)
@@ -47,15 +90,31 @@ local handle_input = function()
 	elseif button_tapped == "_cancel" then
 		color_chosen = nil
 		msg.post(customizer_controller, "unload_palette")
+	elseif button_tapped == "_next" then
+		if active_page < 3 then
+			remove_options()
+			active_page = active_page + 1
+			show_options(active_page)
+		else
+			msg.post("#wrong", "play_sound", {delay = 0, gain = 1})
+		end
+	elseif button_tapped == "_prev" then
+		if active_page > 1 then
+			remove_options()
+			active_page = active_page - 1
+			show_options(active_page)
+		else
+			msg.post("#wrong", "play_sound", {delay = 0, gain = 1})
+		end
 	end
 end
 
-local pkd_tab = {} -- contains the id of the text node set to picked
 function on_input(self, action_id, action)
 	local touch = hash("touch")
 	local back = hash('back')
+
 	if action_id == touch and action.released then
-		local buttons = {"_ok", "_cancel"}
+		local buttons = {"_ok", "_cancel", "_next", "_prev"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
 			if gui.pick_node(node, action.x, action.y) then
@@ -68,15 +127,24 @@ function on_input(self, action_id, action)
 		for k, v in ipairs(box_nodes) do
 			if gui.pick_node(v, action.x, action.y) then
 				button_tapped = nil
-				color_chosen = unlocked_colors_table[k]
+				local pointer = k + ((active_page - 1) * 12) -- calculate where the colour is in the actual table
+				color_chosen = unlocked_colors_table[pointer]
 				if #pkd_tab == 0 then
-					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
+					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])}) -- INSERT the chosen node and the text of that node into pkd_tab
 				else
+					local match = false
+					if pkd_tab[1][1] == text_nodes[k] then -- check if the colour the player chooses if the same as the picked colour
+						match = true
+					end
 					gui.set_text(pkd_tab[1][1], pkd_tab[1][2])
 					pkd_tab = {}
-					table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
+					if not match then
+						table.insert(pkd_tab, {text_nodes[k], gui.get_text(text_nodes[k])})
+					end
 				end
-				gui.set_text(pkd_tab[1][1], "PICKED")
+				if #pkd_tab > 0 then
+					gui.set_text(pkd_tab[1][1], "PICKED")
+				end
 				TouchFb.touch_feedback(v, handle_input)
 			end
 		end

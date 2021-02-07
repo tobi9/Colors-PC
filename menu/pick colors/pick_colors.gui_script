@@ -58,6 +58,11 @@ local set_box_colors = function()
 		local text = gui.get_node("text"..options[k])
 		gui.set_text(text, string.upper(v[1]))
 		TouchFb.bounce_on_y_axis(options[k])
+
+		--to make the text visible
+		if v[1] == "white" then
+			gui.set_color(text, vmath.vector4(0, 0, 0, 1))
+		end
 	end
 end
 
@@ -96,6 +101,7 @@ local clear_tray  = function()
 		gui.set_color(v, default_box_color)
 		local text = gui.get_node("text"..options[k])
 		gui.set_text(text, " ")
+		gui.cancel_animation(gui.get_node(options[k]), "position")
 	end
 end
 

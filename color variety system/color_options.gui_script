@@ -9,38 +9,81 @@ local update_coin_balance = function()
 	gui.set_text(node, "COINS\n"..coins)
 end
 
-function init(self)
-	update_coin_balance()
-	--[[display the color boxes
-	local color_scale = vmath.vector3(0.8, 1.6, 1)
-	local word_scale = vmath.vector3(0.8, 0.8, 1)]]
+local page1, page2, page3, active_page = {}, {}, {}
+
+local show_options = function(page)
 	local positions = {
 		vmath.vector3(120, 800, 0),	vmath.vector3(320, 800, 0),	vmath.vector3(520, 800, 0),
 		vmath.vector3(120, 600, 0),	vmath.vector3(320, 600, 0),	vmath.vector3(520, 600, 0),
 		vmath.vector3(120, 400, 0),	vmath.vector3(320, 400, 0),	vmath.vector3(520, 400, 0),
 		vmath.vector3(120, 200, 0),	vmath.vector3(320, 200, 0),	vmath.vector3(520, 200, 0)
-	}	
-	for k, v in ipairs(color_info_table) do
+	}
+	local tab
+	if page == 1 then
+		tab = page1
+	elseif page == 2 then
+		tab = page2
+	else
+		tab = page3
+	end
+
+	for k, v in ipairs(tab) do
 		local pos = positions[k]
 		local size = vmath.vector3(200, 100, 0)
-		local box_scale = vmath.vector3(0.65, 1.3, 0)
+		local box_scale = vmath.vector3(0.7, 1.4, 0)
 		local text_scale = vmath.vector3(0.25, 0.25, 1)
 		local box_node = gui.new_box_node(pos, size)
 		local text_node = gui.new_text_node(pos, string.upper(v[1]))
 		gui.set_color(box_node, v[3])
 		gui.set_scale(box_node, box_scale)
 		gui.set_scale(text_node, text_scale)
+		gui.set_layer(box_node, "box")
+		gui.set_layer(text_node, "text")
 		table.insert(box_nodes, box_node)
 		table.insert(text_nodes, text_node)
 		if v[2] == false then
 			gui.set_text(text_node, "LOCKED")
 		end
+
+		--to make the text visible
+		if v[1] == "white" then
+			gui.set_color(text_node, vmath.vector4(0, 0, 0, 1))
+		end
 	end
+	active_page = page
+end
+
+local remove_options = function()
+	for k, v in ipairs(box_nodes) do
+		gui.delete_node(v)
+	end
+
+	for k, v in ipairs(text_nodes) do
+		gui.delete_node(v)
+	end
+	box_nodes = {}
+	text_nodes = {}
+end
+
+function init(self)
+	update_coin_balance()
+	for k, v in ipairs(color_info_table) do
+		if k <= 12 then
+			table.insert(page1, v)
+		elseif k > 12 and k <= 24 then
+			table.insert(page2, v)
+		elseif k > 24 and k <= 36 then
+			table.insert(page3, v)
+		end
+	end
+
+	show_options(1)
+	
 	local Customizer = require("modules.customizer")
 	-- node each node to its appropriate color
 	local col_name = "color_options" -- this is needed by the customizer to avoid conflicts in memory
-	local box_nodes = {"title", "coins", "_menu"}
-	for k, v in ipairs(box_nodes) do
+	local nodes = {"title", "coins", "_menu", "_prev", "_next"}
+	for k, v in ipairs(nodes) do
 		Customizer.set_node_color(v, col_name)
 	end
 	msg.post(".", "acquire_input_focus")
@@ -50,28 +93,61 @@ function final(self)
 	msg.post(".", "release_input_focus")
 end
 
---touch id
-local touch = hash('touch')
-local back = hash('back')
 function on_input(self, action_id, action)
+	--touch id
+	local touch = hash('touch')
+	local back = hash('back')
+
+	local button_tapped
+	local input_handler = function()
+		if button_tapped == "menu" then
+			msg.post(main, "unload_color_options")
+		elseif button_tapped == "next" then
+			if active_page < 3 then
+				remove_options()
+				active_page = active_page + 1
+				show_options(active_page)
+			else
+				msg.post("#wrong", "play_sound", {delay = 0, gain = 1})
+			end
+		elseif button_tapped == "prev" then
+			if active_page > 1 then
+				remove_options()
+				active_page = active_page - 1
+				show_options(active_page)
+			else
+				msg.post("#wrong", "play_sound", {delay = 0, gain = 1})
+			end
+		end
+	end
+
 	if action_id == touch and action.released then
 		local menu = gui.get_node("_menu")
+		local next = gui.get_node("_next")
+		local prev = gui.get_node("_prev")
 		if gui.pick_node(menu, action.x, action.y) then
-			TouchFb.touch_feedback(menu)
-			msg.post(main, "unload_color_options")
+			button_tapped = "menu"
+			TouchFb.touch_feedback(menu, input_handler)
+		elseif gui.pick_node(next, action.x, action.y) then
+			button_tapped = "next"
+			TouchFb.touch_feedback(next, input_handler)		
+		elseif gui.pick_node(prev, action.x, action.y) then
+			button_tapped = "prev"
+			TouchFb.touch_feedback(prev, input_handler)
 		else
 			for k, v in ipairs(box_nodes) do
 				if gui.pick_node(v, action.x, action.y) then
 					TouchFb.touch_feedback(v)
 					if coins >= color_price then
-						if color_info_table[k][2] == false then
+						local pointer = k + ((active_page - 1) * 12)
+						if color_info_table[pointer][2] == false then
 							msg.post("#success_sound", "play_sound", {delay = 0, gain = 1})
 							coins = coins - color_price
 							update_coin_balance()
-							table.remove(color_info_table[k], 2)
-							table.insert(color_info_table[k], 2, true)
-							table.insert(unlocked_colors_table, color_info_table[k])
-							gui.set_text(text_nodes[k], string.upper(color_info_table[k][1]))
+							table.remove(color_info_table[pointer], 2)
+							table.insert(color_info_table[pointer], 2, true)
+							table.insert(unlocked_colors_table, color_info_table[pointer])
+							gui.set_text(text_nodes[k], string.upper(color_info_table[pointer][1]))
 						end
 					end
 					return

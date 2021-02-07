@@ -3,7 +3,7 @@ local TouchFb = require("modules.animation")
 local col_name = "palette" -- this is needed by the customizer to avoid conflicts in memory
 
 -- the tables below are needed to revert the changes made
-local node_strings = {"title", "status", "_clear", "_ok"}
+local node_strings = {"title", "status", "_clear", "_ok", "_prev", "_next"}
 local node_colors = {}
 local ledger = {} -- each element in this table is a table {node, clr}. clr is the color node was before it was changed
 
@@ -91,7 +91,7 @@ function on_input(self, action_id, action)
 	local touch = hash("touch") -- touch_id
 	local back = hash("back")
 	if action_id == touch and action.released then
-		local buttons = {"_title", "_status", "_ok", "_clear", "_clear_all", "_set_all", "_undo", "_ok1"}
+		local buttons = {"_title", "_status", "_ok", "_prev", "_next", "_clear", "_clear_all", "_set_all", "_undo", "_ok1"}
 		for k, v in ipairs(buttons) do
 			local node = gui.get_node(v)
 			if gui.pick_node(node, action.x, action.y) then

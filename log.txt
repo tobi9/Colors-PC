@@ -5,6 +5,8 @@ WARNING:REVIEW: Registered review (null) Extension
 INFO:GpgsExt: Registered extension Gpgs (null)
 INFO:ENGINE: Initialised sound device 'default'
 INFO:ADMOB: init
+WARNING:DLIB: Profiler Engine.Init took 2.897 seconds
 INFO:DLIB: SSDP: Started on address 192.168.1.1
-INFO:SOUND: Waiting for OpenAL device to complete
+INFO:DLIB: SSDP: Started on address 192.168.43.132
 INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:DLIB: SSDP: Done on address 192.168.43.132
