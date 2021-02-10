@@ -209,12 +209,12 @@ function init(self)
 	if #color_info_table == 0 then
 		color_info_table = {
 			{'red', true, vmath.vector4(1, 0, 0, 1)}, {'lime', true, vmath.vector4(0, 1, 0, 1)},
-			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', true, vmath.vector4(1, 0, 1, 1)},
-			{'white', true, vmath.vector4(1, 1, 1, 1)}, {'green', false, vmath.vector4(0, 128/255, 0/255, 1)},
+			{'blue', true, vmath.vector4(0, 0, 1, 1)}, {'magenta', false, vmath.vector4(1, 0, 1, 1)},
+			{'white', false, vmath.vector4(1, 1, 1, 1)}, {'green', false, vmath.vector4(0, 128/255, 0/255, 1)},
 			{'yellow', false, vmath.vector4(1, 1, 0, 1)}, {'cyan', false, vmath.vector4(0, 1, 1, 1)},
 			{'gray', false, vmath.vector4(128/255, 128/255, 128/255, 1)}, {'olive', false, vmath.vector4(128/255, 128/255, 0, 1)},
 			{'purple', false, vmath.vector4(128/255, 0, 128/255, 1)}, {'pink', false, vmath.vector4(255/255, 192/255, 203/255, 1)},
-			{'orange', false, vmath.vector4(1, 165/255, 0, 1)},{'lemon', true, vmath.vector4(253/255, 1, 0, 1)},
+			{'orange', false, vmath.vector4(1, 165/255, 0, 1)},{'lemon', false, vmath.vector4(253/255, 1, 0, 1)},
 			{'teal', false, vmath.vector4(0,128/255,128/255, 1)}, {'brown', false, vmath.vector4(165/255, 42/255, 42/255, 1)},
 			{'crimson', false, vmath.vector4(220/255, 20/255, 60/255, 1)}, {'khaki', false, vmath.vector4(240/255, 230/255, 140/255, 1)},
 			{'violet', false, vmath.vector4(238/255, 130/255, 238/255, 1)}, {'beige', false, vmath.vector4(245/255, 245/255, 220/255, 1)},

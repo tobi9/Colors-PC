@@ -15,18 +15,6 @@ local base_reward = 10
 
 local get_day = function(total_seconds)
     local time_days = math.floor(total_seconds / 86400)
-    local time_hours = math.floor(math.mod(total_seconds, 86400) / 3600)
-    local time_minutes = math.floor(math.mod(total_seconds, 3600) / 60)
-    local time_seconds = math.floor(math.mod(total_seconds, 60))
-    if (time_hours < 10) then
-        time_hours = "0" .. time_hours
-    end
-    if (time_minutes < 10) then
-        time_minutes = "0" .. time_minutes
-    end
-    if (time_seconds < 10) then
-        time_seconds = "0" .. time_seconds
-    end
 	return time_days
 end
 
@@ -129,7 +117,7 @@ local function gpgs_callback(self, message_id, message)
 end
 
 function init(self)
-	--[[gpgs.set_callback(gpgs_callback)
+	gpgs.set_callback(gpgs_callback)
 	if gpgs then
 		gpgs.silent_login()
 		timer.delay(2, false, function() 
@@ -137,7 +125,7 @@ function init(self)
 				gpgs.login()
 			end
 		end)
-	end]]
+	end
 	retrieve_data()
 	--calculate the daily reward
 	if get_day(os.time()) - last_day == 1 then

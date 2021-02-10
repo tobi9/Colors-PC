@@ -51,7 +51,7 @@ local function handle_input()
 		old_data_retrieval = true
 		local node = gui.get_node("exit_text")
 		gui.set_text(node, "RETRIEVE FORMER\nPROGRESS?")
-		--msg.post("main:/main#data_handler", "old_data")
+		msg.post("main:/main#data_handler", "old_data")
 	elseif button_tapped == 'chal_but' then
 		if chal_status then
 			msg.post("#cash_sound", "play_sound", {delay = 0, gain = 1})
