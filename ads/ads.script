@@ -23,7 +23,6 @@ end
 
 function init(self)
 	admob.init{
-		test  = true,
 		listener = listener
 	}
 end

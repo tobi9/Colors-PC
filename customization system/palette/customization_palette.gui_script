@@ -37,14 +37,9 @@ local show_options = function(page)
 		gui.set_scale(text_node, text_scale)
 		gui.set_layer(box_node, "box")
 		gui.set_layer(text_node, "text")
+		gui.set_color(text_node, vmath.vector4(0, 0, 0, 1))
 		table.insert(box_nodes, box_node)
 		table.insert(text_nodes, text_node)
-
-		--to make the text visible
-		if v[1] == "white" then
-			gui.set_color(text_node, vmath.vector4(0, 0, 0, 1))
-		end
-
 	end
 	active_page = page
 	-- undo the choice

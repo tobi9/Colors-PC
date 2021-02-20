@@ -1401,8 +1401,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "DARK\n"
-  "MODE"
+  text: "NUMBER\n"
+  "MENU"
   font: "galindo"
   id: "ad_text"
   xanchor: XANCHOR_NONE

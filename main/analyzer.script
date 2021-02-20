@@ -121,6 +121,7 @@ function on_message(self, message_id, message, sender)
 	local msg_colors = hash("colors")
 	local msg_updt_ldgr = hash("update_ledger")	
 	local msg_restart = hash("game_restarted")
+	local msg_cloud_data = hash("cloud_data")
 
 	if message_id == msg_gameover then
 		table.insert(scores, score)
@@ -171,13 +172,23 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == msg_restart then
 		total_restarts = total_restarts + 1
+	elseif message_id == msg_cloud_data then
+		local tab = message.tab
+		time_totals = tab[1]
+		scores = tab[2]
+		total_chals = tab[3]
+		chals_passed = tab[4]
+		total_spawns = tab[5]
+		total_brakes_used = tab[6]
+		colors_used = tab[7]
+		color_ledger = tab[8]
 	end
 	--send this to be saved on the cloud
 	local exit_time = os.time()
 	local time_spent = exit_time - start_time--time spent so far
 	table.insert(time_totals, time_spent)
 	local data_table = {time_totals, scores, total_chals, chals_passed, total_spawns,
-	total_brakes_used, colors_used, color_ledger}	
+	total_brakes_used, colors_used, color_ledger}
 	msg.post("main:/main#data_handler", "analyzer_data", {data = json.encode(data_table)})
 	table.remove(time_totals, #time_totals, time_spent) -- remove it as it was temporary
 	--ask for review if the criteria have been met

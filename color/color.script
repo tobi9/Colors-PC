@@ -35,16 +35,11 @@ function update(self, dt)
 	local pos = go.get_position()
 	pos.x = pos.x + speed * dt
 	go.set_position(pos)
-	if pos.x > 800 then
+	if pos.x > 900 then
 		if answered == false then
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
 			msg.post(main, "gameover")
-			--[[if lives == 0 then
-				msg.post(main, "gameover")
-			else
-				msg.post(level_gui, "show_prompt", {situation = "gameover"})
-			end]]
 		end
 		go.delete() -- the go deletes after it passes 700 on the x-axis
 	end
@@ -85,11 +80,6 @@ function on_message(self, message_id, message, sender)
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type
 			msg.post(main, "gameover")
-			--[[if lives == 0 then
-				msg.post(main, "gameover")
-			else
-				msg.post(level_gui, "show_prompt", {situation = "gameover"})
-			end]]
 		end
 		answered = true -- this is a global variable declared in the controller script
 	--the following two messages are needed when the hint prompt is shown to the player

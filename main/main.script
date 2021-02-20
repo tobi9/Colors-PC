@@ -22,8 +22,6 @@ NumOfColorsPicked = nil
 -- commented out the lvl_loaded in the load clr menu
 local menuProxy = "#menu_proxy" -- the id of the collection proxy of the menu collection
 local levelProxy = "#level_proxy" --(rgb level)the id of the collection proxy of the level collection
-local levelYbrProxy = "#level_ybr_proxy"
-local levelOpgProxy = "#level_opg_proxy"
 local pauseProxy = "#pause_proxy"-- the id of the collection proxy of the pause collection
 local gameOverProxy = "#gameover_proxy" -- the id of the collection proxy of the gameover collection
 local upgradesProxy = "#upgrades_proxy"
@@ -288,6 +286,7 @@ function on_message(self, message_id, message, sender)
 	local ld_sales = hash("load_sales")
 	local unld_sales = hash("unload_sales")
 	local msg_click = hash("click")
+	local msg_new_clrs = hash("new_colors")
 
 	if message_id == msg_click then
 		msg.post("#click", "play_sound", {delay = 0, gain = 1})
@@ -390,5 +389,10 @@ function on_message(self, message_id, message, sender)
 		load_sales()
 	elseif message_id == unld_sales then
 		unload_sales()
+	elseif message_id == msg_new_clrs then
+		--There's an error but it works
+		return_2_menu(gameOverProxy)
+		unload_menu()
+		load_color_menu()
 	end
 end

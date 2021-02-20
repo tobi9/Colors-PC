@@ -180,8 +180,7 @@ function init(self)
 		local node = gui.get_node("log_in")
 		gui.set_text(node, "LOG\nOUT")
 	else
-		local node = gui.get_node("log_in")
-		gui.set_text(node, "LOG\nIN")
+		msg.post("main:/main#data_handler", "menu_active")
 	end
 end
 
