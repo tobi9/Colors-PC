@@ -4,9 +4,6 @@ local json = require("modules.json")
 --local folder = "Trick Colors test"
 local data = {}
 sound_playing = false -- this is used to filter the music
-has_been_reviewed = false -- this boolean tells us whether the game has been reviewed
-local analyzer_data -- to be saved on the cloud.
-user_logged_in = false -- this indicates whether or not a user is logged in
 
 --daily cash reward
 local daily_reward_streak
@@ -17,9 +14,6 @@ local get_day = function(total_seconds)
     local time_days = math.floor(total_seconds / 86400)
 	return time_days
 end
-
-local is_first_time = false --  this variable indicates if the game is started for the first time since installation
-local is_login_declined = false -- this is boolean that indicates whether or not the player declined gpgs login
 
 local retrieve_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
@@ -33,9 +27,6 @@ local retrieve_data = function()
 		highscore = 0
 		daily_reward_streak = 0
 		last_day = get_day(os.time())
-		mode = "light"
-		--gpgs instructions
-		is_first_time = true
 	else
 		table = json.decode(table[1])
 		money = table[1]
@@ -46,65 +37,20 @@ local retrieve_data = function()
 		highscore = table[6]
 		daily_reward_streak = table[7]
 		last_day = table[8]
-		mode = table[9]
-		is_login_declined = table[10]
-		has_been_reviewed = table[11]
 	end
 end
 
 local save_data = function()
 	local file = sys.get_save_file(folder, "tc2_data")
-	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day, mode, is_login_declined, has_been_reviewed}
+	local values = {money, brakes, coins, lives, last_ad_time, highscore, daily_reward_streak, last_day}
 	for i, v in ipairs(values) do
 		table.insert(data, i, v)
 	end
 	local data_enc = json.encode(data)
 	sys.save(file, {data_enc})
-	if gpgs then
-		local is_opened = gpgs.snapshot_is_opened()
-		if is_opened then
-			local color_info_table_enc = json.encode(color_info_table) -- encode the color info table
-			local cloud_data = {data_enc, color_info_table_enc, analyzer_data}
-			local success, error_message = gpgs.snapshot_set_data(cloud_data)
-			if success then
-				gpgs.snapshot_commit_and_close()
-			end
-		end
-	end
-end
-
-local menu_active = false --this is for when the player is logged in after the menu has been loaded
-local manual_method = false -- this indicates whether or not the player logged in using the button in the menu
-local function gpgs_callback(self, message_id, message)
-    if message_id == gpgs.MSG_SIGN_IN or message_id == gpgs.MSG_SILENT_SIGN_IN then
-		if message.status == gpgs.STATUS_SUCCESS then
-			user_logged_in = true
-			if manual_method then
-				msg.post("menu:/menu#menu", "logged_in")
-				manual_method = false
-			end
-			if menu_active then
-				msg.post("menu:/menu#menu", "logged_in")
-			end
-			gpgs.snapshot_open("my_save", true, gpgs.RESOLUTION_POLICY_LAST_KNOWN_GOOD)
-		--[[else
-			is_login_declined = true]]
-		end
-	elseif message_id == gpgs.MSG_SIGN_OUT then
-		msg.post("menu:/menu#menu", "logged_out")
-	end
 end
 
 function init(self)
-	gpgs.set_callback(gpgs_callback)
-	if gpgs then
-		gpgs.silent_login()
-		timer.delay(2, false, function() 
-			if not gpgs.is_logged_in() then
-				gpgs.login()
-			end
-		end)
-	end
 	retrieve_data()
 	--calculate the daily reward
 	if get_day(os.time()) - last_day == 1 then
@@ -123,53 +69,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	local msg_save_data = hash("save_data") 
-	local msg_manual_log_in = hash("manual_login")
-	local msg_analyzer_data = hash("analyzer_data")
-	local msg_old_data = hash("old_data")
-	local msg_menu_active = hash("menu_active")
-
 	if message_id == msg_save_data then
 		save_data()
-	elseif message_id == msg_manual_log_in then
-		if gpgs then
-			if gpgs.is_logged_in() then
-				gpgs.logout()
-			else
-				gpgs.login()
-				manual_method = true
-			end
-		end
-	elseif message_id == msg_analyzer_data then
-		analyzer_data = message.data --update the data. the table has been encoded
-	elseif message_id == msg_old_data then
-		if gpgs then
-			local is_opened = gpgs.snapshot_is_opened()
-			if is_opened then
-				local bytes, error_message = gpgs.snapshot_get_data()
-				if #bytes > 0 then
-					table = json.decode(bytes[1])
-					money = table[1]
-					brakes = table[2]
-					coins = table[3]
-					lives = table[4]
-					last_ad_time = table[5]
-					highscore = table[6]
-					daily_reward_streak = table[7]
-					last_day = table[8]
-					mode = table[9]
-					is_login_declined = table[10]
-					has_been_reviewed = table[11]
-					--color info
-					if #bytes[2] > 0 then
-						color_info_table = json.decode(bytes[2])
-					end
-
-					msg.post(analyzer, "cloud_data", {tab = bytes})
-					msg.post(sender, "retrieved_data")
-				end
-			end
-		end
-	elseif message_id == msg_menu_active then
-		menu_active = true
 	end
 end

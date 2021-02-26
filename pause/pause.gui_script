@@ -87,7 +87,12 @@ local function handle_input()
 		msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
 		msg.post(main, 'resume', {col = "pause"})-- tells the controller script which collection to unload when resuming
 	elseif button_tapped == 'show_ad' and ad_for_hints_played == false then
-		msg.post("main:/main#main", "show_ad", {id = "pause:/pause#pause"})
+		msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
+		msg.post("level:/controller#controller", "new_hints")
+		local txt = gui.get_node("ad_text")
+		gui.set_text(txt, "USED")
+		msg.post(analyzer, 'hint_used')
+		ad_for_hints_played = true
 	elseif button_tapped == 'restart' then
 		msg.post("main:/main#challenges", "restart") -- give the challenge script the required info to update some parameters
 		msg.post(main, 'restart', {col = "pause"})-- tells the controller script which collection to unload when restarting	
@@ -149,7 +154,6 @@ local function handle_input()
 end
 
 function on_message(self, message_id, message, sender)
-	local msg_completed = hash("completed")
 	local msg_chal = hash("chal")
 	local msg_chal_reward = hash("chal_reward")
 
@@ -175,13 +179,6 @@ function on_message(self, message_id, message, sender)
 			node = gui.get_node("challenge_reward")
 			gui.set_text(node, " ")
 		end
-	elseif message_id == msg_completed then
-		msg.post("#bounty_success_sound", "play_sound", {delay = 0, gain = 1})
-		msg.post("level:/controller#controller", "new_hints")
-		local txt = gui.get_node("ad_text")
-		gui.set_text(txt, "USED")
-		msg.post(ANALYZER, 'hint_used')
-		ad_for_hints_played = true
 	elseif message_id == msg_chal_reward then
 		local m = gui.get_node("money")
 		gui.set_text(m, "$"..tostring(money))
