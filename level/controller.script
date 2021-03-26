@@ -1,7 +1,7 @@
 local Color = require("modules.colors")
 
 local colorFac = '#color_factory' -- this is the game object to be spawned 
-local spawn_pos = vmath.vector3(-300, 650, 0.1)-- where the game objects are to be spawned
+local spawn_pos = vmath.vector3(-20, 650, 0.1)-- where the game objects are to be spawned
 local color = nil -- this variable contains the factory of the game object that will b spawned
 spawn = nil -- the id of the spawned game object it is also a global variable it is needed by the level gui script
 answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script

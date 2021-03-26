@@ -1362,8 +1362,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "WATCH\n"
-  "VIDEO"
+  text: "COLLECT"
   font: "galindo"
   id: "gift"
   xanchor: XANCHOR_NONE

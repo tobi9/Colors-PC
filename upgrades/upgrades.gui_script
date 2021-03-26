@@ -204,7 +204,7 @@ function on_message(self, message_id, message, sender)
         timer.delay(1, false, start_countdown) -- The delay is not set to 1 because it's slower
     elseif message_id == countdown_done then
         local countdown_node = gui.get_node('gift')
-        gui.set_text(countdown_node, "WATCH\nVIDEO")
+        gui.set_text(countdown_node, "COLLECT")
         is_timer_zero = true
     	--animate the button
     	TouchFb.bounce_on_y_axis("daily_gift")

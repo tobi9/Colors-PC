@@ -1,7 +1,4 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
-INFO:DLIB: SSDP: Started on address 192.168.1.1
-WARNING:DLIB: Profiler VSync.Wait took 2.028 seconds
-WARNING:DLIB: Profiler Engine.Frame took 2.029 seconds
-INFO:DLIB: SSDP: Done on address 192.168.1.1
+INFO:SOUND: Waiting for OpenAL device to complete

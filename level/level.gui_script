@@ -1,21 +1,6 @@
 local TouchFb = require("modules.animation")
-local Prompt = require("modules.prompt")
 
-local dialogue_nodes = {"dialogue_box", "prompt", "yes", "yes1", "no", "no1"}
 local box_nodes = {"option1", "option2", "option3", "option4", "option5", "option6"}
-local level_nodes
--- these are level node tables for each number of colors the player can pick. This is needed because if its just one
---table, on disablng the exit prompt, all the nodes are re-enabled as opposed to the relevant nodes only being re-enabled  
-local level_nodes_3 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "best"}
-local level_nodes_4 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "color4", "best"}
-local level_nodes_5 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "option5", "color4", "color5", "best"}
-local level_nodes_6 = {"score", "question", "pause", "_brakes", "brakes", "option3", "option1", "option2", "chances",
-"brakes_txt", "pause_txt", "question1", "color1", "color2", "color3", "option4", "option5", "option6",
-"color4", "color5", "color6", "best"}
-local is_prompt_active
 question = nil -- this is a global variable
 ad_for_hints_played = false
 local brake_speed
@@ -37,18 +22,6 @@ end
 
 --score was declared in the main script
 function init(self)
-	--assign the correct level node table to level_nodes
-	if NumOfColorsPicked == 3 then
-		level_nodes = level_nodes_3
-	elseif NumOfColorsPicked == 4 then
-		level_nodes = level_nodes_4
-	elseif NumOfColorsPicked == 5 then
-		level_nodes = level_nodes_5
-	elseif NumOfColorsPicked == 6 then
-		level_nodes = level_nodes_6
-	end
-	Prompt.prompt(dialogue_nodes, level_nodes)
-	is_prompt_active = false
 	--msg.post("@system:", "toggle_profile")
 	local q = gui.get_node("question")
 	gui.animate(q, "position.y", 980, gui.EASING_INBOUNCE, 0.8, 0, nil, gui.PLAYBACK_ONCE_PINGPONG)
@@ -107,19 +80,12 @@ function init(self)
 	for k, v in ipairs(box_nodes) do
 		Customizer.set_node_color(v, --[[default_box_clr_info,]] col_name)
 	end
-	--set the prompts to their app
-	local prompt0 = {"board", "yes_button", "no_button"}
-	local prompt1 = {"dialogue_box", "yes1", "no1"}
-	for k, v in ipairs(prompt0) do
-		gui.set_id(gui.get_node(prompt1[k]), v)
-		Customizer.set_node_color(v, "prompt")
-		gui.set_id(gui.get_node(v), prompt1[k])
-	end
-	
+
 	--set question1 to question's color
 	local clr = gui.get_color(gui.get_node("question"))
 	clr.w = 0.30 -- set the alpha
 	gui.set_color(gui.get_node("question1"), clr)
+	gui.set_color(gui.get_node("streaks"), clr)
 
 	initial_highscore = highscore -- the initial highscore is the hichscore at the beginning of the session needed by the gameover and pause scripts check their init functions
 	local best_id = gui.get_node('best')
@@ -135,7 +101,7 @@ end
 local button_tapped = nil
 local option_ptr
 
-local prompt_context -- the reason the prompt is shown. It can only be 'gameover' or 'hints'
+--local prompt_context -- the reason the prompt is shown. It can only be 'gameover' or 'hints'
 
 local function handle_input()
 	if button_tapped == 'option'..tostring(option_ptr) then
@@ -149,27 +115,6 @@ local function handle_input()
 		msg.post("main:/main#data_handler", "save_data")
 		msg.post(level_gui, "adjust_brakes")
 		msg.post(analyzer, "brake_used")
-	elseif button_tapped == "yes" then
-		if prompt_context == "gameover" then
-			if lives > 0 then
-				lives = lives - 1
-				Prompt.prompt(dialogue_nodes, level_nodes)
-				is_prompt_active = false
-				msg.post(spawn, "unhide")
-				gamePaused = false
-			end
-		else
-			--show prompt
-			msg.post(main, "show_ad")
-		end
-	elseif button_tapped == "no" then
-		if prompt_context == "gameover" then
-			msg.post(main, "gameover")
-		else
-			Prompt.prompt(dialogue_nodes, level_nodes)
-			is_prompt_active = false
-			msg.post(spawn, "unhide")
-		end
 	end
 end
 
@@ -194,7 +139,7 @@ function on_message(self, message_id, message, sender)
 	local what_is_the_question = hash("what_is_the_question")
 	local msg_pointers = hash("pointers")
 	local adj_brakes = hash("adjust_brakes")
-	local msg_show_prompt = hash("show_prompt")
+	--local msg_show_prompt = hash("show_prompt")
 	local msg_completed = hash("completed")
 	local msg_strk = hash("streak")
 
@@ -227,31 +172,12 @@ function on_message(self, message_id, message, sender)
 		local b_id = gui.get_node("brakes")
 		gui.set_text(b_id, brakes)
 	elseif message_id == msg_strk then
-		local node = gui.get_node("question1")
+		local node = gui.get_node("streaks")
 		gui.set_text(node, message.number.."X ".." "..string.upper(message.type).." STREAK FOR "..string.upper(color_strings[message.pointer]))
 		local callback = function()
 			gui.set_text(node, question)
 		end
-		timer.delay(2, false, callback)
-	elseif message_id == msg_show_prompt then
-		Prompt.prompt(level_nodes, dialogue_nodes)
-		is_prompt_active = true
-		local prompt = gui.get_node("prompt")
-		if message.situation == "gameover" then
-			gui.set_text(prompt, "WOULD YOU LIKE TO CONTINUE?\nLIVES\n"..tostring(lives).."\nIT WILL COST 1 LIVE")
-			gamePaused = true
-		--[[else
-			gui.set_text(prompt, "YOU CAN WATCH THIS VIDEO TO GET SOME HINTS. ")]]
-		end
-		prompt_context = message.situation
-		msg.post(sender, "hide")
-	elseif message_id == msg_completed then
-		--rewarded video complete
-		msg.post("level:/controller#controller", "new hints")
-		Prompt.prompt(dialogue_nodes, level_nodes)
-		is_prompt_active = false
-		msg.post(spawn, "unhide")
-		ad_for_hints_played = true -- decalerd in the controller script
+		timer.delay(1, false, callback)
 	end
 end
 
@@ -260,7 +186,7 @@ local back = hash("back")
 
 function on_input(self, action_id, action)
 	if action_id == touch and action.released then
-		if is_prompt_active == false then
+		--if is_prompt_active == false then
 			local pause = gui.get_node("pause")
 			local _frictions = gui.get_node("_brakes")
 			if gui.pick_node(pause, action.x, action.y) then
@@ -279,24 +205,9 @@ function on_input(self, action_id, action)
 					return
 				end
 			end
-		else
-			local yes = gui.get_node("yes")
-			local no = gui.get_node("no")
-			if gui.pick_node(yes, action.x, action.y) then
-				button_tapped = 'yes'
-				TouchFb.touch_feedback(yes, handle_input)
-			elseif gui.pick_node(no, action.x, action.y) then
-				button_tapped = 'no'
-				TouchFb.touch_feedback(no,handle_input)
-			end
-		end
 	elseif action_id == back and action.released then
 		msg.post(main, "click")
-		if is_prompt_active == false then
-			button_tapped = 'pause'
-		else
-			button_tapped = 'no'
-		end
+		button_tapped = 'pause'
 		handle_input()
 	end
 end

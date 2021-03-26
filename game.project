@@ -1,9 +1,10 @@
 [project]
 title = POMPAYUS
-dependencies = 
+dependencies = https://github.com/subsoap/defos/archive/v2.5.0.zip
 compress_archive = 1
 write_log = 1
 version = 2.2.1
+publisher = Rodio Studios
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -94,7 +95,7 @@ android_app_id = ca-app-pub-8430717424261932~7956131041
 max_resources = 2048
 
 [native_extension]
-app_manifest = /generated.appmanifest
+app_manifest = 
 
 [windows]
 app_icon = /Logo.ico
