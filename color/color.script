@@ -23,14 +23,14 @@ function init(self)
 	self.word_ptr = math.random(#my_words) 	-- index of the word to be chosen
 	my_word = my_words[self.word_ptr]
 	label.set_text("#label", string.upper(my_word)) -- sets itself to the randomly selected word	
-	
+	self.endpoint = width + 150 -- width in declared in the controller script
 end
 
 function update(self, dt)
 	local pos = go.get_position()
 	pos.x = pos.x + speed * dt
 	go.set_position(pos)
-	if pos.x > 660 then
+	if pos.x > self.endpoint then
 		if answered == false then
 			msg.post("#wrong", "play_sound", {delay = 0, gain = 0.7})
 			msg.post(controller, "wrong", {type = answer_type, answer = answer}) -- this message tells the controller script the answer is correct for a particular color and type

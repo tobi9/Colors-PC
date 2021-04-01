@@ -175,7 +175,7 @@ function on_message(self, message_id, message, sender)
 		local node = gui.get_node("streaks")
 		gui.set_text(node, message.number.."X ".." "..string.upper(message.type).." STREAK FOR "..string.upper(color_strings[message.pointer]))
 		local callback = function()
-			gui.set_text(node, question)
+			gui.set_text(node, ' ')
 		end
 		timer.delay(1, false, callback)
 	end

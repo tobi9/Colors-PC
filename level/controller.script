@@ -1,20 +1,22 @@
 local Color = require("modules.colors")
 
 local colorFac = '#color_factory' -- this is the game object to be spawned 
-local spawn_pos = vmath.vector3(-20, 650, 0.1)-- where the game objects are to be spawned
 local color = nil -- this variable contains the factory of the game object that will b spawned
 spawn = nil -- the id of the spawned game object it is also a global variable it is needed by the level gui script
 answered = false -- this variable becomes true if the color has given its answer it prevents multiple answers to the same question it is used by the colors.script
 level_gui  = "level:/gui#level" -- this is also used by the colors.script
 score = 0 -- this is the player's score and it is also a global variable
-speed = 700
+speed = 1200
 brake_score = 0 -- the score when the player used brakes for the first time needed by the level and challenge scripts
 chal_passed = false -- true if so and false if not
+width = nil --  the width returned by the windows.get_size function
+local spawn_x_pos
 --ad_prompt_shown = false -- this is a boolean value needed by the colors script to stop the ad prompt seen more than once
-local function spawn_color(clr, pos) -- this function spawns the stated game object at the stated position
+local function spawn_color(clr) -- this function spawns the stated game object at the stated position
+	local pos = vmath.vector3(spawn_x_pos, 650, 0.1)-- where the game objects are to be spawned
 	spawn = factory.create(clr, pos, nil, {}, 0.5) -- the clr is a string and pos is vector3 value. 1 is the scale of the game object 
 	msg.post(spawn, "your_color_is", {color = clr}) -- sends the color game object the data it needs to determine what its answer is.
-	if speed < 1200 then --1400 is the max speed
+	if speed < 1700 then --1400 is the max speed
 		speed = speed + 25
 	end
 end
@@ -22,7 +24,9 @@ end
 function init(self)
 	Color.extract_color_info(tray, color_strings, 1) -- this statement extracts the string names of the colors in the TRAY and places them in the global color table
 	Color.extract_color_info(tray, colors, 3) -- extracts the vector4 color values
-	spawn_color(colorFac, spawn_pos) -- spawns the first go of the session
+	width = window.get_size()
+	spawn_x_pos = -(width/2) - 100
+	spawn_color(colorFac) -- spawns the first go of the session
 	msg.post(level_gui, "adjust_lives")-- displays the number of lives the player has left
 	--msg.post("#background_music", "play_sound", {delay = 0, gain = 1})
 	msg.post("main:/main#challenges", "num_of_colors") -- give the challenge script the required info to calculate the actual reward
