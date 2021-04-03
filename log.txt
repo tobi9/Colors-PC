@@ -1,3 +1,11 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
+INFO:DLIB: SSDP: Started on address 192.168.43.132
+ERROR:SCRIPT: /modules/customizer.lua:30: attempt to index local 'new_clr_info' (a nil value)
+stack traceback:
+	/modules/customizer.lua:30: in function 'set_new_node_color'
+	ization system/shell collections/menu/menu_shell.gui_script:67: in function <ization system/shell collections/menu/menu_shell.gui_script:48>
+ERROR:GAMESYS: Error when dispatching message to gui scene: -2. Message 'enabled' sent from customizer:/controller#customizer_controller to menu_shell:/menu#menu_shell.
+INFO:SOUND: Waiting for OpenAL device to complete
+INFO:DLIB: SSDP: Done on address 192.168.43.132

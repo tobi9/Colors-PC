@@ -1,5 +1,5 @@
 --The folder that will contain a game data
-folder = "Pompayus"
+folder = "Pompayus test"
 --The tables below are global tables that hold the information on the colors the player can use.	
 color_info_table = nil
 unlocked_colors_table = {}
