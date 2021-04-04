@@ -23,10 +23,10 @@ M.set_node_color = function(node_id, col)
 	end
 end
 
-M.set_new_node_color = function(node, new_clr_info, col)
-	local node_id = gui.get_id(node)
-	--col and node_id are concatenated to avoid conflicts in memory location.
-	local file = sys.get_save_file(folder, col..node_id)
+M.set_new_node_color = function(node, node_name, new_clr_info, col)
+	--col and node_name are concatenated to avoid conflicts in memory location.
+	local save_name = col.."["..node_name.."]"
+	local file = sys.get_save_file(folder, save_name)
     gui.set_color(node, new_clr_info[3])
 	sys.save(file, {new_clr_info[3]})
 	current_col = col
