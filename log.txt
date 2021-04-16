@@ -1,4 +1,3 @@
 INFO:DLIB: Writing log to: ./log.txt
 INFO:ENGINE: Loading data from: build/default
 INFO:ENGINE: Initialised sound device 'default'
-INFO:SOUND: Waiting for OpenAL device to complete
