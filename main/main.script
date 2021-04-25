@@ -194,7 +194,7 @@ local function window_callback(self, event, data) --gamePaused is declared in th
 end
 
 function init(self)
-	defos.set_maximized(true)
+	defos.toggle_fullscreen(true)
 	msg.post("@render:", "use_fixed_fit_projection")
 	if sound.is_music_playing() then
 		for i, group_hash in ipairs(sound.get_groups()) do
